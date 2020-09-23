@@ -20,10 +20,21 @@ namespace ToucanPlugin
         public void Start()
         {
             while (true)
-                if (IsConnected())
-                    SendQueue();
-                else
-                    Main();
+            {
+                try
+                {
+                    if (IsConnected())
+                    {
+                        SendQueue();
+                    }
+                    else
+                        Main();
+                    Thread.Sleep(1000);
+                }
+                catch (Exception e) { 
+                    Log.Error($"Could not connect: {e}"); 
+                }
+            }
         }
         public static Socket S { get; set; } = null;
         static List<String> messageQueue = new List<string>();
@@ -79,7 +90,6 @@ namespace ToucanPlugin
                         {
                             try
                             {
-                                if (!S.Connected) return;
                                 byte[] bytes = new byte[2000]; //256
                                 if (bytes == null) return;
                                 int i = S.Receive(bytes);
@@ -117,9 +127,9 @@ namespace ToucanPlugin
                 return false;
             }
         }
-        private void SendShit(String data)
+        private bool SendShit(String data)
         {
-            if (data == null) return;
+            if (data == null) return false;
             try
             {
                 if (S.Connected || S != null)
@@ -128,15 +138,18 @@ namespace ToucanPlugin
                     byte[] niceData = Encoding.ASCII.GetBytes(data);
                     S.Send(niceData);
                     Log.Debug($"Sent: {data}");
+                    return true;
                 }
                 else
                 {
                     Log.Debug($"Not Connected?");
+                    return false;
                 }
             }
             catch (Exception e)
             {
                 Log.Debug($"Failed to send data: {e}");
+                return false;
             }
         }
         public void Send(String data)
@@ -144,7 +157,7 @@ namespace ToucanPlugin
             Log.Info($"I should send: {data}");
             messageQueue.Add(data);
         }
-        public void SendQueue()
+        /*public void SendQueue() //Dosent Work
         {
             Log.Info("Sending data...");
             if (topicUpdateTimer.ElapsedMilliseconds >= 10000)
@@ -160,6 +173,29 @@ namespace ToucanPlugin
                     EpicData += messageQueue[i];
             SendShit(EpicData);
             Log.Info("Data sent!");
+        }*/
+        public void SendQueue()
+        {
+            Log.Info("Sending data...");
+            if (!IsConnected()) Log.Info("Cant send data WHEN IM NOT CONNECTED DIPSHIT.");
+            else
+            {
+                if (topicUpdateTimer.ElapsedMilliseconds >= 10000)
+                {
+                    topicUpdateTimer.Reset();
+                    topicUpdateTimer.Start();
+                }
+                for (int i = 0; i < messageQueue.Count; i++)
+                {
+                    if (SendShit(messageQueue[i]))
+                    {
+                        messageQueue.RemoveAt(i);
+                        i--;
+                    }
+                }
+                if (messageQueue.Count != 0)
+                    Log.Error("Could not send all messages.");
+            }
         }
     }
 

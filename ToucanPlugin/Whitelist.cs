@@ -10,7 +10,7 @@ namespace ToucanPlugin
     public class Whitelist
     {
         public bool Whitelisted { get; set; } = false;
-        readonly private string WhitelistLocation = @"C:\Users\Kelvin Kersna\AppData\Roaming\SCP Secret Laboratory\config\7777\UserIDWhitelist.txt";
+        readonly private string WhitelistLocation = @"./config/7777/UserIDWhitelist.txt";
         private List<String> WhitelistUsersRaw { get; set; } = new List<string> { };
         public List<String> WhitelistUsers { get; set; } = new List<string> { };
         public void Read()
@@ -24,11 +24,12 @@ namespace ToucanPlugin
         }
         public void Add(string User, string Comment = null)
         {
-                using (StreamWriter file =
-    new StreamWriter(WhitelistLocation, true))
+            using (StreamWriter file =
+new StreamWriter(WhitelistLocation, true))
             {
-                if(Comment != null) file.WriteLine($"#{Comment}\n{User}"); else
-                file.WriteLine($"{User}");
+                if (Comment != null) file.WriteLine($"#{Comment}\n{User}");
+                else
+                    file.WriteLine($"{User}");
             }
         }
         public void Remove(string User)
