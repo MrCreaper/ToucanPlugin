@@ -29,6 +29,7 @@ namespace ToucanPlugin
         static List<String> messageQueue = new List<string>();
         static public Stopwatch topicUpdateTimer;
         //Removed Static
+        // Fucking Kill me
         public void Main()
         {
             if (IsConnected()) return;
