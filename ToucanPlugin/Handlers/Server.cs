@@ -8,6 +8,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using ToucanPlugin.Commands;
 using UnityEngine;
 
@@ -17,6 +19,7 @@ namespace ToucanPlugin.Handlers
     {
         readonly System.Random rnd = new System.Random();
         readonly Tcp Tcp = new Tcp();
+        readonly MessageResponder mr = new MessageResponder();
         public void OnWaitingForPlayers()
         {
             if (AcGame.NextGamemode != 0)
@@ -35,7 +38,7 @@ namespace ToucanPlugin.Handlers
             Tcp.Send("log Round started");
             Exiled.API.Features.Map.Broadcast(5, ToucanPlugin.Instance.Config.RoundStartMessage);
             List<Exiled.API.Features.Player> playerList = new List<Exiled.API.Features.Player>((IEnumerable<Exiled.API.Features.Player>)Exiled.API.Features.Player.List.ToList());
-            if (playerList.Count >= 5 && rnd.Next(0,5) == 1)
+            if (playerList.Count >= 5 && rnd.Next(0, 5) == 1)
             {
                 Exiled.API.Features.Player Janitor = playerList.Find(x => x.Role == RoleType.ClassD);
                 Janitor.MaxHealth = 100;
@@ -51,7 +54,6 @@ namespace ToucanPlugin.Handlers
         public void OnRestartingRound()
         {
             Tcp.Send("log Round restarting...");
-            AcGame.RoundGamemode = 0;
         }
         public void OnRoundEnded(RoundEndedEventArgs ev)
         {
@@ -67,9 +69,11 @@ if (ev.LeadingTeam == LeadingTeam.Anomalies && u.Team == Team.SCP || u.Role == R
 if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team == Team.RSC)
                     Tcp.Send($"stats {u.UserId} gameswonMTF 1");
             });
+            AcGame.RoundGamemode = 0;
             Player.Has008RandomSpawned = false;
             Player.SCPKills = 0;
             SpecMode.TUTSpecList = null;
+            mr.ChaosHacker = null;
         }
         private Vector3 MTFSpawnLocaltion;
         public void OnRespawningTeam(RespawningTeamEventArgs ev)
@@ -92,7 +96,8 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
                 });
                 Cassie.Message($"the z i p HasEntered", false, false);
             }
-            else {
+            else
+            {
                 if (ev.NextKnownTeam == Respawning.SpawnableTeamType.NineTailedFox)
                 {
                     if (Player.SCPKills <= 2)
@@ -157,9 +162,42 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
                         p.ClearInventory();
                         ToucanPlugin.Instance.Config.MTFMedicItems.ForEach(item => p.Inventory.AddNewItem((ItemType)item));
                         p.Position = MTFSpawnLocaltion;
-                        p.Broadcast(5, "You are a medic! Your weak but have a fuck ton of healing items.");
+                        p.Broadcast(5, $"< size = 60 > You are < color = #185ede><b>A MTF Medic</b></color></size>\n\n < i > Help the < color = \"cyan\" > MTF </ color > by healing them and giving them aid! </ i > ");
                     }
                 }
+                else
+                { // Is chaos spawn.
+                    if (Player.SCPKills <= 15 && playerList.Count >= 2)
+                    {
+                        if (!ToucanPlugin.Instance.Config.CanChaosHackerSpawn) return;
+                        Exiled.API.Features.Player p = playerList[rnd.Next(0, playerList.Count)];
+                        p.MaxHealth = 75;
+                        p.MaxEnergy = 75;
+                        p.MaxAdrenalineHealth = 100;
+                        p.AdrenalineHealth = 100;
+                        p.ClearInventory();
+                        ToucanPlugin.Instance.Config.ChaosHackerItems.ForEach(item => p.Inventory.AddNewItem((ItemType)item));
+                        p.Position = Exiled.API.Features.Map.GetRandomSpawnPoint(RoleType.ChaosInsurgency);
+                        p.Broadcast(5, $"< size = 60 > You are < color = #2a6e02><b>A Chaos Hacker</b></color></size>\n\n < i > Help the < color = \"green\" > Chaos </ color > by hacking doors, your ahp is you ap! </ i > ");
+                        mr.ChaosHacker.Add(p);
+                        Task.Factory.StartNew(() => ChaosHackerCharge(p));
+                    }
+                }
+            }
+        }
+        public void ChaosHackerCharge(Exiled.API.Features.Player p)
+        {
+            while (mr.ChaosHacker.Contains(p))
+            {
+                if (p.AdrenalineHealth + 1 > p.MaxAdrenalineHealth)
+                {
+                    p.AdrenalineHealth = p.MaxAdrenalineHealth;
+                }
+                else
+                {
+                    p.AdrenalineHealth = +1;
+                }
+                Thread.Sleep(100);
             }
         }
     }

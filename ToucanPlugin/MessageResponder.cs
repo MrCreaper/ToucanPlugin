@@ -18,6 +18,7 @@ namespace ToucanPlugin
     {
         readonly Tcp Tcp = new Tcp();
         readonly Whitelist wl = new Whitelist();
+        public List<Player> ChaosHacker;
         public List<string> Boosters;
     public void Respond(String Cmd)
         {

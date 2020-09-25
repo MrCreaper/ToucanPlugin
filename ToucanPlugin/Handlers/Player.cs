@@ -1,4 +1,6 @@
-﻿using Exiled.API.Features;
+﻿using Exiled.API.Enums;
+using Exiled.API.Extensions;
+using Exiled.API.Features;
 using Exiled.Events.EventArgs;
 using System;
 using System.Collections.Generic;
@@ -58,7 +60,7 @@ namespace ToucanPlugin.Handlers
             {
                 UserGroup boosterGroup = new UserGroup
                 {
-                    BadgeText = "Server Nitro Booster",
+                    BadgeText = "High ranking player",
                     BadgeColor = "pink"
                 };
                 ev.Player.SetRank("boost", boosterGroup);
@@ -172,6 +174,26 @@ namespace ToucanPlugin.Handlers
         {
             Tcp.Send($"spawn {ev.Player.Role} {ev.Player.UserId}");
         }*/
+        public void OnInteractingDoor(InteractingDoorEventArgs ev)
+        {
+            if (!mr.ChaosHacker.Contains(ev.Player)) return;
+            if (ev.IsAllowed == true) return;
+                float ap = ev.Player.AdrenalineHealth;
+                float apCost = 0;
+                if (ev.Door.destroyed) return;
+                switch (ev.Door.doorType) {
+                    case (Door.DoorTypes)DoorType.Airlocks:
+                        break;
+                }
+                if (ap < apCost) ev.Player.Broadcast(2, $"Need {ap - apCost} more ap to open that door!");
+                else
+                {
+                    ap = ap - apCost;
+                    if (ev.Door.isOpen) ev.Door.isOpen = false;
+                    else
+                        ev.Door.isOpen = true;
+                }
+        }
         public void OnBanned(BannedEventArgs ev)
         {
             Tcp.Send($"log {ev.Details.Issuer} ({ev.Details.OriginalName}) banned player {ev.Player.Nickname} ({ev.Player.UserId}). Ban duration: {ev.Details.Expires}. Reason: {ev.Details.Reason}.");
@@ -205,7 +227,7 @@ namespace ToucanPlugin.Handlers
                     dmgHealed = 30;
                     break;
             }
-            
+            if(dmgHealed != 0)
             Tcp.Send($"stats {ev.Player.UserId} dmghealed {dmgHealed}");
         }
         public void OnThrowingGrenade(ThrowingGrenadeEventArgs ev)

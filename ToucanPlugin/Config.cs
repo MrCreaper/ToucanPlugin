@@ -50,5 +50,7 @@ namespace ToucanPlugin
         public List<int> MTFMedicItems { get; set; } = new List<int> { 17, 33, 33, 33, 34, 12, 13 };
         public bool CanJanitorSpawn { get; set; } = false;
         public List<int> JanitorItems { get; set; } = new List<int> { 0, 34, 35 };
+        public bool CanChaosHackerSpawn { get; set; } = false;
+        public List<int> ChaosHackerItems { get; set; } = new List<int> { 23, 14, 15, 12 };
     }
 }
