@@ -146,7 +146,7 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
                             });
                         Cassie.Message($"the MTFUNIT red right hand HasEntered the o 5 have disignated this a x k event", false, false);
                     }
-                    if (Player.SCPKills <= 15)
+                    if (Player.SCPKills <= 15 && playerList.Count >= 2)
                     {
                         if (!ToucanPlugin.Instance.Config.CanMedicMTFSpawn) return;
                         Exiled.API.Features.Player p = playerList[rnd.Next(0, playerList.Count)];
