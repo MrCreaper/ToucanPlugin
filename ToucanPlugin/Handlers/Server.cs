@@ -74,74 +74,91 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
         private Vector3 MTFSpawnLocaltion;
         public void OnRespawningTeam(RespawningTeamEventArgs ev)
         {
-            if (ev.NextKnownTeam == Respawning.SpawnableTeamType.NineTailedFox)
-            {
-                SpecMode.TUTSpecList.ForEach(id => ev.Players.Add(Exiled.API.Features.Player.List.ToList().Find(x => x.Id.ToString() == id)));
-                SpecMode.TUTSpecList = new List<string>();
-                List<Exiled.API.Features.Player> playerList = new List<Exiled.API.Features.Player>((IEnumerable<Exiled.API.Features.Player>)ev.Players);
-                if (Player.SCPKills <= 2)
+            SpecMode.TUTSpecList.ForEach(id => ev.Players.Add(Exiled.API.Features.Player.List.ToList().Find(x => x.Id.ToString() == id)));
+            SpecMode.TUTSpecList = new List<string>();
+            List<Exiled.API.Features.Player> playerList = new List<Exiled.API.Features.Player>((IEnumerable<Exiled.API.Features.Player>)ev.Players);
+            if (rnd.Next(0, 100) == 1)
+            { //Zipper gang
+                ev.Players.Clear();
+                playerList.ForEach(p =>
                 {
-                    ev.Players.Clear();
-                    bool CommanderFound = false;
-                    playerList.ForEach(p =>
-                        {
-                            if (rnd.Next(1, 2) == 1 && !CommanderFound) { p.Inventory.AddNewItem(ItemType.KeycardNTFLieutenant); CommanderFound = true; }
-                            p.SetRole(RoleType.FacilityGuard);
-                            p.ClearInventory();
-                            ToucanPlugin.Instance.Config.UIUSpawnItems.ForEach(item => p.Inventory.AddNewItem((ItemType)item));
-                            MTFSpawnLocaltion = new Vector3(176.2091f, 984.6033f, 39.10069f);
-                            p.Position = MTFSpawnLocaltion;
-                        });
-                    Cassie.Message($"the u i u HasEntered", false, false);
-                }
-                else
-                if (Player.SCPKills >= 5)
-                {
-                    //Just spawn normal mtf
-                }
-                else
-                if (Player.SCPKills <= 15)
-                {
-                    ev.Players.Clear();
-                    playerList.ForEach(p =>
-                        {
-                            p.SetRole(RoleType.NtfLieutenant);
-                            p.ClearInventory();
-                            ToucanPlugin.Instance.Config.HammerDownSpawnItems.ForEach(item => p.Inventory.AddNewItem((ItemType)item));
-                            MTFSpawnLocaltion = new Vector3(0.1775058f, 1005.311f, -10.53564f);
-                            p.Position = MTFSpawnLocaltion;
-                        });
-                    Cassie.Message($"MTFUNIT n u 7 HasEntered ", false, false);
-                }
-                else
-                if (Player.SCPKills <= 20)
-                {
-                    ev.Players.Clear();
-                    playerList.ForEach(p =>
-                        {
-                            p.SetRole(RoleType.NtfCommander);
-                            p.MaxHealth = 200;
-                            p.MaxEnergy = 999;
-                            p.MaxAdrenalineHealth = 300;
-                            p.ClearInventory();
-                            ToucanPlugin.Instance.Config.RedHandSpawnItems.ForEach(item => p.Inventory.AddNewItem((ItemType)item));
-                            MTFSpawnLocaltion = new Vector3(86.69146f, 988.5291f, -68.22584f);
-                            p.Position = MTFSpawnLocaltion;
-                        });
-                    Cassie.Message($"the MTFUNIT red right hand HasEntered the o 5 have disignated this a x k event", false, false);
-                }
-                if (Player.SCPKills <= 15)
-                {
-                    if (!ToucanPlugin.Instance.Config.CanMedicMTFSpawn) return;
-                    Exiled.API.Features.Player p = playerList[rnd.Next(0, playerList.Count)];
-                    p.SetRole(RoleType.NtfLieutenant);
-                    p.MaxHealth = 75;
-                    p.MaxEnergy = 75;
-                    p.MaxAdrenalineHealth = 300;
+                    p.SetRole(RoleType.Tutorial);
+                    p.MaxHealth = 69;
+                    p.MaxEnergy = 420;
+                    p.MaxAdrenalineHealth = 360;
                     p.ClearInventory();
-                    ToucanPlugin.Instance.Config.MTFMedicItems.ForEach(item => p.Inventory.AddNewItem((ItemType)item));
-                    p.Position = MTFSpawnLocaltion;
-                    p.Broadcast(5, "You are a medic! Your weak but have a fuck ton of healing items.");
+                    ToucanPlugin.Instance.Config.RedHandSpawnItems.ForEach(item => p.Inventory.AddNewItem((ItemType)14));
+                    p.Position = new Vector3(176.2091f, 984.6033f, 39.10069f);
+                });
+                Cassie.Message($"the z i p HasEntered", false, false);
+            }
+            else {
+                if (ev.NextKnownTeam == Respawning.SpawnableTeamType.NineTailedFox)
+                {
+                    if (Player.SCPKills <= 2)
+                    {
+                        ev.Players.Clear();
+                        bool CommanderFound = false;
+                        playerList.ForEach(p =>
+                            {
+                                if (rnd.Next(1, 2) == 1 && !CommanderFound) { p.Inventory.AddNewItem(ItemType.KeycardNTFLieutenant); CommanderFound = true; }
+                                p.SetRole(RoleType.FacilityGuard);
+                                p.ClearInventory();
+                                ToucanPlugin.Instance.Config.UIUSpawnItems.ForEach(item => p.Inventory.AddNewItem((ItemType)item));
+                                MTFSpawnLocaltion = new Vector3(176.2091f, 984.6033f, 39.10069f);
+                                p.Position = MTFSpawnLocaltion;
+                            });
+                        Cassie.Message($"the u i u HasEntered", false, false);
+                    }
+                    else
+                    if (Player.SCPKills >= 5)
+                    {
+                        //Just spawn normal mtf
+                    }
+                    else
+                    if (Player.SCPKills <= 15)
+                    {
+                        ev.Players.Clear();
+                        playerList.ForEach(p =>
+                            {
+                                p.SetRole(RoleType.NtfLieutenant);
+                                p.ClearInventory();
+                                ToucanPlugin.Instance.Config.HammerDownSpawnItems.ForEach(item => p.Inventory.AddNewItem((ItemType)item));
+                                MTFSpawnLocaltion = new Vector3(0.1775058f, 1005.311f, -10.53564f);
+                                p.Position = MTFSpawnLocaltion;
+                            });
+                        Cassie.Message($"MTFUNIT n u 7 HasEntered ", false, false);
+                    }
+                    else
+                    if (Player.SCPKills <= 20)
+                    {
+                        ev.Players.Clear();
+                        playerList.ForEach(p =>
+                            {
+                                p.SetRole(RoleType.NtfCommander);
+                                p.MaxHealth = 200;
+                                p.MaxEnergy = 999;
+                                p.MaxAdrenalineHealth = 300;
+                                p.ClearInventory();
+                                ToucanPlugin.Instance.Config.RedHandSpawnItems.ForEach(item => p.Inventory.AddNewItem((ItemType)item));
+                                MTFSpawnLocaltion = new Vector3(86.69146f, 988.5291f, -68.22584f);
+                                p.Position = MTFSpawnLocaltion;
+                            });
+                        Cassie.Message($"the MTFUNIT red right hand HasEntered the o 5 have disignated this a x k event", false, false);
+                    }
+                    if (Player.SCPKills <= 15)
+                    {
+                        if (!ToucanPlugin.Instance.Config.CanMedicMTFSpawn) return;
+                        Exiled.API.Features.Player p = playerList[rnd.Next(0, playerList.Count)];
+                        p.SetRole(RoleType.NtfLieutenant);
+                        p.MaxHealth = 75;
+                        p.MaxEnergy = 75;
+                        p.MaxAdrenalineHealth = 300;
+                        p.ClearInventory();
+                        ToucanPlugin.Instance.Config.MTFMedicItems.ForEach(item => p.Inventory.AddNewItem((ItemType)item));
+                        p.Position = MTFSpawnLocaltion;
+                        p.Broadcast(5, "You are a medic! Your weak but have a fuck ton of healing items.");
+                    }
                 }
             }
         }

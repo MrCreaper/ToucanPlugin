@@ -79,7 +79,7 @@ namespace ToucanPlugin.Handlers
             else 
                 Tcp.Send($"stats {ev.Player.UserId} sescapses 1");
             Map.Broadcast(4, $"{ev.Player.Nickname} escaped");
-            string escapeMsg = $"escape {classBool} {ev.Player.UserId}";
+            string escapeMsg = $"escape {classBool} {ev.Player.UserId} {Exiled.API.Features.Player.List.ToList().Count}";
             if (ev.Player.IsCuffed)
             {
                 escapeMsg = escapeMsg + " " + Exiled.API.Features.Player.List.ToList().Find(x => x.Id.ToString().Contains(ev.Player.CufferId.ToString())).UserId;
