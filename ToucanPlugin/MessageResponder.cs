@@ -99,6 +99,7 @@ namespace ToucanPlugin
                     break;
 
                 case "store":
+                    if (Store.StoreStock != null) return;
                     Store.StoreStock = Cmd.ToString().Remove(0, 6);
                     Log.Info("Store Retrived");
                     break;

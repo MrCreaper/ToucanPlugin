@@ -24,7 +24,6 @@ namespace ToucanPlugin
         // Fucking Kill me
         public void Main()
         {
-            //if (IsConnected()) return;
             try
             {
                 // Define those variables to be evaluated in the next for loop and
@@ -67,6 +66,7 @@ namespace ToucanPlugin
                         while (S.Connected)
                         //while (S != null)
                         {
+                            SendQueue();
                             try
                             {
                                 byte[] bytes = new byte[2000]; //256
@@ -78,19 +78,6 @@ namespace ToucanPlugin
                             catch (Exception e)
                             {
                                 Log.Error($"Message Responder Failed/Reciving messages Failed, {e}");
-                            }
-
-                            try
-                            {
-                                if (IsConnected())
-                                    SendQueue();
-                                else
-                                    Main();
-                                Thread.Sleep(1000);
-                            }
-                            catch (Exception e)
-                            {
-                                Log.Error($"Could not connect: {e}");
                             }
                         }
                     }
@@ -175,6 +162,7 @@ namespace ToucanPlugin
             }
             for (int i = 0; i < messageQueue.Count; i++)
             {
+                Log.Info(messageQueue[i]);
                 if (SendShit(messageQueue[i]))
                 {
                     messageQueue.RemoveAt(i);
@@ -183,6 +171,25 @@ namespace ToucanPlugin
             }
             if (messageQueue.Count != 0)
                 Log.Error("Could not send all messages.");
+        }
+
+        public void Start()
+        {
+            while (true)
+            {
+                try
+                {
+                    if (IsConnected())
+                        SendQueue();
+                    else 
+                        Task.Factory.StartNew(() => Main());
+                    Thread.Sleep(5000);
+                }
+                catch (Exception e)
+                {
+                    Log.Error($"Could not connect: {e}");
+                }
+            }
         }
     }
 
@@ -212,7 +219,7 @@ namespace ToucanPlugin
             Patch();
             Tcp.topicUpdateTimer = Stopwatch.StartNew();
             Tcp.topicUpdateTimer.Start();
-            Task.Factory.StartNew(() => Tcp.Main());
+            Task.Factory.StartNew(() => Tcp.Start());
         }
         public override void OnDisabled()
         {
