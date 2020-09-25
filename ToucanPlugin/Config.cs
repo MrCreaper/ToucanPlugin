@@ -48,5 +48,7 @@ namespace ToucanPlugin
         public List<int> RedHandSpawnItems { get; set; } = new List<int> { 24, 30, 8, 17, 12, 19, 27 };
         public bool CanMedicMTFSpawn { get; set; } = false;
         public List<int> MTFMedicItems { get; set; } = new List<int> { 17, 33, 33, 33, 34, 12, 13 };
+        public bool CanJanitorSpawn { get; set; } = false;
+        public List<int> JanitorItems { get; set; } = new List<int> { 0, 34, 35 };
     }
 }

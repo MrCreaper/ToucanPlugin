@@ -3,6 +3,7 @@ using Exiled.API.Enums;
 using Exiled.API.Features;
 using Exiled.Events.EventArgs;
 using Exiled.Events.Handlers;
+using GameCore;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ namespace ToucanPlugin.Handlers
 {
     class Server
     {
+        readonly System.Random rnd = new System.Random();
         readonly Tcp Tcp = new Tcp();
         public void OnWaitingForPlayers()
         {
@@ -32,6 +34,18 @@ namespace ToucanPlugin.Handlers
         {
             Tcp.Send("log Round started");
             Exiled.API.Features.Map.Broadcast(5, ToucanPlugin.Instance.Config.RoundStartMessage);
+            List<Exiled.API.Features.Player> playerList = new List<Exiled.API.Features.Player>((IEnumerable<Exiled.API.Features.Player>)Exiled.API.Features.Player.List.ToList());
+            if (playerList.Count >= 5 && rnd.Next(0,5) == 1)
+            {
+                Exiled.API.Features.Player Janitor = playerList.Find(x => x.Role == RoleType.ClassD);
+                Janitor.MaxHealth = 100;
+                Janitor.MaxEnergy = 110;
+                Janitor.MaxAdrenalineHealth = 100;
+                Janitor.ClearInventory();
+                ToucanPlugin.Instance.Config.JanitorItems.ForEach(item => Janitor.Inventory.AddNewItem((ItemType)item));
+                Janitor.Position = Exiled.API.Features.Map.GetRandomSpawnPoint(RoleType.Scientist);
+                Janitor.Broadcast(5, "Life sucz.");
+            }
         }
 
         public void OnRestartingRound()
@@ -57,6 +71,7 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
             Player.SCPKills = 0;
             SpecMode.TUTSpecList = null;
         }
+        private Vector3 MTFSpawnLocaltion;
         public void OnRespawningTeam(RespawningTeamEventArgs ev)
         {
             if (ev.NextKnownTeam == Respawning.SpawnableTeamType.NineTailedFox)
@@ -64,7 +79,6 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
                 SpecMode.TUTSpecList.ForEach(id => ev.Players.Add(Exiled.API.Features.Player.List.ToList().Find(x => x.Id.ToString() == id)));
                 SpecMode.TUTSpecList = new List<string>();
                 List<Exiled.API.Features.Player> playerList = new List<Exiled.API.Features.Player>((IEnumerable<Exiled.API.Features.Player>)ev.Players);
-                System.Random rnd = new System.Random();
                 if (Player.SCPKills <= 2)
                 {
                     ev.Players.Clear();
@@ -75,7 +89,8 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
                             p.SetRole(RoleType.FacilityGuard);
                             p.ClearInventory();
                             ToucanPlugin.Instance.Config.UIUSpawnItems.ForEach(item => p.Inventory.AddNewItem((ItemType)item));
-                            p.Position = new Vector3(176.2091f, 984.6033f, 39.10069f);
+                            MTFSpawnLocaltion = new Vector3(176.2091f, 984.6033f, 39.10069f);
+                            p.Position = MTFSpawnLocaltion;
                         });
                     Cassie.Message($"the u i u HasEntered", false, false);
                 }
@@ -93,7 +108,8 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
                             p.SetRole(RoleType.NtfLieutenant);
                             p.ClearInventory();
                             ToucanPlugin.Instance.Config.HammerDownSpawnItems.ForEach(item => p.Inventory.AddNewItem((ItemType)item));
-                            p.Position = new Vector3(0.1775058f, 1005.311f, -10.53564f);
+                            MTFSpawnLocaltion = new Vector3(0.1775058f, 1005.311f, -10.53564f);
+                            p.Position = MTFSpawnLocaltion;
                         });
                     Cassie.Message($"MTFUNIT n u 7 HasEntered ", false, false);
                 }
@@ -109,9 +125,23 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
                             p.MaxAdrenalineHealth = 300;
                             p.ClearInventory();
                             ToucanPlugin.Instance.Config.RedHandSpawnItems.ForEach(item => p.Inventory.AddNewItem((ItemType)item));
-                            p.Position = new Vector3(86.69146f, 988.5291f, -68.22584f);
+                            MTFSpawnLocaltion = new Vector3(86.69146f, 988.5291f, -68.22584f);
+                            p.Position = MTFSpawnLocaltion;
                         });
                     Cassie.Message($"the MTFUNIT red right hand HasEntered the o 5 have disignated this a x k event", false, false);
+                }
+                if (Player.SCPKills <= 15)
+                {
+                    if (!ToucanPlugin.Instance.Config.CanMedicMTFSpawn) return;
+                    Exiled.API.Features.Player p = playerList[rnd.Next(0, playerList.Count)];
+                    p.SetRole(RoleType.NtfLieutenant);
+                    p.MaxHealth = 75;
+                    p.MaxEnergy = 75;
+                    p.MaxAdrenalineHealth = 300;
+                    p.ClearInventory();
+                    ToucanPlugin.Instance.Config.MTFMedicItems.ForEach(item => p.Inventory.AddNewItem((ItemType)item));
+                    p.Position = MTFSpawnLocaltion;
+                    p.Broadcast(5, "You are a medic! Your weak but have a fuck ton of healing items.");
                 }
             }
         }
