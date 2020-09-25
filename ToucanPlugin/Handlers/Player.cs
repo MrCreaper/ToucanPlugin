@@ -33,7 +33,7 @@ namespace ToucanPlugin.Handlers
                 List<string> PlayerNameSplit = new List<string>(ev.Player.Nickname.Split(' '));
                 PlayerNameSplit.ForEach(part =>
                 {
-                    if (part.ToLower().Contains(".com") || part.ToLower().Contains("ttv/") || part.Contains("YT"))
+                    if (part.ToLower().Contains(".com") || part.Contains(".tf") || part.ToLower().Contains("ttv/") || part.Contains("YT"))
                     {
                         ev.Player.DisplayNickname = ev.Player.Nickname.Replace(part, ToucanPlugin.Instance.Config.ReplaceAdvertismentNamesWhit);
                     }

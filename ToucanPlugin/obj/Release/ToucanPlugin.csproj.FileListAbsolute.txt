@@ -17,7 +17,6 @@ C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Release
 C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Release\UnityEngine.UNETModule.dll
 C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Release\UnityEngine.SharedInternalsModule.dll
 C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Release\UnityEngine.JSONSerializeModule.dll
-C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Release\0Harmony.xml
 C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Release\Newtonsoft.Json.xml
 C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\obj\Release\ToucanPlugin.csprojAssemblyReference.cache
 C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\obj\Release\ToucanPlugin.csproj.CoreCompileInputs.cache
@@ -25,3 +24,8 @@ C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\obj\Release
 C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\obj\Release\ToucanPlugin.dll
 C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\obj\Release\ToucanPlugin.pdb
 C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Release\Assembly-CSharp_publicized.dll
+C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Release\Exiled.Updater.dll
+C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Release\libvideo.dll
+C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Release\MediaToolkit.dll
+C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Release\System.Diagnostics.DiagnosticSource.dll
+C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Release\System.Diagnostics.DiagnosticSource.xml

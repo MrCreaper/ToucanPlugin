@@ -41,7 +41,7 @@ namespace ToucanPlugin.Handlers
         }
         public void OnRoundEnded(RoundEndedEventArgs ev)
         {
-            if (ToucanPlugin.Instance.Config.DetonateAtRoundEnded) Exiled.API.Features.Warhead.Detonate();
+            if (ToucanPlugin.Instance.Config.DetonateAtRoundEnded && Exiled.API.Features.Warhead.IsDetonated) Exiled.API.Features.Warhead.Detonate();
             Tcp.Send($"log Round Ended\n```Winning Class: {ev.LeadingTeam}\nEscaped D-Class: {ev.ClassList.class_ds}\nRescued Scientists: {ev.ClassList.scientists}\nContained SCPs: {ev.ClassList.scps_except_zombies}\nWas warhead detonated: {Exiled.API.Features.Warhead.IsDetonated}\nKilled by warhead: {ev.ClassList.warhead_kills}```");
             Exiled.API.Features.Player.List.ToList().ForEach(u => Tcp.Send($"stats {u.UserId} gamesplayed 1"));
             Exiled.API.Features.Player.List.ToList().ForEach(u =>

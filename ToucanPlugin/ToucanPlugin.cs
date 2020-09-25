@@ -17,35 +17,14 @@ namespace ToucanPlugin
 {
     public class Tcp
     {
-        public void Start()
-        {
-            while (true)
-            {
-                try
-                {
-                    if (IsConnected())
-                    {
-                        SendQueue();
-                    }
-                    else
-                        Main();
-                    Thread.Sleep(1000);
-                }
-                catch (Exception e) { 
-                    Log.Error($"Could not connect: {e}"); 
-                }
-            }
-        }
         public static Socket S { get; set; } = null;
-        static List<String> messageQueue = new List<string>();
+        readonly static List<String> messageQueue = new List<string>();
         static public Stopwatch topicUpdateTimer;
         //Removed Static
         // Fucking Kill me
         public void Main()
         {
-            if (IsConnected()) return;
-            topicUpdateTimer = Stopwatch.StartNew();
-            topicUpdateTimer.Start();
+            //if (IsConnected()) return;
             try
             {
                 // Define those variables to be evaluated in the next for loop and
@@ -99,6 +78,19 @@ namespace ToucanPlugin
                             catch (Exception e)
                             {
                                 Log.Error($"Message Responder Failed/Reciving messages Failed, {e}");
+                            }
+
+                            try
+                            {
+                                if (IsConnected())
+                                    SendQueue();
+                                else
+                                    Main();
+                                Thread.Sleep(1000);
+                            }
+                            catch (Exception e)
+                            {
+                                Log.Error($"Could not connect: {e}");
                             }
                         }
                     }
@@ -154,7 +146,6 @@ namespace ToucanPlugin
         }
         public void Send(String data)
         {
-            Log.Info($"I should send: {data}");
             messageQueue.Add(data);
         }
         /*public void SendQueue() //Dosent Work
@@ -176,26 +167,22 @@ namespace ToucanPlugin
         }*/
         public void SendQueue()
         {
-            Log.Info("Sending data...");
-            if (!IsConnected()) Log.Info("Cant send data WHEN IM NOT CONNECTED DIPSHIT.");
-            else
+            if (!IsConnected()) return;
+            if (topicUpdateTimer.ElapsedMilliseconds >= 10000)
             {
-                if (topicUpdateTimer.ElapsedMilliseconds >= 10000)
-                {
-                    topicUpdateTimer.Reset();
-                    topicUpdateTimer.Start();
-                }
-                for (int i = 0; i < messageQueue.Count; i++)
-                {
-                    if (SendShit(messageQueue[i]))
-                    {
-                        messageQueue.RemoveAt(i);
-                        i--;
-                    }
-                }
-                if (messageQueue.Count != 0)
-                    Log.Error("Could not send all messages.");
+                topicUpdateTimer.Reset();
+                topicUpdateTimer.Start();
             }
+            for (int i = 0; i < messageQueue.Count; i++)
+            {
+                if (SendShit(messageQueue[i]))
+                {
+                    messageQueue.RemoveAt(i);
+                    i--;
+                }
+            }
+            if (messageQueue.Count != 0)
+                Log.Error("Could not send all messages.");
         }
     }
 
@@ -223,8 +210,9 @@ namespace ToucanPlugin
             Log.Info($"Enabling Toucan Plugin V{Instance.Version.Major}.{Instance.Version.Minor}.{Instance.Version.Revision}");
             RegisterEvents();
             Patch();
-
-            Task.Factory.StartNew(() => Tcp.Start());
+            Tcp.topicUpdateTimer = Stopwatch.StartNew();
+            Tcp.topicUpdateTimer.Start();
+            Task.Factory.StartNew(() => Tcp.Main());
         }
         public override void OnDisabled()
         {
