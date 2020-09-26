@@ -26,6 +26,8 @@ namespace ToucanPlugin.Commands
                 {
                     if (p.AdrenalineHealth >= 60)
                     {
+                        Intercom.host.IntercomTime =+ 35;
+                        Intercom.host._intercomText = $"Lol u ben haxed\n-CI haxer men ({PCplayer.Nickname})";
                         response = $"Hacking the intercom...";
                         return false;
                     }

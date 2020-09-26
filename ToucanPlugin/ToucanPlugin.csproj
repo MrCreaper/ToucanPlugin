@@ -247,7 +247,8 @@
     <Compile Include="Handlers\Player.cs" />
     <Compile Include="Handlers\Server.cs" />
     <Compile Include="MessageResponder.cs" />
-    <Compile Include="Patches\IntercomPatch.cs" />
+    <Compile Include="Patches\IntercomHackPatch.cs" />
+    <Compile Include="Patches\IntercomMusicPatch.cs" />
     <Compile Include="Patches\RadioHackPatch.cs" />
     <Compile Include="Patches\RadioPatch.cs" />
     <Compile Include="ToucanPlugin.cs" />
