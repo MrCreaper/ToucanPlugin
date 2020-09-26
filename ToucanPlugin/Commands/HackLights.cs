@@ -13,7 +13,7 @@ namespace ToucanPlugin.Commands
         MessageResponder mr = new MessageResponder();
         public string Command { get; } = "HackLight";
 
-        public string[] Aliases { get; } = { "HackLights", "HackI", "HaI" };
+        public string[] Aliases { get; } = { "HackLights", "HackL", "HaL" };
 
         public string Description { get; } = "Hack the lights as a CI Hacker";
 

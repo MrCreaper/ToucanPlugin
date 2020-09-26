@@ -24,6 +24,7 @@ namespace ToucanPlugin
         // Fucking Kill me
         public void Main()
         {
+            if (IsConnected()) return;
             try
             {
                 // Define those variables to be evaluated in the next for loop and
@@ -163,6 +164,7 @@ namespace ToucanPlugin
                 {
                     messageQueue.RemoveAt(i);
                     i--;
+                    Thread.Sleep(100);
                 }
             }
             if (messageQueue.Count != 0)
