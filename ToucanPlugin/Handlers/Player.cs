@@ -183,7 +183,65 @@ namespace ToucanPlugin.Handlers
             if (ev.Door.destroyed) return;
             switch (ev.Door.doorType)
             {
-                case (Door.DoorTypes)DoorType.Airlocks:
+                case (Door.DoorTypes)DoorType.NukeSurface:
+                    apCost = 110;
+                    break;
+                case (Door.DoorTypes)DoorType.GateA:
+                    apCost = 75;
+                    break;
+                case (Door.DoorTypes)DoorType.GateB:
+                    apCost = 75;
+                    break;
+                case (Door.DoorTypes)DoorType.Scp106Primary:
+                    apCost = 85;
+                    break;
+                case (Door.DoorTypes)DoorType.Scp106Secondary:
+                    apCost = 85;
+                    break;
+                case (Door.DoorTypes)DoorType.Scp106Bottom:
+                    apCost = 85;
+                    break;
+                case (Door.DoorTypes)DoorType.Scp914:
+                    apCost = 25;
+                    break;
+                case (Door.DoorTypes)DoorType.Scp012:
+                    apCost = 25;
+                    break;
+                case (Door.DoorTypes)DoorType.LczArmory:
+                    apCost = 30;
+                    break;
+                case (Door.DoorTypes)DoorType.HczArmory:
+                    apCost = 30;
+                    break;
+                case (Door.DoorTypes)DoorType.NukeArmory:
+                    apCost = 55;
+                    break;
+                case (Door.DoorTypes)DoorType.Scp049Armory:
+                    apCost = 55;
+                    break;
+                case (Door.DoorTypes)DoorType.HID:
+                    apCost = 90;
+                    break;
+                case (Door.DoorTypes)DoorType.CheckpointEntrance:
+                    apCost = 35;
+                    break;
+                case (Door.DoorTypes)DoorType.CheckpointLczA:
+                    apCost = 35;
+                    break;
+                case (Door.DoorTypes)DoorType.CheckpointLczB:
+                    apCost = 35;
+                    break;
+                case (Door.DoorTypes)DoorType.Intercom:
+                    apCost = 40;
+                    break;
+                case (Door.DoorTypes)DoorType.Scp079First:
+                    apCost = 45;
+                    break;
+                case (Door.DoorTypes)DoorType.Scp079Second:
+                    apCost = 45;
+                    break;
+                case (Door.DoorTypes)DoorType.Scp096:
+                    apCost = 40;
                     break;
             }
             if (ap < apCost) ev.Player.Broadcast(2, $"Need {ap - apCost} more ap to open that door!");

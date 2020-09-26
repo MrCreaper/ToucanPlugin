@@ -173,8 +173,8 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
                         Exiled.API.Features.Player p = playerList[rnd.Next(0, playerList.Count)];
                         p.MaxHealth = 75;
                         p.MaxEnergy = 75;
-                        p.MaxAdrenalineHealth = 100;
-                        p.AdrenalineHealth = 100;
+                        p.MaxAdrenalineHealth = 50; //AP
+                        p.AdrenalineHealth = 50;
                         p.ClearInventory();
                         ToucanPlugin.Instance.Config.ChaosHackerItems.ForEach(item => p.Inventory.AddNewItem((ItemType)item));
                         p.Position = Exiled.API.Features.Map.GetRandomSpawnPoint(RoleType.ChaosInsurgency);
