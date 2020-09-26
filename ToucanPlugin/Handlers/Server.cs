@@ -1,4 +1,5 @@
 ﻿using CommandSystem.Commands;
+using Dissonance;
 using Exiled.API.Enums;
 using Exiled.API.Features;
 using Exiled.Events.EventArgs;
@@ -103,16 +104,18 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
                     if (Player.SCPKills <= 2)
                     {
                         ev.Players.Clear();
-                        bool CommanderFound = false;
+                        List<int> spawnerNumList = new List<int>();
                         playerList.ForEach(p =>
                             {
-                                if (rnd.Next(1, 2) == 1 && !CommanderFound) { p.Inventory.AddNewItem(ItemType.KeycardNTFLieutenant); CommanderFound = true; }
+                                spawnerNumList.Add(p.Id);
                                 p.SetRole(RoleType.FacilityGuard);
                                 p.ClearInventory();
                                 ToucanPlugin.Instance.Config.UIUSpawnItems.ForEach(item => p.Inventory.AddNewItem((ItemType)item));
                                 MTFSpawnLocaltion = new Vector3(176.2091f, 984.6033f, 39.10069f);
                                 p.Position = MTFSpawnLocaltion;
                             });
+                        int leaderIndex = rnd.Next(0, spawnerNumList.Count);
+                        playerList[leaderIndex].Inventory.AddNewItem(ItemType.KeycardNTFLieutenant);
                         Cassie.Message($"the u i u HasEntered", false, false);
                     }
                     else
