@@ -23,7 +23,7 @@ namespace ToucanPlugin.Commands
         {
             if (Sender is PlayerCommandSender PCplayer)
             {
-                if (PCplayer.CCM.CurRole.roleId != RoleType.Spectator || PCplayer.CCM.CurRole.roleId != RoleType.Tutorial)
+                if (PCplayer.CCM.CurClass != RoleType.Spectator || PCplayer.CCM.CurClass != RoleType.Tutorial)
                 {
                     response = $"Can only use this command while being a dead";
                     return true;
@@ -35,8 +35,8 @@ namespace ToucanPlugin.Commands
                         TUTSpecList.Add(PCplayer.SenderId);
                         PCplayer.CCM.SetClassID(RoleType.Tutorial);
                         PCplayer.CCM.NoclipEnabled = true;
-                        for(int i = 0; i<= 8; i++)
-                        Player.List.ToList().Find(x => x.Id.ToString() == PCplayer.SenderId).Inventory.AddNewItem(ItemType.Coin);
+                        for (int i = 0; i <= 8; i++)
+                            Player.List.ToList().Find(x => x.Id.ToString() == PCplayer.SenderId).Inventory.AddNewItem(ItemType.Coin);
                         Player.List.ToList().Find(x => x.Id.ToString() == PCplayer.SenderId).ReferenceHub.playerEffectsController.EnableEffect<Scp268>();
                         Player.List.ToList().Find(x => x.Id.ToString() == PCplayer.SenderId).ReferenceHub.playerEffectsController.EnableEffect<Amnesia>();
                         response = $"Enjoy flying around!";
@@ -54,11 +54,11 @@ namespace ToucanPlugin.Commands
                     }
                 }
             }
-                else
-                {
-                    response = $"Shit fucked up";
-                    return true;
-                }
+            else
+            {
+                response = $"Shit fucked up";
+                return true;
+            }
         }
     }
 }

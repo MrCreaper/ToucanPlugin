@@ -20,11 +20,13 @@ namespace ToucanPlugin
         public static Socket S { get; set; } = null;
         readonly static List<String> messageQueue = new List<string>();
         static public Stopwatch topicUpdateTimer;
+        private bool connecting = false;
         //Removed Static
         // Fucking Kill me
         public void Main()
         {
-            if (IsConnected()) return;
+            if (connecting) return;
+            connecting = true;
             try
             {
                 // Define those variables to be evaluated in the next for loop and
@@ -55,6 +57,7 @@ namespace ToucanPlugin
 
                     if (!IsConnected())
                     {
+                        connecting = false;
                         // Connection failed, try next IPaddress.
                         Log.Error("Connection Failed");
                         S = null;
@@ -63,11 +66,12 @@ namespace ToucanPlugin
                     }
                     else
                     {
+                        connecting = false;
                         Log.Info("Connected To Toucan Server.");
                         while (S.Connected)
                         //while (S != null)
                         {
-                            SendQueue();
+                            //SendQueue();
                             try
                             {
                                 byte[] bytes = new byte[2000]; //256
@@ -87,6 +91,7 @@ namespace ToucanPlugin
             catch
             {
                 Log.Error("Connecting failed");
+                connecting = false;
             }
         }
         public static bool IsConnected()
@@ -159,7 +164,6 @@ namespace ToucanPlugin
             }
             for (int i = 0; i < messageQueue.Count; i++)
             {
-                Log.Info(messageQueue[i]);
                 if (SendShit(messageQueue[i]))
                 {
                     messageQueue.RemoveAt(i);
