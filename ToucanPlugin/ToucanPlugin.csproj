@@ -217,6 +217,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\AcGame.cs" />
+    <Compile Include="Commands\HackIcom.cs" />
+    <Compile Include="Commands\HackRadio.cs" />
+    <Compile Include="Commands\HackLights.cs" />
     <Compile Include="Commands\MyPos.cs" />
     <Compile Include="Commands\Kick.cs" />
     <Compile Include="Commands\Plugins.cs" />
@@ -245,6 +248,7 @@
     <Compile Include="Handlers\Server.cs" />
     <Compile Include="MessageResponder.cs" />
     <Compile Include="Patches\IntercomPatch.cs" />
+    <Compile Include="Patches\RadioHackPatch.cs" />
     <Compile Include="Patches\RadioPatch.cs" />
     <Compile Include="ToucanPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

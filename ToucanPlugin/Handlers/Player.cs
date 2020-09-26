@@ -244,6 +244,7 @@ namespace ToucanPlugin.Handlers
                     apCost = 40;
                     break;
             }
+            if (apCost == 0) return;
             if (ap < apCost) ev.Player.Broadcast(2, $"Need {ap - apCost} more ap to open that door!");
             else
             {
