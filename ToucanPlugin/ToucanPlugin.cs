@@ -131,13 +131,11 @@ namespace ToucanPlugin
                 return false;
             }
         }
-        public void Send(String data)
-        {
+        public void Send(String data) =>
             messageQueue.Add(data);
-        }
         /*public void SendQueue() //Dosent Work
         {
-            Log.Info("Sending data...");
+            if (!IsConnected()) return;
             if (topicUpdateTimer.ElapsedMilliseconds >= 10000)
             {
                 topicUpdateTimer.Reset();
@@ -145,12 +143,10 @@ namespace ToucanPlugin
             }
             String EpicData = null;
             for (int i = 0; i < messageQueue.Count; i++)
-                if (messageQueue[i + 1] != null)
                     EpicData += $"{messageQueue[i]} ||| ";
-                else
-                    EpicData += messageQueue[i];
             SendShit(EpicData);
-            Log.Info("Data sent!");
+            messageQueue.Clear();
+            EpicData = null;
         }*/
         public void SendQueue()
         {
@@ -183,7 +179,7 @@ namespace ToucanPlugin
                         SendQueue();
                     else 
                         Task.Factory.StartNew(() => Main());
-                    Thread.Sleep(5000);
+                    Thread.Sleep(1000);
                 }
                 catch (Exception e)
                 {

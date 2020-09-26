@@ -60,7 +60,7 @@ namespace ToucanPlugin.Handlers
             {
                 UserGroup boosterGroup = new UserGroup
                 {
-                    BadgeText = "High ranking player",
+                    BadgeText = "High Ranking Player",
                     BadgeColor = "pink"
                 };
                 ev.Player.SetRank("boost", boosterGroup);
@@ -177,7 +177,7 @@ namespace ToucanPlugin.Handlers
         public void OnInteractingDoor(InteractingDoorEventArgs ev)
         {
             if (!mr.ChaosHacker.Contains(ev.Player)) return;
-            if (ev.IsAllowed == true) return;
+            if (ev.IsAllowed) return;
             float ap = ev.Player.AdrenalineHealth;
             float apCost = 0;
             if (ev.Door.destroyed) return;
@@ -293,7 +293,7 @@ namespace ToucanPlugin.Handlers
         }
         public void OnThrowingGrenade(ThrowingGrenadeEventArgs ev)
         {
-            Tcp.Send($"log {ev.Player.Nickname} threw a grenade");
+            Tcp.Send($"log {ev.Player.Nickname} threw a {(ItemType)ev.Id}");
         }
     }
 }
