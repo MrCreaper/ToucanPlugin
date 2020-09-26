@@ -175,7 +175,7 @@ namespace ToucanPlugin.Handlers
             Tcp.Send($"spawn {ev.Player.Role} {ev.Player.UserId}");
         }*/
         public void OnInteractingDoor(InteractingDoorEventArgs ev)
-        {
+        {/*
             if (!mr.ChaosHacker.Contains(ev.Player)) return;
             if (ev.IsAllowed) return;
             float ap = ev.Player.AdrenalineHealth;
@@ -252,7 +252,7 @@ namespace ToucanPlugin.Handlers
                 if (ev.Door.isOpen) ev.Door.isOpen = false;
                 else
                     ev.Door.isOpen = true;
-            }
+            }*/
         }
         public void OnBanned(BannedEventArgs ev)
         {
