@@ -92,7 +92,7 @@ namespace ToucanPlugin.Handlers
         public void OnDead(DiedEventArgs ev)
         {
             if (ev.Killer.Team == Team.SCP) SCPKills++;
-            if (mr.ChaosHacker.Contains(ev.Target)) mr.ChaosHacker.Remove(ev.Target); // Remove the chaos hacker things
+            //if (mr.ChaosHacker.Contains(ev.Target)) mr.ChaosHacker.Remove(ev.Target); // Remove the chaos hacker things
             if (ToucanPlugin.Instance.Config.Random008Spawn)
                 if (!Has008RandomSpawned)
                 {
@@ -264,7 +264,7 @@ namespace ToucanPlugin.Handlers
         }
         public void OnMedicalItemUsed(UsedMedicalItemEventArgs ev)
         {
-            if (ev.Item == ItemType.SCP207) Tcp.Send($"stats {ev.Player.UserId} 207drunk 1");
+            if (ev.Item == ItemType.SCP207) Tcp.Send($"stats {ev.Player.UserId} cokedrunk 1");
             int dmgHealed = 0;
             switch (ev.Item)
             {
