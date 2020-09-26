@@ -78,7 +78,7 @@ namespace ToucanPlugin.Handlers
                 classBool = true;
             }
             if (classBool == true) Tcp.Send($"stats {ev.Player.UserId} descapses 1");
-            else 
+            else
                 Tcp.Send($"stats {ev.Player.UserId} sescapses 1");
             Map.Broadcast(4, $"{ev.Player.Nickname} escaped");
             string escapeMsg = $"escape {classBool} {ev.Player.UserId} {Exiled.API.Features.Player.List.ToList().Count}";
@@ -92,8 +92,8 @@ namespace ToucanPlugin.Handlers
         public void OnDead(DiedEventArgs ev)
         {
             if (ev.Killer.Team == Team.SCP) SCPKills++;
+            if (mr.ChaosHacker.Contains(ev.Target)) mr.ChaosHacker.Remove(ev.Target); // Remove the chaos hacker things
             if (ToucanPlugin.Instance.Config.Random008Spawn)
-            {
                 if (!Has008RandomSpawned)
                 {
                     if (ev.Target.Role != RoleType.ClassD || ev.Target.Role != RoleType.Scientist || ev.Target.Role != RoleType.FacilityGuard) return;
@@ -107,8 +107,8 @@ namespace ToucanPlugin.Handlers
                         Cassie.Message($"biological infection at {ev.Target.CurrentRoom.Zone}");
                     }
                 }
-            }
-            switch (ev.Target.Team) {
+            switch (ev.Target.Team)
+            {
                 case Team.SCP:
                     Tcp.Send($"stats {ev.Killer.UserId} scpkilled 1");
                     break;
@@ -178,21 +178,22 @@ namespace ToucanPlugin.Handlers
         {
             if (!mr.ChaosHacker.Contains(ev.Player)) return;
             if (ev.IsAllowed == true) return;
-                float ap = ev.Player.AdrenalineHealth;
-                float apCost = 0;
-                if (ev.Door.destroyed) return;
-                switch (ev.Door.doorType) {
-                    case (Door.DoorTypes)DoorType.Airlocks:
-                        break;
-                }
-                if (ap < apCost) ev.Player.Broadcast(2, $"Need {ap - apCost} more ap to open that door!");
+            float ap = ev.Player.AdrenalineHealth;
+            float apCost = 0;
+            if (ev.Door.destroyed) return;
+            switch (ev.Door.doorType)
+            {
+                case (Door.DoorTypes)DoorType.Airlocks:
+                    break;
+            }
+            if (ap < apCost) ev.Player.Broadcast(2, $"Need {ap - apCost} more ap to open that door!");
+            else
+            {
+                ap =- apCost;
+                if (ev.Door.isOpen) ev.Door.isOpen = false;
                 else
-                {
-                    ap = ap - apCost;
-                    if (ev.Door.isOpen) ev.Door.isOpen = false;
-                    else
-                        ev.Door.isOpen = true;
-                }
+                    ev.Door.isOpen = true;
+            }
         }
         public void OnBanned(BannedEventArgs ev)
         {
@@ -206,7 +207,8 @@ namespace ToucanPlugin.Handlers
         {
             if (ev.Item == ItemType.SCP207) Tcp.Send($"stats {ev.Player.UserId} 207drunk 1");
             int dmgHealed = 0;
-            switch (ev.Item) {
+            switch (ev.Item)
+            {
                 case ItemType.Painkillers:
                     dmgHealed = 45;
                     break;
@@ -227,8 +229,8 @@ namespace ToucanPlugin.Handlers
                     dmgHealed = 30;
                     break;
             }
-            if(dmgHealed != 0)
-            Tcp.Send($"stats {ev.Player.UserId} dmghealed {dmgHealed}");
+            if (dmgHealed != 0)
+                Tcp.Send($"stats {ev.Player.UserId} dmghealed {dmgHealed}");
         }
         public void OnThrowingGrenade(ThrowingGrenadeEventArgs ev)
         {
