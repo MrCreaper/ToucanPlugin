@@ -27,7 +27,6 @@ namespace ToucanPlugin.Handlers
 
         public void OnJoin(JoinedEventArgs ev)
         {
-            Log.Info(ServerStatic.RolesConfig.RawData);
             if (wl.Whitelisted)
                 if (!wl.WhitelistUsers.Contains(ev.Player.UserId))
                     ev.Player.Kick("Sorry the server is right now whitelisted. Come back later!");
@@ -65,7 +64,8 @@ namespace ToucanPlugin.Handlers
                     BadgeText = "Highest Ranker",
                     BadgeColor = "gold"
                 };
-                ev.Player.SetRank("top", topGroup);
+                if (ev.Player.RankName != null)
+                    ev.Player.SetRank("top", topGroup);
             }
         }
         public void OnEscape(EscapingEventArgs ev)
@@ -296,6 +296,12 @@ namespace ToucanPlugin.Handlers
         public void OnThrowingGrenade(ThrowingGrenadeEventArgs ev)
         {
             Tcp.Send($"log {ev.Player.Nickname} threw a {(ItemType)ev.Id}");
+        }
+        public void OnEnteringFemurBreaker(EnteringFemurBreakerEventArgs ev)
+        {
+            List<Exiled.API.Features.Player> playerList = new List<Exiled.API.Features.Player>((IEnumerable<Exiled.API.Features.Player>)Exiled.API.Features.Player.List.ToList());
+            if (playerList.Find(x => x.Role == RoleType.Scp106) != null)
+                Tcp.Send($"femur {ev.Player.UserId}");
         }
     }
 }

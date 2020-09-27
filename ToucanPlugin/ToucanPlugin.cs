@@ -279,6 +279,7 @@ namespace ToucanPlugin
             Player.Kicked += player.OnKicked;
             Player.MedicalItemUsed += player.OnMedicalItemUsed;
             Player.ThrowingGrenade += player.OnThrowingGrenade;
+            Player.EnteringFemurBreaker += player.OnEnteringFemurBreaker;
         }
 
         public void UnRegisterEvents()

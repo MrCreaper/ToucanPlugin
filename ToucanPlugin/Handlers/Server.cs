@@ -208,9 +208,10 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
         }
         public void OnSendingRemoteAdminCommand(SendingRemoteAdminCommandEventArgs ev)
         {
-            string cmd = "";
+            string cmd = ev.Name;
             ev.Arguments.ForEach(arg => cmd += $" {arg}");
-            Tcp.Send($"slog **{ev.Sender.Nickname}** Sent:\n```{cmd}```");
+            Exiled.API.Features.Log.Info(cmd);
+            if(!ev.Sender.IsHost) Tcp.Send($"slog **{ev.Sender.Nickname}** Sent:\n```{cmd}```");
         }
     }
 }
