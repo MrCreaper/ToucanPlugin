@@ -289,6 +289,7 @@ namespace ToucanPlugin
             Server.RestartingRound -= server.OnRestartingRound;
             Server.RoundEnded -= server.OnRoundEnded;
             Server.RespawningTeam -= server.OnRespawningTeam;
+            Server.SendingRemoteAdminCommand -= server.OnSendingRemoteAdminCommand;
 
             Player.Left -= player.OnLeft;
             Player.Joined -= player.OnJoin;
@@ -300,6 +301,7 @@ namespace ToucanPlugin
             Player.Kicked -= player.OnKicked;
             Player.MedicalItemUsed -= player.OnMedicalItemUsed;
             Player.ThrowingGrenade -= player.OnThrowingGrenade;
+            Player.EnteringFemurBreaker -= player.OnEnteringFemurBreaker;
             player = null;
             server = null;
         }

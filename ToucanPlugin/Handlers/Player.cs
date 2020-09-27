@@ -100,8 +100,7 @@ namespace ToucanPlugin.Handlers
                 {
                     if (ev.Target.Role != RoleType.ClassD || ev.Target.Role != RoleType.Scientist || ev.Target.Role != RoleType.FacilityGuard) return;
                     System.Random rnd = new System.Random();
-                    int spawnChance = rnd.Next(1, 100);
-                    if (spawnChance == 1)
+                    if (rnd.Next(1, 100) == 1)
                     {
                         ev.Target.SetRole(RoleType.Scp0492);
                         Has008RandomSpawned = true;
