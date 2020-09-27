@@ -239,7 +239,6 @@
     <Compile Include="Commands\Rotations.cs" />
     <Compile Include="Commands\SpecMode.cs" />
     <Compile Include="Commands\StartDec.cs" />
-    <Compile Include="Commands\Suicide.cs" />
     <Compile Include="Commands\Store.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="GamemodeSelector.cs" />

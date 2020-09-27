@@ -114,9 +114,9 @@ namespace ToucanPlugin
                     Tcp.Send($"list {Cmds[1]} {playerList}".Trim());
                     break;
 
-                case "boosters":
+                case "bestbois":
                     Boosters = new List<string>(Cmd.Replace("boosters ", "").Split(' '));
-                    Log.Info("Boosters recived!");
+                    Log.Info("Best bois recived!");
                     break;
 
                 case "whitelist":

@@ -27,6 +27,7 @@ namespace ToucanPlugin.Handlers
 
         public void OnJoin(JoinedEventArgs ev)
         {
+            Log.Info(ServerStatic.RolesConfig.RawData);
             if (wl.Whitelisted)
                 if (!wl.WhitelistUsers.Contains(ev.Player.UserId))
                     ev.Player.Kick("Sorry the server is right now whitelisted. Come back later!");
@@ -58,12 +59,13 @@ namespace ToucanPlugin.Handlers
             //Booster Role
             if (mr.Boosters != null && mr.Boosters.Contains(ev.Player.UserId))
             {
-                UserGroup boosterGroup = new UserGroup
+                UserGroup topGroup = new UserGroup
                 {
-                    BadgeText = "High Ranking Player",
-                    BadgeColor = "pink"
+
+                    BadgeText = "Highest Ranker",
+                    BadgeColor = "gold"
                 };
-                ev.Player.SetRank("boost", boosterGroup);
+                ev.Player.SetRank("top", topGroup);
             }
         }
         public void OnEscape(EscapingEventArgs ev)
@@ -175,72 +177,72 @@ namespace ToucanPlugin.Handlers
             Tcp.Send($"spawn {ev.Player.Role} {ev.Player.UserId}");
         }*/
         public void OnInteractingDoor(InteractingDoorEventArgs ev)
-        {/*
+        {
             if (!mr.ChaosHacker.Contains(ev.Player)) return;
             if (ev.IsAllowed) return;
             float ap = ev.Player.AdrenalineHealth;
             float apCost = 0;
             if (ev.Door.destroyed) return;
-            switch (ev.Door.doorType)
+            switch (ev.Door.Type())
             {
-                case (Door.DoorTypes)DoorType.NukeSurface:
+                case DoorType.NukeSurface:
                     apCost = 110;
                     break;
-                case (Door.DoorTypes)DoorType.GateA:
+                case DoorType.GateA:
                     apCost = 75;
                     break;
-                case (Door.DoorTypes)DoorType.GateB:
+                case DoorType.GateB:
                     apCost = 75;
                     break;
-                case (Door.DoorTypes)DoorType.Scp106Primary:
+                case DoorType.Scp106Primary:
                     apCost = 85;
                     break;
-                case (Door.DoorTypes)DoorType.Scp106Secondary:
+                case DoorType.Scp106Secondary:
                     apCost = 85;
                     break;
-                case (Door.DoorTypes)DoorType.Scp106Bottom:
+                case DoorType.Scp106Bottom:
                     apCost = 85;
                     break;
-                case (Door.DoorTypes)DoorType.Scp914:
+                case DoorType.Scp914:
                     apCost = 25;
                     break;
-                case (Door.DoorTypes)DoorType.Scp012:
+                case DoorType.Scp012:
                     apCost = 25;
                     break;
-                case (Door.DoorTypes)DoorType.LczArmory:
+                case DoorType.LczArmory:
                     apCost = 30;
                     break;
-                case (Door.DoorTypes)DoorType.HczArmory:
+                case DoorType.HczArmory:
                     apCost = 30;
                     break;
-                case (Door.DoorTypes)DoorType.NukeArmory:
+                case DoorType.NukeArmory:
                     apCost = 55;
                     break;
-                case (Door.DoorTypes)DoorType.Scp049Armory:
+                case DoorType.Scp049Armory:
                     apCost = 55;
                     break;
-                case (Door.DoorTypes)DoorType.HID:
+                case DoorType.HID:
                     apCost = 90;
                     break;
-                case (Door.DoorTypes)DoorType.CheckpointEntrance:
+                case DoorType.CheckpointEntrance:
                     apCost = 35;
                     break;
-                case (Door.DoorTypes)DoorType.CheckpointLczA:
+                case DoorType.CheckpointLczA:
                     apCost = 35;
                     break;
-                case (Door.DoorTypes)DoorType.CheckpointLczB:
+                case DoorType.CheckpointLczB:
                     apCost = 35;
                     break;
-                case (Door.DoorTypes)DoorType.Intercom:
+                case DoorType.Intercom:
                     apCost = 40;
                     break;
-                case (Door.DoorTypes)DoorType.Scp079First:
+                case DoorType.Scp079First:
                     apCost = 45;
                     break;
-                case (Door.DoorTypes)DoorType.Scp079Second:
+                case DoorType.Scp079Second:
                     apCost = 45;
                     break;
-                case (Door.DoorTypes)DoorType.Scp096:
+                case DoorType.Scp096:
                     apCost = 40;
                     break;
             }
@@ -248,11 +250,11 @@ namespace ToucanPlugin.Handlers
             if (ap < apCost) ev.Player.Broadcast(2, $"Need {ap - apCost} more ap to open that door!");
             else
             {
-                ap =- apCost;
+                _ = ap - apCost;
                 if (ev.Door.isOpen) ev.Door.isOpen = false;
                 else
                     ev.Door.isOpen = true;
-            }*/
+            }
         }
         public void OnBanned(BannedEventArgs ev)
         {

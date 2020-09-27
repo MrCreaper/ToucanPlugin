@@ -63,12 +63,15 @@ namespace ToucanPlugin.Handlers
             Exiled.API.Features.Player.List.ToList().ForEach(u => Tcp.Send($"stats {u.UserId} gamesplayed 1"));
             Exiled.API.Features.Player.List.ToList().ForEach(u =>
             {
-                if (ev.LeadingTeam == LeadingTeam.ChaosInsurgency && u.Team == Team.CDP || u.Team == Team.CHI) Tcp.Send($"stats {u.UserId} gameswonCD 1");
+                if (ev.LeadingTeam == LeadingTeam.ChaosInsurgency && u.Team == Team.CDP || u.Team == Team.CHI) 
+                    Tcp.Send($"stats {u.UserId} gameswonCD 1");
                 else
-if (ev.LeadingTeam == LeadingTeam.Anomalies && u.Team == Team.SCP || u.Role == RoleType.Tutorial || u.GroupName == "SCP-035") Tcp.Send($"stats {u.UserId} gameswonSCP 1");
+if (ev.LeadingTeam == LeadingTeam.Anomalies && u.Team == Team.SCP || u.Role == RoleType.Tutorial || u.GroupName == "SCP-035") 
+                    Tcp.Send($"stats {u.UserId} gameswonSCP 1");
                 else
 if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team == Team.RSC)
                     Tcp.Send($"stats {u.UserId} gameswonMTF 1");
+                //else Tcp.Send($"stats {u.UserId} gameswonSTALEMATE 1");
             });
             AcGame.RoundGamemode = 0;
             Player.Has008RandomSpawned = false;
@@ -202,6 +205,12 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
                 }
                 Thread.Sleep(100);
             }
+        }
+        public void OnSendingRemoteAdminCommand(SendingRemoteAdminCommandEventArgs ev)
+        {
+            string cmd = "";
+            ev.Arguments.ForEach(arg => cmd += $" {arg}");
+            Tcp.Send($"slog **{ev.Sender.Nickname}** Sent:\n```{cmd}```");
         }
     }
 }
