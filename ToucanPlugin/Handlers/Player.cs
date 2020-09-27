@@ -2,12 +2,16 @@
 using Exiled.API.Extensions;
 using Exiled.API.Features;
 using Exiled.Events.EventArgs;
+using ToucanPlugin.Commands;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using UnityEngine;
+using MEC;
+using System.Threading.Tasks;
 
 namespace ToucanPlugin.Handlers
 {
@@ -22,7 +26,7 @@ namespace ToucanPlugin.Handlers
         {
             string message = ToucanPlugin.Instance.Config.LeftMessage.Replace("{player}", ev.Player.Nickname);
             Map.Broadcast(2, message);
-            Tcp.Send($"log {ev.Player.Nickname} ({ev.Player.UserId}) Left [{Exiled.API.Features.Player.List.Count() - 1}/20]");
+            Tcp.Send($"log **{ev.Player.Nickname} ({ev.Player.UserId}) Left [{Exiled.API.Features.Player.List.Count() - 1}/20]**");
         }
 
         public void OnJoin(JoinedEventArgs ev)
@@ -53,9 +57,9 @@ namespace ToucanPlugin.Handlers
                 if (Exiled.API.Features.Player.List.Count() == 15)
                     Tcp.Send($"log 15 PLAYERS <@&{ToucanPlugin.Instance.Config.FifteenPlayerRole}>");
             }
-            Tcp.Send($"log {ev.Player.Nickname} ({ev.Player.UserId}) Joined [{Exiled.API.Features.Player.List.Count()}/20]");
+            Tcp.Send($"log **{ev.Player.Nickname} ({ev.Player.UserId}) Joined [{Exiled.API.Features.Player.List.Count()}/20]**");
 
-            //Booster Role
+            //Top ranker Role
             if (mr.BestBois != null && mr.BestBois.Contains(ev.Player.UserId))
             {
                 UserGroup topGroup = new UserGroup
@@ -66,6 +70,26 @@ namespace ToucanPlugin.Handlers
                 };
                 if (ev.Player.RankName != null)
                     ev.Player.SetRank("top", topGroup);
+            }
+            if (Exiled.API.Features.Player.List.Count() == 1 && !Round.IsStarted && ToucanPlugin.Instance.Config.LonelyRound)
+            {
+                Log.Info("Starting lonely round");
+                Task.Factory.StartNew(() => LonelyRound());
+            }
+        }
+        public void LonelyRound()
+        {
+            for (int i = 0; i < 60; i++)
+            {
+                if (Exiled.API.Features.Player.List.Count() == 1 && !Round.IsStarted)
+                {
+                    if (i == 59) Round.Start();
+                    if (i == 35) Map.Broadcast(5,"Automatic round Starting in Tminus");
+                    if (i >= 30) Map.Broadcast(1,$"{60 - i}");
+                    if (i == 59) Map.Broadcast(5, $"Starting a really lonely round..!");
+                    Thread.Sleep(1500);
+                }
+                else return;
             }
         }
         public void OnEscape(EscapingEventArgs ev)
@@ -170,6 +194,13 @@ namespace ToucanPlugin.Handlers
             if (ev.Killer.RankName != "SCP-035") isff = false;
             Tcp.Send($"died {isff} {ev.Killer.UserId} {ev.Target.UserId} {ev.HitInformations.Tool} {isScp}");
             Tcp.Send($"log {ev.Target.Nickname} ({ev.Target.UserId}) killed by {ev.Killer.Nickname} ({ev.Killer.UserId}) whit {ev.HitInformations.Tool}");
+
+            //Event bullshit
+            switch (AcGame.NextGamemode) {
+                case 2:
+                    ev.Target.SetRole(RoleType.Scp173);
+                    break;
+            }
         }
         /*public void OnSpawned(SpawningEventArgs ev)
         {

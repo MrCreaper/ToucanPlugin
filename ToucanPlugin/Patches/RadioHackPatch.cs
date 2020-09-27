@@ -7,15 +7,15 @@ namespace ToucanPlugin.Patches
     [HarmonyPatch(nameof(Radio.Start))]
     internal static class RadioHackPatch
     {
-        static bool Prefix(Radio __instance)
+        static bool Prefix(/*Radio __instance*/)
         {
             if (HackRadio.radioHacked)
             {
+                RadioDisplay.label = "Lol u been haxxx";
                 return false;
             }
             else
             {
-                RadioDisplay.label = "Lol u been haxxx";
                 return true;
             }
         }

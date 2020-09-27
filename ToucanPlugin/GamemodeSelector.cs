@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ToucanPlugin.Commands;
+﻿using ToucanPlugin.Commands;
 using ToucanPlugin.Gamemodes;
 
 namespace ToucanPlugin
@@ -17,7 +12,10 @@ namespace ToucanPlugin
                 switch (AcGame.NextGamemode)
                 {
                     case 1:
-                        new QuietPlace().Quietplace();
+                        new QuietPlace().QuietPlacee();
+                        break;
+                    case 2:
+                        new RealPeanutInfection().RealPeanutInfectione();
                         break;
                 }
             }

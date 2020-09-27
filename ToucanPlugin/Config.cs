@@ -52,5 +52,7 @@ namespace ToucanPlugin
         public List<int> JanitorItems { get; set; } = new List<int> { 0, 34, 35 };
         public bool CanChaosHackerSpawn { get; set; } = false;
         public List<int> ChaosHackerItems { get; set; } = new List<int> { 23, 14, 15, 12 };
+        [Description("Start the round automaticly after a minute")]
+        public bool LonelyRound { get; set; } = false;
     }
 }

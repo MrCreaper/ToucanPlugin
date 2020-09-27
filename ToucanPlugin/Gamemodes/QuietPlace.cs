@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Exiled.API.Extensions;
 using Exiled.API.Features;
 
 namespace ToucanPlugin.Gamemodes
 {
     public class QuietPlace
     {
-        public void Quietplace()
+        public void QuietPlacee()
         {
             Map.Broadcast(5, "Quite Place Gamemode started!\n<size=2>Idea by Symbol#0420 </size>");
             int teamCount = Player.List.Count() / 2;

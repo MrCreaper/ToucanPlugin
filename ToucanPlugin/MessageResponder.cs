@@ -15,7 +15,7 @@ namespace ToucanPlugin
     {
         readonly Tcp Tcp = new Tcp();
         readonly Whitelist wl = new Whitelist();
-        public List<Player> ChaosHacker;
+        public List<Player> ChaosHacker { get; set; } = new List<Player>();
         public List<string> BestBois;
     public void Respond(String Cmd)
         {

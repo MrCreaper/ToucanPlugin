@@ -171,7 +171,7 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
                         p.Broadcast(5, $"< size = 60 > You are < color = #185ede><b>A MTF Medic</b></color></size>\n\n < i > Help the < color = \"cyan\" > MTF </ color > by healing them and giving them aid! </ i > ");
                     }
                 }
-                else
+                else if(ev.NextKnownTeam == Respawning.SpawnableTeamType.NineTailedFox)
                 { // Is chaos spawn.
                     if (Player.SCPKills <= 15 && playerList.Count >= 2)
                     {
@@ -210,7 +210,6 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
         {
             string cmd = ev.Name;
             ev.Arguments.ForEach(arg => cmd += $" {arg}");
-            Exiled.API.Features.Log.Info(cmd);
             if(!ev.Sender.IsHost) Tcp.Send($"slog **{ev.Sender.Nickname}** Sent:\n```{cmd}```");
         }
     }
