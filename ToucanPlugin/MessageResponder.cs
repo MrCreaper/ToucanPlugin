@@ -16,7 +16,7 @@ namespace ToucanPlugin
         readonly Tcp Tcp = new Tcp();
         readonly Whitelist wl = new Whitelist();
         public List<Player> ChaosHacker;
-        public List<string> Boosters;
+        public List<string> BestBois;
     public void Respond(String Cmd)
         {
             Log.Debug($"Recived {Cmd}");
@@ -115,7 +115,7 @@ namespace ToucanPlugin
                     break;
 
                 case "bestbois":
-                    Boosters = new List<string>(Cmd.Replace("boosters ", "").Split(' '));
+                    BestBois = new List<string>(Cmd.Replace("bestbois ", "").Split(' '));
                     Log.Info("Best bois recived!");
                     break;
 

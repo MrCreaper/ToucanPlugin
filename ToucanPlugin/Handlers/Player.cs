@@ -57,7 +57,7 @@ namespace ToucanPlugin.Handlers
             Tcp.Send($"log {ev.Player.Nickname} ({ev.Player.UserId}) Joined [{Exiled.API.Features.Player.List.Count()}/20]");
 
             //Booster Role
-            if (mr.Boosters != null && mr.Boosters.Contains(ev.Player.UserId))
+            if (mr.BestBois != null && mr.BestBois.Contains(ev.Player.UserId))
             {
                 UserGroup topGroup = new UserGroup
                 {

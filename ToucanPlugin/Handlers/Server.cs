@@ -31,7 +31,7 @@ namespace ToucanPlugin.Handlers
             }
             Tcp.Send("log Waiting for players...");
             //Log.Info("Waiting For players...");
-            Tcp.Send("boosters");
+            Tcp.Send("bestbois");
         }
 
         public void OnRoundStarted()
