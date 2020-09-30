@@ -13,6 +13,7 @@ using UnityEngine;
 using System.Threading.Tasks;
 using Exiled.Permissions.Commands.Permissions;
 using Exiled.Permissions.Extensions;
+using ToucanPlugin.Gamemodes;
 
 namespace ToucanPlugin.Handlers
 {
@@ -197,9 +198,9 @@ namespace ToucanPlugin.Handlers
             Tcp.Send($"log {ev.Target.Nickname} ({ev.Target.UserId}) killed by {ev.Killer.Nickname} ({ev.Killer.UserId}) whit {ev.HitInformations.Tool}");
 
             //Event bullshit
-            switch (AcGame.NextGamemode)
+            switch (AcGame.RoundGamemode)
             {
-                case 2:
+                case GamemodeType.PeanutInfection:
                     ev.Target.SetRole(RoleType.Scp173);
                     break;
             }
@@ -334,6 +335,14 @@ namespace ToucanPlugin.Handlers
             List<Exiled.API.Features.Player> playerList = new List<Exiled.API.Features.Player>((IEnumerable<Exiled.API.Features.Player>)Exiled.API.Features.Player.List.ToList());
             if (playerList.Find(x => x.Role == RoleType.Scp106) != null)
                 Tcp.Send($"femur {ev.Player.UserId}");
+        }
+        public void OnHurting(HurtingEventArgs ev)
+        {
+            // Among us game
+            if (AmongUs.ImpostersSet.Contains(ev.Attacker) && AcGame.RoundGamemode == GamemodeType.AmongUs)
+            {
+                ev.Target.Kill();
+            }
         }
     }
 }

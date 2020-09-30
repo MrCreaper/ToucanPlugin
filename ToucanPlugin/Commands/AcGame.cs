@@ -8,8 +8,8 @@ namespace ToucanPlugin.Commands
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     class AcGame : ICommand
     {
-        public static int NextGamemode { get; set; } = 0;
-        public static int RoundGamemode { get; set; } = 0;
+        public static GamemodeType NextGamemode { get; set; } = 0;
+        public static GamemodeType RoundGamemode { get; set; } = 0;
         public string Command { get; } = "activateGamemode";
 
         public string[] Aliases { get; } = { "acGame", "acg" };
@@ -24,7 +24,7 @@ namespace ToucanPlugin.Commands
                     var isNumeric = int.TryParse(args[1], out int gameNum);
                     if (isNumeric == true)
                     {
-                        NextGamemode = gameNum;
+                        NextGamemode = (GamemodeType)gameNum;
                         response = "Gamemode set for next round.";
                         return true;
                     }

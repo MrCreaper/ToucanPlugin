@@ -3,6 +3,13 @@ using ToucanPlugin.Gamemodes;
 
 namespace ToucanPlugin
 {
+    public enum GamemodeType
+    {
+        None = 0,
+        QuitePlace = 1,
+        PeanutInfection = 2,
+        AmongUs = 3,
+    }
     public class GamemodeSelector
     {
         public void GameSelector()
@@ -11,11 +18,14 @@ namespace ToucanPlugin
             {
                 switch (AcGame.NextGamemode)
                 {
-                    case 1:
+                    case GamemodeType.QuitePlace:
                         new QuietPlace().QuietPlacee();
                         break;
-                    case 2:
+                    case GamemodeType.PeanutInfection:
                         new RealPeanutInfection().RealPeanutInfectione();
+                        break;
+                    case GamemodeType.AmongUs:
+                        new AmongUs().Amongus();
                         break;
                 }
             }

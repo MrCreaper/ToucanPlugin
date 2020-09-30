@@ -13,7 +13,7 @@ namespace ToucanPlugin.Gamemodes
         public void RealPeanutInfectione()
         {
             Map.Broadcast(5, "REAL Peanut Infection Gamemode started!");
-            int teamCount = Player.List.Count() / 2;
+            int teamCount = Player.List.Count();
             for (int i = 0; i <= teamCount; i++)
             {
                 if(i == teamCount) Player.List.ToList().Find(x => x.Id == i).SetRole(RoleType.Scp173); 

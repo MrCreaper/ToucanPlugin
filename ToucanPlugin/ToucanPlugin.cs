@@ -280,6 +280,7 @@ namespace ToucanPlugin
             Player.MedicalItemUsed += player.OnMedicalItemUsed;
             Player.ThrowingGrenade += player.OnThrowingGrenade;
             Player.EnteringFemurBreaker += player.OnEnteringFemurBreaker;
+            Player.Hurting += player.OnHurting;
         }
 
         public void UnRegisterEvents()

@@ -8,8 +8,8 @@ namespace ToucanPlugin.Gamemodes
     {
         public void QuietPlacee()
         {
-            Map.Broadcast(5, "Quite Place Gamemode started!\n<size=2>Idea by Symbol#0420 </size>");
-            int teamCount = Player.List.Count() / 2;
+            Map.Broadcast(5, "Quite Place Gamemode started!");
+            int teamCount = Player.List.ToList().Count;
             for (int i = 0; i < teamCount; i++)
             {
                 Random rnd = new Random();

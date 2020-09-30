@@ -37,6 +37,7 @@ namespace ToucanPlugin.Handlers
         {
             Tcp.Send("log Round started");
             Exiled.API.Features.Map.Broadcast(5, ToucanPlugin.Instance.Config.RoundStartMessage);
+            //Janitor spawning
             List<Exiled.API.Features.Player> playerList = new List<Exiled.API.Features.Player>((IEnumerable<Exiled.API.Features.Player>)Exiled.API.Features.Player.List.ToList());
             if (playerList.Count >= 5 && rnd.Next(0, 5) == 1)
             {

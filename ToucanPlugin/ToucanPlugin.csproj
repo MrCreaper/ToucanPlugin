@@ -246,6 +246,7 @@
     <Compile Include="Commands\Store.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="GamemodeSelector.cs" />
+    <Compile Include="Gamemodes\AmongUs.cs" />
     <Compile Include="Gamemodes\QuietPlace.cs" />
     <Compile Include="Gamemodes\RealPeanutInfection.cs" />
     <Compile Include="Handlers\Player.cs" />
