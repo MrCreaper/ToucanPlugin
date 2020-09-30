@@ -10,8 +10,9 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using UnityEngine;
-using MEC;
 using System.Threading.Tasks;
+using Exiled.Permissions.Commands.Permissions;
+using Exiled.Permissions.Extensions;
 
 namespace ToucanPlugin.Handlers
 {
@@ -84,8 +85,8 @@ namespace ToucanPlugin.Handlers
                 if (Exiled.API.Features.Player.List.Count() == 1 && !Round.IsStarted)
                 {
                     if (i == 59) Round.Start();
-                    if (i == 35) Map.Broadcast(5,"Automatic round Starting in Tminus");
-                    if (i >= 30) Map.Broadcast(1,$"{60 - i}");
+                    if (i == 30) Map.Broadcast(5, "Automatic round Starting in Tminus");
+                    if (i >= 35) Map.Broadcast(1, $"{60 - i}");
                     if (i == 59) Map.Broadcast(5, $"Starting a really lonely round..!");
                     Thread.Sleep(1500);
                 }
@@ -110,7 +111,7 @@ namespace ToucanPlugin.Handlers
             string escapeMsg = $"escape {classBool} {ev.Player.UserId} {Exiled.API.Features.Player.List.ToList().Count}";
             if (ev.Player.IsCuffed)
             {
-                escapeMsg = escapeMsg + " " + Exiled.API.Features.Player.List.ToList().Find(x => x.Id.ToString().Contains(ev.Player.CufferId.ToString())).UserId;
+                escapeMsg = $"{escapeMsg} { Exiled.API.Features.Player.List.ToList().Find(x => x.Id.ToString().Contains(ev.Player.CufferId.ToString())).UserId}";
             }
             Tcp.Send(escapeMsg);
             Tcp.Send($"log {ev.Player.Nickname} ({ev.Player.UserId}) Escaped");
@@ -196,7 +197,8 @@ namespace ToucanPlugin.Handlers
             Tcp.Send($"log {ev.Target.Nickname} ({ev.Target.UserId}) killed by {ev.Killer.Nickname} ({ev.Killer.UserId}) whit {ev.HitInformations.Tool}");
 
             //Event bullshit
-            switch (AcGame.NextGamemode) {
+            switch (AcGame.NextGamemode)
+            {
                 case 2:
                     ev.Target.SetRole(RoleType.Scp173);
                     break;

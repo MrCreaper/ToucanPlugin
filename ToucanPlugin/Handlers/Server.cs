@@ -4,7 +4,6 @@ using Exiled.API.Enums;
 using Exiled.API.Features;
 using Exiled.Events.EventArgs;
 using Exiled.Events.Handlers;
-using GameCore;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -63,10 +62,10 @@ namespace ToucanPlugin.Handlers
             Exiled.API.Features.Player.List.ToList().ForEach(u => Tcp.Send($"stats {u.UserId} gamesplayed 1"));
             Exiled.API.Features.Player.List.ToList().ForEach(u =>
             {
-                if (ev.LeadingTeam == LeadingTeam.ChaosInsurgency && u.Team == Team.CDP || u.Team == Team.CHI) 
+                if (ev.LeadingTeam == LeadingTeam.ChaosInsurgency && u.Team == Team.CDP || u.Team == Team.CHI)
                     Tcp.Send($"stats {u.UserId} gameswonCD 1");
                 else
-if (ev.LeadingTeam == LeadingTeam.Anomalies && u.Team == Team.SCP || u.Role == RoleType.Tutorial || u.GroupName == "SCP-035") 
+if (ev.LeadingTeam == LeadingTeam.Anomalies && u.Team == Team.SCP || u.Role == RoleType.Tutorial || u.GroupName == "SCP-035")
                     Tcp.Send($"stats {u.UserId} gameswonSCP 1");
                 else
 if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team == Team.RSC)
@@ -171,7 +170,7 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
                         p.Broadcast(5, $"< size = 60 > You are < color = #185ede><b>A MTF Medic</b></color></size>\n\n < i > Help the < color = \"cyan\" > MTF </ color > by healing them and giving them aid! </ i > ");
                     }
                 }
-                else if(ev.NextKnownTeam == Respawning.SpawnableTeamType.NineTailedFox)
+                else if (ev.NextKnownTeam == Respawning.SpawnableTeamType.NineTailedFox)
                 { // Is chaos spawn.
                     if (Player.SCPKills <= 15 && playerList.Count >= 2)
                     {
@@ -210,7 +209,7 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
         {
             string cmd = ev.Name;
             ev.Arguments.ForEach(arg => cmd += $" {arg}");
-            if(!ev.Sender.IsHost) Tcp.Send($"slog **{ev.Sender.Nickname}** Sent:\n```{cmd}```");
+            if (!ev.Sender.IsHost) Tcp.Send($"slog **{ev.Sender.Nickname}** Sent:\n```{cmd}```");
         }
     }
 }

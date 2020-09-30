@@ -102,6 +102,16 @@ namespace ToucanPlugin
                     Log.Info("Store Retrived");
                     break;
 
+                case "msg":
+                    String msg = "";
+                    for (int i = 1; i <= Cmds.Count; i++)
+                        msg += $" {Cmds[i]}";
+                    Player.List.ToList().ForEach(player =>
+                    {
+                        player.SendConsoleMessage(msg, "cyan");
+                    });
+                    break;
+
                 case "list":
                     String playerList = $"List of players ({Player.List.ToList().Count}):";
                     Player.List.ToList().ForEach(player =>

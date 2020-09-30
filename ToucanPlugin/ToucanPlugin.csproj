@@ -220,6 +220,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\AcGame.cs" />
+    <Compile Include="Commands\Chat.cs" />
     <Compile Include="Commands\HackIcom.cs" />
     <Compile Include="Commands\HackRadio.cs" />
     <Compile Include="Commands\HackLights.cs" />
