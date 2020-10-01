@@ -238,6 +238,7 @@
     <Compile Include="Commands\Buy.cs" />
     <Compile Include="Commands\Helloworld.cs" />
     <Compile Include="Commands\Nuke.cs" />
+    <Compile Include="Commands\Report.cs" />
     <Compile Include="Commands\Scale.cs" />
     <Compile Include="Commands\Rotation.cs" />
     <Compile Include="Commands\Rotations.cs" />

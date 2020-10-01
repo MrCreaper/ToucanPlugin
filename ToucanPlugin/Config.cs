@@ -19,6 +19,8 @@ namespace ToucanPlugin
 
         [Description("Sets the message when the round starts")]
         public string RoundStartMessage { get; set; } = "";
+        [Description("Reflect team damage")]
+        public bool ReflectTeamDMG { get; set; } = false;
         [Description("Default Kick message, when the kicker didnt add a reason to why")]
         public string DefaultKickReason { get; set; } = "[Kicked by {kicker}] No Reason";
         [Description("Default Kick All message, when the kicker didnt add a reason to why")]

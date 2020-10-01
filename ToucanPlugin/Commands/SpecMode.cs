@@ -10,7 +10,7 @@ using System.Linq;
 namespace ToucanPlugin.Commands
 {
     [CommandHandler(typeof(ClientCommandHandler))]
-    class SpecMode : ICommand
+    public class SpecMode : ICommand
     {
         public static List<String> TUTSpecList { get; set; } = new List<String> { };
         public string Command { get; } = "specmode";

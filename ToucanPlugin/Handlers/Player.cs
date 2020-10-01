@@ -342,6 +342,19 @@ namespace ToucanPlugin.Handlers
             if (AmongUs.ImpostersSet.Contains(ev.Attacker) && AcGame.RoundGamemode == GamemodeType.AmongUs)
             {
                 ev.Target.Kill();
+                AmongUs.DeathCords.Add(ev.Target.Position);
+            }
+            else
+            {
+                if (ToucanPlugin.Instance.Config.ReflectTeamDMG)
+                {
+                    if (ev.Target.Team == ev.Attacker.Team)
+                    {
+                        ev.Target.Health = ev.Target.Health + ev.Amount;
+                        ev.Attacker.Health = ev.Attacker.Health - ev.Amount;
+                        ev.Attacker.Broadcast(1,$"Dmg reflected! (Reflector: {ev.Target.Nickname})");
+                    }
+                }
             }
         }
     }

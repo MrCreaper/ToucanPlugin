@@ -5,17 +5,19 @@ using System.Text;
 using System.Threading.Tasks;
 using Exiled.API.Extensions;
 using Exiled.API.Features;
+using UnityEngine;
 
 namespace ToucanPlugin.Gamemodes
 {
     public class AmongUs
     {
         public static List<Player> ImpostersSet { get; } = new List<Player>();
+        public static List<Vector2> DeathCords { get; } = new List<Vector2>();
         public void Amongus()
         {
             int imposterCount = 1; // default
             List<Player> playerList = Player.List.ToList();
-            Random rnd = new Random();
+            System.Random rnd = new System.Random();
             playerList.ForEach(p =>
             {
                 if (imposterCount != ImpostersSet.Count)
