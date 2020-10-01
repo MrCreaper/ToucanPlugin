@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using Exiled.Permissions.Commands.Permissions;
 using Exiled.Permissions.Extensions;
 using ToucanPlugin.Gamemodes;
+using Grenades;
 
 namespace ToucanPlugin.Handlers
 {
@@ -291,11 +292,11 @@ namespace ToucanPlugin.Handlers
         }
         public void OnBanned(BannedEventArgs ev)
         {
-            Tcp.Send($"log {ev.Details.Issuer} ({ev.Details.OriginalName}) banned player {ev.Player.Nickname} ({ev.Player.UserId}). Ban duration: {ev.Details.Expires}. Reason: {ev.Details.Reason}.");
+            Tcp.Send($"log **{ev.Details.Issuer} ({ev.Details.OriginalName}) banned player {ev.Player.Nickname} ({ev.Player.UserId}). Ban duration: {ev.Details.Expires}. Reason: {ev.Details.Reason}.**");
         }
         public void OnKicked(KickedEventArgs ev)
         {
-            Tcp.Send($"log {ev.Player.Nickname} ({ev.Player.UserId}) has been kicked. Reason: {ev.Reason}");
+            Tcp.Send($"log **{ev.Player.Nickname} ({ev.Player.UserId}) has been kicked. Reason: {ev.Reason}**");
         }
         public void OnMedicalItemUsed(UsedMedicalItemEventArgs ev)
         {
@@ -326,9 +327,16 @@ namespace ToucanPlugin.Handlers
             if (dmgHealed != 0)
                 Tcp.Send($"stats {ev.Player.UserId} dmghealed {dmgHealed}");
         }
+        public enum GrenadeType
+        {
+            Unspecified = 0,
+            Grenade = 1,
+            FlashGrenade = 2,
+            SCP018 = 3
+        }
         public void OnThrowingGrenade(ThrowingGrenadeEventArgs ev)
         {
-            Tcp.Send($"log {ev.Player.Nickname} threw a {(ItemType)ev.Id}");
+            Tcp.Send($"log {ev.Player.Nickname} threw a {(GrenadeType)ev.Id}");
         }
         public void OnEnteringFemurBreaker(EnteringFemurBreakerEventArgs ev)
         {
@@ -346,14 +354,11 @@ namespace ToucanPlugin.Handlers
             }
             else
             {
-                if (ToucanPlugin.Instance.Config.ReflectTeamDMG)
+                if (ToucanPlugin.Instance.Config.ReflectTeamDMG && ev.Target.Team == ev.Attacker.Team && ev.Target != ev.Attacker)
                 {
-                    if (ev.Target.Team == ev.Attacker.Team)
-                    {
-                        ev.Target.Health = ev.Target.Health + ev.Amount;
-                        ev.Attacker.Health = ev.Attacker.Health - ev.Amount;
-                        ev.Attacker.Broadcast(1,$"Dmg reflected! (Reflector: {ev.Target.Nickname})");
-                    }
+                    ev.Target.Health = ev.Target.Health + ev.Amount;
+                    ev.Attacker.Health = ev.Attacker.Health - ev.Amount;
+                    ev.Attacker.Broadcast(1, $"Dmg reflected! (Reflector: {ev.Target.Nickname})");
                 }
             }
         }

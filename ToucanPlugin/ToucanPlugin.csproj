@@ -224,7 +224,6 @@
     <Compile Include="Commands\HackIcom.cs" />
     <Compile Include="Commands\HackRadio.cs" />
     <Compile Include="Commands\HackLights.cs" />
-    <Compile Include="Commands\MyPos.cs" />
     <Compile Include="Commands\Kick.cs" />
     <Compile Include="Commands\Plugins.cs" />
     <Compile Include="Commands\Link.cs" />
