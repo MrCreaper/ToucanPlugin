@@ -282,6 +282,7 @@ namespace ToucanPlugin
             Player.ThrowingGrenade += player.OnThrowingGrenade;
             Player.EnteringFemurBreaker += player.OnEnteringFemurBreaker;
             Player.Hurting += player.OnHurting;
+            Player.ChangingRole += player.OnChangingRole;
         }
 
         public void UnRegisterEvents()

@@ -4,6 +4,7 @@ using Exiled.API.Enums;
 using Exiled.API.Features;
 using Exiled.Events.EventArgs;
 using Exiled.Events.Handlers;
+using SerpentsHand.API;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -66,7 +67,7 @@ namespace ToucanPlugin.Handlers
                 if (ev.LeadingTeam == LeadingTeam.ChaosInsurgency && u.Team == Team.CDP || u.Team == Team.CHI)
                     Tcp.Send($"stats {u.UserId} gameswonCD 1");
                 else
-if (ev.LeadingTeam == LeadingTeam.Anomalies && u.Team == Team.SCP || u.Role == RoleType.Tutorial || u.GroupName == "SCP-035")
+if (ev.LeadingTeam == LeadingTeam.Anomalies && u.Team == Team.SCP || SerpentsHand.API.SerpentsHand.GetSHPlayers().Contains(u) || scp035.API.Scp035Data.GetScp035() == u)
                     Tcp.Send($"stats {u.UserId} gameswonSCP 1");
                 else
 if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team == Team.RSC)
@@ -82,6 +83,7 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
         private Vector3 MTFSpawnLocaltion;
         public void OnRespawningTeam(RespawningTeamEventArgs ev)
         {
+            Log.Info($"Scps have killed {Player.SCPKills} people!");
             SpecMode.TUTSpecList.ForEach(id => ev.Players.Add(Exiled.API.Features.Player.List.ToList().Find(x => x.Id.ToString() == id)));
             SpecMode.TUTSpecList = new List<string>();
             List<Exiled.API.Features.Player> playerList = new List<Exiled.API.Features.Player>((IEnumerable<Exiled.API.Features.Player>)ev.Players);

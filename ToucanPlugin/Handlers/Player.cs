@@ -3,18 +3,13 @@ using Exiled.API.Extensions;
 using Exiled.API.Features;
 using Exiled.Events.EventArgs;
 using ToucanPlugin.Commands;
-using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.IO;
 using System.Linq;
 using System.Threading;
-using UnityEngine;
 using System.Threading.Tasks;
-using Exiled.Permissions.Commands.Permissions;
-using Exiled.Permissions.Extensions;
 using ToucanPlugin.Gamemodes;
-using Grenades;
+using scp035;
+using SerpentsHand;
 
 namespace ToucanPlugin.Handlers
 {
@@ -84,7 +79,7 @@ namespace ToucanPlugin.Handlers
         {
             for (int i = 0; i < 60; i++)
             {
-                if (Exiled.API.Features.Player.List.Count() == 1 && !Round.IsStarted)
+                if (Exiled.API.Features.Player.List.Count() == 1 && !Round.IsStarted && !Round.IsLobbyLocked)
                 {
                     if (i == 59) Round.Start();
                     if (i == 30) Map.Broadcast(5, "Automatic round Starting in Tminus");
@@ -116,7 +111,7 @@ namespace ToucanPlugin.Handlers
                 escapeMsg = $"{escapeMsg} { Exiled.API.Features.Player.List.ToList().Find(x => x.Id.ToString().Contains(ev.Player.CufferId.ToString())).UserId}";
             }
             Tcp.Send(escapeMsg);
-            Tcp.Send($"log {ev.Player.Nickname} ({ev.Player.UserId}) Escaped");
+            Tcp.Send($"log **{ev.Player.Nickname} ({ev.Player.UserId}) Escaped**");
         }
         public void OnDead(DiedEventArgs ev)
         {
@@ -194,7 +189,7 @@ namespace ToucanPlugin.Handlers
             {
                 isScp = true;
             }
-            if (ev.Killer.RankName != "SCP-035") isff = false;
+            if (scp035.API.Scp035Data.GetScp035() == ev.Killer) isff = false;
             Tcp.Send($"died {isff} {ev.Killer.UserId} {ev.Target.UserId} {ev.HitInformations.Tool} {isScp}");
             Tcp.Send($"log {ev.Target.Nickname} ({ev.Target.UserId}) killed by {ev.Killer.Nickname} ({ev.Killer.UserId}) whit {ev.HitInformations.Tool}");
 
@@ -329,10 +324,9 @@ namespace ToucanPlugin.Handlers
         }
         public enum GrenadeType
         {
-            Unspecified = 0,
-            Grenade = 1,
+            Grenade = 0,
+            SCP018 = 1,
             FlashGrenade = 2,
-            SCP018 = 3
         }
         public void OnThrowingGrenade(ThrowingGrenadeEventArgs ev)
         {
@@ -354,13 +348,26 @@ namespace ToucanPlugin.Handlers
             }
             else
             {
-                if (ToucanPlugin.Instance.Config.ReflectTeamDMG && ev.Target.Team == ev.Attacker.Team && ev.Target != ev.Attacker)
+                if (ToucanPlugin.Instance.Config.ReflectTeamDMG && ev.Target.Team == ev.Attacker.Team && ev.Target != ev.Attacker && scp035.API.Scp035Data.GetScp035() != ev.Attacker)
                 {
                     ev.Target.Health = ev.Target.Health + ev.Amount;
                     ev.Attacker.Health = ev.Attacker.Health - ev.Amount;
                     ev.Attacker.Broadcast(1, $"Dmg reflected! (Reflector: {ev.Target.Nickname})");
                 }
             }
+        }
+        public void OnChangingRole(ChangingRoleEventArgs ev)
+        {
+            Team PlayerTeam = Team.RIP;
+            if (ev.NewRole.GetSide() == Side.Tutorial) PlayerTeam = Team.TUT;
+            if (ev.NewRole.GetSide() == Side.Scp) PlayerTeam = Team.SCP;
+            if (ev.NewRole.GetTeam() == Team.RSC) PlayerTeam = Team.RSC;
+            if (ev.NewRole.GetTeam() == Team.MTF) PlayerTeam = Team.MTF;
+            if (ev.NewRole.GetTeam() == Team.CDP) PlayerTeam = Team.CDP;
+            if (ev.NewRole.GetTeam() == Team.CHI) PlayerTeam = Team.CHI;
+            if (SerpentsHand.API.SerpentsHand.GetSHPlayers().Contains(ev.Player)) PlayerTeam = Team.SCP;
+            if (scp035.API.Scp035Data.GetScp035() == ev.Player) PlayerTeam = Team.SCP;
+            Tcp.Send($"vc {ev.Player.UserId} {PlayerTeam}");
         }
     }
 }
