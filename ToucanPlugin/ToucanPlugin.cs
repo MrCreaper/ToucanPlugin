@@ -79,6 +79,7 @@ namespace ToucanPlugin
                                 if (bytes == null) return;
                                 int i = S.Receive(bytes);
                                 MessageResponder mr = new MessageResponder();
+                                if (Encoding.UTF8.GetString(bytes) == null) S.Close();
                                 mr.Respond(Encoding.UTF8.GetString(bytes));
                             }
                             catch (Exception e)

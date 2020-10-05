@@ -56,5 +56,8 @@ namespace ToucanPlugin
         public List<int> ChaosHackerItems { get; set; } = new List<int> { 23, 14, 15, 12 };
         [Description("Start the round automaticly after a minute")]
         public bool LonelyRound { get; set; } = false;
+        [Description("Default image/text on the intercom")]
+        public bool DefaultIntercomTextEnabled { get; set; } = false;
+        public List<String> DefaultIntercomText { get; set; } = new List<string> { "" };
     }
 }

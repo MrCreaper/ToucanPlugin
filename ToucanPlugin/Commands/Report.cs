@@ -1,7 +1,10 @@
 ﻿using CommandSystem;
 using GameCore;
 using RemoteAdmin;
+using ToucanPlugin.Gamemodes;
 using System;
+using Exiled.API.Features;
+using System.Linq;
 
 namespace ToucanPlugin.Commands
 {
@@ -20,12 +23,25 @@ namespace ToucanPlugin.Commands
             {
                 if (PCplayer.CCM.IsAlive)
                 {
-                    response = $"Nah, ur ded fam";
-                    return false;
+                    bool bodyClose = false;
+                    AmongUs.DeathCords.ForEach(cords => {
+                        //if (cords.x =< Player.List.ToList().Find(x => x.UserId == PCplayer.CCM.UserId).Position.x + 10) 
+                            bodyClose = true;
+                            });
+                    if (bodyClose) {
+                        AmongUs.ReportBody(PCplayer.CCM.UserId);
+                        response = "Reporting!";
+                        return false;
+                    }
+                    else
+                    {
+                        response = "No body close!";
+                        return false;
+                    }
                 }
                 else
                 {
-                    response = $"Fuck off";
+                    response = $"Nah, ur ded fam";
                     return false;
                 }
             }

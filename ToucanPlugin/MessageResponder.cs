@@ -8,6 +8,7 @@ using VideoLibrary;
 using MediaToolkit.Model;
 using UnityEngine;
 using Assets._Scripts.Dissonance;
+using CommandSystem.Commands;
 
 namespace ToucanPlugin
 {
@@ -17,18 +18,20 @@ namespace ToucanPlugin
         readonly Whitelist wl = new Whitelist();
         public List<Player> ChaosHacker { get; set; } = new List<Player>();
         public List<string> BestBois;
-    public void Respond(String Cmd)
+    public void Respond(string Cmd)
         {
             Log.Debug($"Recived {Cmd}");
             List<string> Cmds = new List<string>(Cmd.Split(' '));
             switch (Cmds[0])
             {
                 case "itemBought":
-                    //itemBought {buyer} {item}
-                    Player.List.ToList().Find(x => x.UserId.Contains(Cmds[1])).AddItem((ItemType)int.Parse(Cmds[2].ToString()));
-                    Player.List.ToList().Find(x => x.UserId.Contains(Cmds[1])).SendConsoleMessage($"Item Bought!", "#fffff");
-                    Tcp.Send($"log {Player.List.ToList().Find(x => x.UserId.Contains(Cmds[1])).Nickname} ({Cmds[1]}) Bought an {(ItemType)int.Parse(Cmds[2].ToString())}");
-                    Tcp.Send($"stats {Player.List.ToList().Find(x => x.UserId.Contains(Cmds[1])).UserId} itemsbought 1");
+                    //itemBought {buyer} {item} {coins left}
+                    Player p = Player.List.ToList().Find(x => x.UserId.Contains(Cmds[1]));
+                    p.AddItem((ItemType)int.Parse(Cmds[2].ToString()));
+                    p.SendConsoleMessage($"Thanks for buying a {(ItemType)int.Parse(Cmds[2])}", "#fffff");
+                    p.ShowHint($"<i>Item Bought a <color=yellow>{ (ItemType)int.Parse(Cmds[2])}</color></i>");
+                    Tcp.Send($"log {p.Nickname} ({Cmds[1]}) Bought an {(ItemType)int.Parse(Cmds[2].ToString())}");
+                    Tcp.Send($"stats {p.UserId} itemsbought 1");
                     break;
 
                 case "consoleMsg":
@@ -61,7 +64,7 @@ namespace ToucanPlugin
 
                 case "kickall":
                     //kick {kicker} {reason}
-                    String kickallreason = null;
+                    string kickallreason = null;
                     if (Cmds[2] != null)
                     {
                         kickallreason = Cmd.Replace($"kickall {Cmds[1]} ", "");
@@ -77,7 +80,7 @@ namespace ToucanPlugin
 
                 case "ban":
                     //ban {duration} {banee} {banner} {reason}
-                    String banreason = null;
+                    string banreason = null;
                     if (Cmds[4] != null)
                     {
                         banreason = Cmd.Replace($"ban {Cmds[1]} {Cmds[2]} {Cmds[3]} ", "");
@@ -103,17 +106,13 @@ namespace ToucanPlugin
                     break;
 
                 case "msg":
-                    String msg = "";
-                    for (int i = 1; i <= Cmds.Count; i++)
-                        msg += $" {Cmds[i]}";
+                    string msg = Cmd.Remove(0,3);
                     Player.List.ToList().ForEach(player =>
-                    {
-                        player.SendConsoleMessage(msg, "cyan");
-                    });
+                        player.SendConsoleMessage(msg, "#fffff"));
                     break;
 
                 case "list":
-                    String playerList = $"List of players ({Player.List.ToList().Count}):";
+                    string playerList = $"List of players ({Player.List.ToList().Count}):";
                     Player.List.ToList().ForEach(player =>
                     {
                         playerList = $"{playerList}\n - [{player.Id}]{player.DisplayNickname} ({player.UserId})";
@@ -181,6 +180,20 @@ namespace ToucanPlugin
                     sp.SetActive(true);
                     sp.GetComponentInChildren<DissonanceUserSetup>();
                     Intercom.host._StartTransmitting(sp);
+                    break;
+
+                case "icomtxt":
+                    Intercom.host.UpdateIntercomText(Cmd.Remove(0,8));
+                    break;
+
+                case "icomimg":
+                    /*List<String> imgData = new List<String>();
+                    Log.Info(Cmd);
+                    String image = "";
+                    for (var i = 0; i < 1825; i++)
+                    {
+                        image = image + $"<color={imgData[i]}>█</color>";
+                    }*/
                     break;
             }
         }

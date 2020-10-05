@@ -10,7 +10,7 @@ namespace ToucanPlugin.Commands
     [CommandHandler(typeof(ClientCommandHandler))]
     class HackIcom : ICommand
     {
-        MessageResponder mr = new MessageResponder();
+        readonly MessageResponder mr = new MessageResponder();
         public string Command { get; } = "HackIcom";
 
         public string[] Aliases { get; } = { "HackI", "HaI" };
@@ -26,7 +26,7 @@ namespace ToucanPlugin.Commands
                 {
                     if (p.AdrenalineHealth >= 60)
                     {
-                        Intercom.host.IntercomTime =+ 35;
+                        Intercom.host.remainingCooldown =+ 35;
                         Intercom.host._intercomText = $"Lol u ben haxed\n-CI haxer men ({PCplayer.Nickname})";
                         response = $"Hacking the intercom...";
                         return false;

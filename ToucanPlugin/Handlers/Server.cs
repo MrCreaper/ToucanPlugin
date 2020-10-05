@@ -30,7 +30,6 @@ namespace ToucanPlugin.Handlers
                 new GamemodeSelector();
             }
             Tcp.Send("log Waiting for players...");
-            //Log.Info("Waiting For players...");
             Tcp.Send("bestbois");
         }
 
@@ -50,6 +49,13 @@ namespace ToucanPlugin.Handlers
                 ToucanPlugin.Instance.Config.JanitorItems.ForEach(item => Janitor.Inventory.AddNewItem((ItemType)item));
                 Janitor.Position = Exiled.API.Features.Map.GetRandomSpawnPoint(RoleType.Scientist);
                 Janitor.Broadcast(5, "Life sucz.");
+            }
+            for (int i = 0; i <= ToucanPlugin.Instance.Config.DefaultIntercomText.Count; i++)
+            {
+                if (!ToucanPlugin.Instance.Config.DefaultIntercomTextEnabled) return;
+                Intercom.host.UpdateIntercomText(ToucanPlugin.Instance.Config.DefaultIntercomText[i]);
+                if (i >= ToucanPlugin.Instance.Config.DefaultIntercomText.Count) i = 0;
+                Thread.Sleep(20000); //20s
             }
         }
 
@@ -80,10 +86,9 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
             SpecMode.TUTSpecList = null;
             mr.ChaosHacker = null;
         }
-        private Vector3 MTFSpawnLocaltion;
         public void OnRespawningTeam(RespawningTeamEventArgs ev)
         {
-            Log.Info($"Scps have killed {Player.SCPKills} people!");
+            Vector3 MTFSpawnLocaltion = new Vector3();
             SpecMode.TUTSpecList.ForEach(id => ev.Players.Add(Exiled.API.Features.Player.List.ToList().Find(x => x.Id.ToString() == id)));
             SpecMode.TUTSpecList = new List<string>();
             List<Exiled.API.Features.Player> playerList = new List<Exiled.API.Features.Player>((IEnumerable<Exiled.API.Features.Player>)ev.Players);
@@ -98,7 +103,7 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
                     p.MaxAdrenalineHealth = 360;
                     p.ClearInventory();
                     ToucanPlugin.Instance.Config.RedHandSpawnItems.ForEach(item => p.Inventory.AddNewItem((ItemType)14));
-                    p.Position = new Vector3(176.2091f, 984.6033f, 39.10069f);
+                    p.Position = new Vector3(176f, 984f, 39f);
                 });
                 Cassie.Message($"the z i p HasEntered", false, false);
             }
@@ -115,21 +120,15 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
                                 spawnerNumList.Add(p.Id);
                                 p.SetRole(RoleType.FacilityGuard);
                                 p.ClearInventory();
-                                ToucanPlugin.Instance.Config.UIUSpawnItems.ForEach(item => p.Inventory.AddNewItem((ItemType)item));
-                                MTFSpawnLocaltion = new Vector3(176.2091f, 984.6033f, 39.10069f);
-                                p.Position = MTFSpawnLocaltion;
+                                ToucanPlugin.Instance.Config.UIUSpawnItems.ForEach(item => p.Inventory.AddNewItem((ItemType)item)); 
+                                p.Position = new Vector3(176f, 984f, 39f);
                             });
                         int leaderIndex = rnd.Next(0, spawnerNumList.Count);
                         playerList[leaderIndex].Inventory.AddNewItem(ItemType.KeycardNTFLieutenant);
                         Cassie.Message($"the u i u HasEntered", false, false);
                     }
                     else
-                    if (Player.SCPKills >= 5)
-                    {
-                        //Just spawn normal mtf
-                    }
-                    else
-                    if (Player.SCPKills <= 15)
+                    if (Player.SCPKills <= 15 && Player.SCPKills >= 10)
                     {
                         ev.Players.Clear();
                         playerList.ForEach(p =>
@@ -137,13 +136,13 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
                                 p.SetRole(RoleType.NtfLieutenant);
                                 p.ClearInventory();
                                 ToucanPlugin.Instance.Config.HammerDownSpawnItems.ForEach(item => p.Inventory.AddNewItem((ItemType)item));
-                                MTFSpawnLocaltion = new Vector3(0.1775058f, 1005.311f, -10.53564f);
+                                MTFSpawnLocaltion = new Vector3(0f, 1005f, -10f);
                                 p.Position = MTFSpawnLocaltion;
                             });
                         Cassie.Message($"MTFUNIT n u 7 HasEntered ", false, false);
                     }
                     else
-                    if (Player.SCPKills <= 20)
+                    if (Player.SCPKills <= 20 && Player.SCPKills >= 16)
                     {
                         ev.Players.Clear();
                         playerList.ForEach(p =>
@@ -154,7 +153,7 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
                                 p.MaxAdrenalineHealth = 300;
                                 p.ClearInventory();
                                 ToucanPlugin.Instance.Config.RedHandSpawnItems.ForEach(item => p.Inventory.AddNewItem((ItemType)item));
-                                MTFSpawnLocaltion = new Vector3(86.69146f, 988.5291f, -68.22584f);
+                                MTFSpawnLocaltion = new Vector3(86f, 988f, -68f);
                                 p.Position = MTFSpawnLocaltion;
                             });
                         Cassie.Message($"the MTFUNIT red right hand HasEntered the o 5 have disignated this a x k event", false, false);
