@@ -54,10 +54,9 @@ namespace ToucanPlugin
         public List<int> JanitorItems { get; set; } = new List<int> { 0, 34, 35 };
         public bool CanChaosHackerSpawn { get; set; } = false;
         public List<int> ChaosHackerItems { get; set; } = new List<int> { 23, 14, 15, 12 };
+        public bool CanContainmentEngineerSpawn { get; set; } = false;
+        public List<int> ContainmentEngineerItems { get; set; } = new List<int> {  };
         [Description("Start the round automaticly after a minute")]
         public bool LonelyRound { get; set; } = false;
-        [Description("Default image/text on the intercom")]
-        public bool DefaultIntercomTextEnabled { get; set; } = false;
-        public List<String> DefaultIntercomText { get; set; } = new List<string> { "" };
     }
 }

@@ -25,6 +25,8 @@ namespace ToucanPlugin.Handlers
             string message = ToucanPlugin.Instance.Config.LeftMessage.Replace("{player}", ev.Player.Nickname);
             Map.Broadcast(2, message);
             Tcp.Send($"log **{ev.Player.Nickname} ({ev.Player.UserId}) Left [{Exiled.API.Features.Player.List.Count() - 1}/20]**");
+            if (Exiled.API.Features.Player.List.Count() - 1 == 0 && Round.IsStarted)
+                Round.Restart();
         }
 
         public void OnJoin(JoinedEventArgs ev)
@@ -134,49 +136,36 @@ namespace ToucanPlugin.Handlers
             {
                 case Team.SCP:
                     Tcp.Send($"stats {ev.Killer.UserId} scpkilled 1");
+                    Tcp.Send($"stats {ev.Target.UserId} scpdeaths 1");
                     break;
                 case Team.MTF:
                     Tcp.Send($"stats {ev.Killer.UserId} mtfkilled 1");
+                    Tcp.Send($"stats {ev.Target.UserId} mtfdeaths 1");
                     break;
                 case Team.CHI:
                     Tcp.Send($"stats {ev.Killer.UserId} chaoskilled 1");
+                    Tcp.Send($"stats {ev.Target.UserId} chaosdeaths 1");
                     break;
                 case Team.RSC:
                     Tcp.Send($"stats {ev.Killer.UserId} scikilled 1");
+                    Tcp.Send($"stats {ev.Target.UserId} scideaths 1");
                     break;
                 case Team.CDP:
                     Tcp.Send($"stats {ev.Killer.UserId} dclasskilled 1");
-                    break;
-                /*case Team.RIP:
-                    Tcp.Send($"stats {ev.Killer.UserId} scikilled 1");
-                    break;*/
-                case Team.TUT:
-                    Tcp.Send($"stats {ev.Killer.UserId} scikilled 1");
-                    break;
-            }
-            switch (ev.Killer.Team)
-            {
-                case Team.SCP:
-                    Tcp.Send($"stats {ev.Target.UserId} scpkills 1");
-                    break;
-                case Team.MTF:
-                    Tcp.Send($"stats {ev.Target.UserId} mtfkills 1");
-                    break;
-                case Team.CHI:
-                    Tcp.Send($"stats {ev.Target.UserId} chaoskills 1");
-                    break;
-                case Team.RSC:
-                    Tcp.Send($"stats {ev.Target.UserId} scikills 1");
-                    break;
-                case Team.CDP:
-                    Tcp.Send($"stats {ev.Target.UserId} dclasskills 1");
+                    Tcp.Send($"stats {ev.Target.UserId} dclassdeaths 1");
                     break;
                 /*case Team.RIP:
                     Tcp.Send($"stats {ev.Target.UserId} scikilled 1");
                     break;*/
                 case Team.TUT:
-                    Tcp.Send($"stats {ev.Target.UserId} scikills 1");
+                    Tcp.Send($"stats {ev.Killer.UserId} scikilled 1");
+                    Tcp.Send($"stats {ev.Target.UserId} scideaths 1");
                     break;
+            }
+            if (SerpentsHand.API.SerpentsHand.GetSHPlayers().Contains(ev.Target) || scp035.API.Scp035Data.GetScp035() == ev.Target)
+            {
+                Tcp.Send($"stats {ev.Killer.UserId} scpkilled 1");
+                Tcp.Send($"stats {ev.Target.UserId} scpdeaths 1");
             }
             if (ev.Killer.UserId == ev.Target.UserId) return;
             bool isff = false;

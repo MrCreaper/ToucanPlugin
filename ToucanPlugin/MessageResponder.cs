@@ -6,9 +6,14 @@ using ToucanPlugin.Commands;
 using MediaToolkit;
 using VideoLibrary;
 using MediaToolkit.Model;
-using UnityEngine;
 using Assets._Scripts.Dissonance;
 using CommandSystem.Commands;
+using System.Drawing;
+using System.IO;
+using System.Net;
+using System.Drawing.Imaging;
+using MEC;
+using UnityEngine;
 
 namespace ToucanPlugin
 {
@@ -18,7 +23,7 @@ namespace ToucanPlugin
         readonly Whitelist wl = new Whitelist();
         public List<Player> ChaosHacker { get; set; } = new List<Player>();
         public List<string> BestBois;
-    public void Respond(string Cmd)
+        public void Respond(string Cmd)
         {
             Log.Debug($"Recived {Cmd}");
             List<string> Cmds = new List<string>(Cmd.Split(' '));
@@ -106,7 +111,7 @@ namespace ToucanPlugin
                     break;
 
                 case "msg":
-                    string msg = Cmd.Remove(0,3);
+                    string msg = Cmd.Remove(0, 3);
                     Player.List.ToList().ForEach(player =>
                         player.SendConsoleMessage(msg, "#fffff"));
                     break;
@@ -180,20 +185,6 @@ namespace ToucanPlugin
                     sp.SetActive(true);
                     sp.GetComponentInChildren<DissonanceUserSetup>();
                     Intercom.host._StartTransmitting(sp);
-                    break;
-
-                case "icomtxt":
-                    Intercom.host.UpdateIntercomText(Cmd.Remove(0,8));
-                    break;
-
-                case "icomimg":
-                    /*List<String> imgData = new List<String>();
-                    Log.Info(Cmd);
-                    String image = "";
-                    for (var i = 0; i < 1825; i++)
-                    {
-                        image = image + $"<color={imgData[i]}>█</color>";
-                    }*/
                     break;
             }
         }

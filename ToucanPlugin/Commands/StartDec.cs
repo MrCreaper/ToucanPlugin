@@ -15,15 +15,23 @@ namespace ToucanPlugin.Commands
 
         public bool Execute(ArraySegment<string> arguments, ICommandSender Sender, out string response)
         {
-            if (Map.IsLCZDecontaminated == false)
+            if (Sender.CheckPermission(PlayerPermissions.FacilityManagement))
             {
-                response = "Starting Decontamination...";
-                Map.StartDecontamination();
-                return true;
+                if (Map.IsLCZDecontaminated == false)
+                {
+                    response = "Starting Decontamination...";
+                    Map.StartDecontamination();
+                    return true;
+                }
+                else
+                {
+                    response = "Decontamination has already happend.";
+                    return false;
+                }
             }
             else
             {
-                response = "Decontamination has already happend.";
+                response = "You dont have Facility Managment permission";
                 return false;
             }
         }

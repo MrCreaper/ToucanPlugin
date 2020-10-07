@@ -39,7 +39,8 @@ namespace ToucanPlugin.Handlers
             Exiled.API.Features.Map.Broadcast(5, ToucanPlugin.Instance.Config.RoundStartMessage);
             //Janitor spawning
             List<Exiled.API.Features.Player> playerList = new List<Exiled.API.Features.Player>((IEnumerable<Exiled.API.Features.Player>)Exiled.API.Features.Player.List.ToList());
-            if (playerList.Count >= 5 && rnd.Next(0, 5) == 1)
+            Log.Info(playerList.ToString());
+            if (playerList.Count >= 0 && rnd.Next(0, 5) == 1)
             {
                 Exiled.API.Features.Player Janitor = playerList.Find(x => x.Role == RoleType.ClassD);
                 Janitor.MaxHealth = 100;
@@ -48,15 +49,33 @@ namespace ToucanPlugin.Handlers
                 Janitor.ClearInventory();
                 ToucanPlugin.Instance.Config.JanitorItems.ForEach(item => Janitor.Inventory.AddNewItem((ItemType)item));
                 Janitor.Position = Exiled.API.Features.Map.GetRandomSpawnPoint(RoleType.Scientist);
-                Janitor.Broadcast(5, "Life sucz.");
+                Janitor.ShowHint("<i>You are a <color=yellow>Janior</color>... life sucz</i>");
             }
-            for (int i = 0; i <= ToucanPlugin.Instance.Config.DefaultIntercomText.Count; i++)
+            //Containment Engineer spawning
+            if (playerList.Count >= 0 && rnd.Next(0, 5) == 1)
             {
-                if (!ToucanPlugin.Instance.Config.DefaultIntercomTextEnabled) return;
-                Intercom.host.UpdateIntercomText(ToucanPlugin.Instance.Config.DefaultIntercomText[i]);
-                if (i >= ToucanPlugin.Instance.Config.DefaultIntercomText.Count) i = 0;
-                Thread.Sleep(20000); //20s
+                if (playerList.Find(x => x.Role == RoleType.Scp106) == null) return;
+                Exiled.API.Features.Player CE = playerList.Find(x => x.Role == RoleType.Scientist);
+                CE.MaxHealth = 90;
+                CE.MaxEnergy = 90;
+                CE.MaxAdrenalineHealth = 120;
+                CE.ClearInventory();
+                ToucanPlugin.Instance.Config.JanitorItems.ForEach(item => CE.Inventory.AddNewItem((ItemType)item));
+                CE.Position = Exiled.API.Features.Map.GetRandomSpawnPoint(RoleType.Scp106);
+                CE.ShowHint("<i>You are a <color=yellow>Containment Engineer</color>. You had <color=yellow>one</color> job.</i>");
             }
+            //Speedy boi spawning
+            /*if (playerList.Count >= 5 && rnd.Next(0, 5) == 1)
+            {
+                if (playerList.Find(x => x.Role == RoleType.Scp106) == null) return;
+                Exiled.API.Features.Player CE = playerList.Find(x => x.Role == RoleType.ClassD);
+                CE.MaxEnergy = 9999;
+                CE.Energy = CE.MaxEnergy;
+                CE.ClearInventory();
+                ToucanPlugin.Instance.Config.JanitorItems.ForEach(item => CE.Inventory.AddNewItem((ItemType)item));
+                CE.Position = Exiled.API.Features.Map.GetRandomSpawnPoint(RoleType.ClassD);
+                CE.ShowHint("<i>You are a <color=yellow>Speedy Fucker</color>. You are <color=yellow><b>FAST</b></color>.</i>");
+            }*/
         }
 
         public void OnRestartingRound()
@@ -172,7 +191,7 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
                         p.Broadcast(5, $"< size = 60 > You are < color = #185ede><b>A MTF Medic</b></color></size>\n\n < i > Help the < color = \"cyan\" > MTF </ color > by healing them and giving them aid! </ i > ");
                     }
                 }
-                else if (ev.NextKnownTeam == Respawning.SpawnableTeamType.NineTailedFox)
+                else if (ev.NextKnownTeam == Respawning.SpawnableTeamType.ChaosInsurgency)
                 { // Is chaos spawn.
                     if (Player.SCPKills <= 15 && playerList.Count >= 2)
                     {
@@ -211,7 +230,7 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
         {
             string cmd = ev.Name;
             ev.Arguments.ForEach(arg => cmd += $" {arg}");
-            if (!ev.Sender.IsHost) Tcp.Send($"slog **{ev.Sender.Nickname}** Sent:\n```{cmd}```");
+            if (!ev.Sender.IsHost) Tcp.Send($"slog **{ev.Sender.Nickname}** Sent:\n```{cmd}  {ev.IsAllowed.ToString().PadRight(40)}```");
         }
     }
 }
