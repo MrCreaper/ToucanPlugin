@@ -73,7 +73,6 @@ namespace ToucanPlugin.Handlers
             }
             if (Exiled.API.Features.Player.List.Count() == 1 && !Round.IsStarted && ToucanPlugin.Instance.Config.LonelyRound)
             {
-                Log.Info("Starting lonely round");
                 Task.Factory.StartNew(() => LonelyRound());
             }
         }
@@ -124,7 +123,7 @@ namespace ToucanPlugin.Handlers
                 {
                     if (ev.Target.Role != RoleType.ClassD || ev.Target.Role != RoleType.Scientist || ev.Target.Role != RoleType.FacilityGuard) return;
                     System.Random rnd = new System.Random();
-                    if (rnd.Next(1, 100) == 1)
+                    if (rnd.Next(1, 50) == 1)
                     {
                         ev.Target.SetRole(RoleType.Scp0492);
                         Has008RandomSpawned = true;
@@ -132,6 +131,7 @@ namespace ToucanPlugin.Handlers
                         Cassie.Message($"biological infection at {ev.Target.CurrentRoom.Zone}");
                     }
                 }
+            Log.Info(ev.Target.Team);
             switch (ev.Target.Team)
             {
                 case Team.SCP:
@@ -326,6 +326,8 @@ namespace ToucanPlugin.Handlers
             List<Exiled.API.Features.Player> playerList = new List<Exiled.API.Features.Player>((IEnumerable<Exiled.API.Features.Player>)Exiled.API.Features.Player.List.ToList());
             if (playerList.Find(x => x.Role == RoleType.Scp106) != null)
                 Tcp.Send($"femur {ev.Player.UserId}");
+            else
+                ev.Player.ShowHint("<i>Well that was a waste...</i>");
         }
         public void OnHurting(HurtingEventArgs ev)
         {
@@ -337,7 +339,7 @@ namespace ToucanPlugin.Handlers
             }
             else
             {
-                if (ToucanPlugin.Instance.Config.ReflectTeamDMG && ev.Target.Team == ev.Attacker.Team && ev.Target != ev.Attacker && scp035.API.Scp035Data.GetScp035() != ev.Attacker)
+                if (ToucanPlugin.Instance.Config.ReflectTeamDMG && ev.Target.Team == ev.Attacker.Team && ev.Target != ev.Attacker && scp035.API.Scp035Data.GetScp035() != ev.Attacker && scp035.API.Scp035Data.GetScp035() != ev.Target)
                 {
                     ev.Target.Health = ev.Target.Health + ev.Amount;
                     ev.Attacker.Health = ev.Attacker.Health - ev.Amount;

@@ -1,12 +1,6 @@
-﻿using CommandSystem.Commands;
-using Dissonance;
-using Exiled.API.Enums;
+﻿using Exiled.API.Enums;
 using Exiled.API.Features;
 using Exiled.Events.EventArgs;
-using Exiled.Events.Handlers;
-using SerpentsHand.API;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -39,7 +33,6 @@ namespace ToucanPlugin.Handlers
             Exiled.API.Features.Map.Broadcast(5, ToucanPlugin.Instance.Config.RoundStartMessage);
             //Janitor spawning
             List<Exiled.API.Features.Player> playerList = new List<Exiled.API.Features.Player>((IEnumerable<Exiled.API.Features.Player>)Exiled.API.Features.Player.List.ToList());
-            Log.Info(playerList.ToString());
             if (playerList.Count >= 0 && rnd.Next(0, 5) == 1)
             {
                 Exiled.API.Features.Player Janitor = playerList.Find(x => x.Role == RoleType.ClassD);
@@ -61,7 +54,7 @@ namespace ToucanPlugin.Handlers
                 CE.MaxAdrenalineHealth = 120;
                 CE.ClearInventory();
                 ToucanPlugin.Instance.Config.JanitorItems.ForEach(item => CE.Inventory.AddNewItem((ItemType)item));
-                CE.Position = Exiled.API.Features.Map.GetRandomSpawnPoint(RoleType.Scp106);
+                CE.Position = Map.GetRandomSpawnPoint(RoleType.Scp106);
                 CE.ShowHint("<i>You are a <color=yellow>Containment Engineer</color>. You had <color=yellow>one</color> job.</i>");
             }
             //Speedy boi spawning
@@ -107,11 +100,11 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
         }
         public void OnRespawningTeam(RespawningTeamEventArgs ev)
         {
-            Vector3 MTFSpawnLocaltion = new Vector3();
+            Vector3 MTFSpawnLocaltion = new Vector3(0,0,0);
             SpecMode.TUTSpecList.ForEach(id => ev.Players.Add(Exiled.API.Features.Player.List.ToList().Find(x => x.Id.ToString() == id)));
             SpecMode.TUTSpecList = new List<string>();
             List<Exiled.API.Features.Player> playerList = new List<Exiled.API.Features.Player>((IEnumerable<Exiled.API.Features.Player>)ev.Players);
-            if (rnd.Next(0, 100) == 1)
+            if (rnd.Next(0, 50) == 1)
             { //Zipper gang
                 ev.Players.Clear();
                 playerList.ForEach(p =>
@@ -131,7 +124,7 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
                 if (ev.NextKnownTeam == Respawning.SpawnableTeamType.NineTailedFox)
                 {
                     if (Player.SCPKills <= 2)
-                    {
+                    { // UIU
                         ev.Players.Clear();
                         List<int> spawnerNumList = new List<int>();
                         playerList.ForEach(p =>
@@ -139,8 +132,9 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
                                 spawnerNumList.Add(p.Id);
                                 p.SetRole(RoleType.FacilityGuard);
                                 p.ClearInventory();
-                                ToucanPlugin.Instance.Config.UIUSpawnItems.ForEach(item => p.Inventory.AddNewItem((ItemType)item)); 
-                                p.Position = new Vector3(176f, 984f, 39f);
+                                ToucanPlugin.Instance.Config.UIUSpawnItems.ForEach(item => p.Inventory.AddNewItem((ItemType)item));
+                                MTFSpawnLocaltion = new Vector3(176f, 984f, 39f);
+                                p.Position = MTFSpawnLocaltion;
                             });
                         int leaderIndex = rnd.Next(0, spawnerNumList.Count);
                         playerList[leaderIndex].Inventory.AddNewItem(ItemType.KeycardNTFLieutenant);
@@ -148,7 +142,7 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
                     }
                     else
                     if (Player.SCPKills <= 15 && Player.SCPKills >= 10)
-                    {
+                    { // NU7
                         ev.Players.Clear();
                         playerList.ForEach(p =>
                             {
@@ -162,7 +156,7 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
                     }
                     else
                     if (Player.SCPKills <= 20 && Player.SCPKills >= 16)
-                    {
+                    { //RED RIGHT HAND
                         ev.Players.Clear();
                         playerList.ForEach(p =>
                             {
@@ -200,10 +194,10 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
                         p.MaxHealth = 75;
                         p.MaxEnergy = 75;
                         p.MaxAdrenalineHealth = 50; //AP
-                        p.AdrenalineHealth = 50;
+                        p.AdrenalineHealth = p.MaxAdrenalineHealth;
                         p.ClearInventory();
                         ToucanPlugin.Instance.Config.ChaosHackerItems.ForEach(item => p.Inventory.AddNewItem((ItemType)item));
-                        p.Position = Exiled.API.Features.Map.GetRandomSpawnPoint(RoleType.ChaosInsurgency);
+                        p.Position = Map.GetRandomSpawnPoint(RoleType.ChaosInsurgency);
                         p.Broadcast(5, $"< size = 60 > You are < color = #2a6e02><b>A Chaos Hacker</b></color></size>\n\n < i > Help the < color = \"green\" > Chaos </ color > by hacking doors, your ahp is you ap! </ i > ");
                         mr.ChaosHacker.Add(p);
                         Task.Factory.StartNew(() => ChaosHackerCharge(p));
@@ -230,7 +224,7 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
         {
             string cmd = ev.Name;
             ev.Arguments.ForEach(arg => cmd += $" {arg}");
-            if (!ev.Sender.IsHost) Tcp.Send($"slog **{ev.Sender.Nickname}** Sent:\n```{cmd}  {ev.IsAllowed.ToString().PadRight(40)}```");
+            if (!ev.Sender.IsHost) Tcp.Send($"slog **{ev.Sender.Nickname}** Sent:\n```{cmd}```");
         }
     }
 }

@@ -22,72 +22,88 @@ namespace ToucanPlugin.Commands
             if (Store.StoreStock != null)
             {
                 if (ToucanPlugin.Instance.Config.CanBuy)
-            {
-                if (Sender is PlayerCommandSender player) //CommandSender
                 {
-                    if (Player.List.ToList().Find(x => x.UserId.Contains(player.SenderId)).IsAlive)
+                    if (Sender is PlayerCommandSender player) //CommandSender
                     {
-                        string[] args = arguments.Array;
-                        if (args[1] != null)
+                        if (!Round.IsStarted)
                         {
-                            var isNumeric = int.TryParse(args[1], out int itemNum);
-                            if (isNumeric == true)
+                            if (Player.List.ToList().Find(x => x.UserId.Contains(player.SenderId)).IsAlive)
                             {
-                                if (itemNum >= 1)
+                                if (Player.List.ToList().Find(x => x.UserId.Contains(player.SenderId)).Team == Team.SCP)
                                 {
-                                    if (itemNum < Store.StoreStock.Split('\n').Length)
+                                    string[] args = arguments.Array;
+                                    if (args[1] != null)
                                     {
-                                        tcp.Send($"give {player.SenderId} {args[1]}");
-                                        response = "Buying item...";
-                                        return true;
+                                        var isNumeric = int.TryParse(args[1], out int itemNum);
+                                        if (isNumeric == true)
+                                        {
+                                            if (itemNum >= 1)
+                                            {
+                                                if (itemNum < Store.StoreStock.Split('\n').Length)
+                                                {
+                                                    tcp.Send($"give {player.SenderId} {args[1]}");
+                                                    response = "Buying item...";
+                                                    return true;
+                                                }
+                                                else
+                                                {
+                                                    response = "[That number] Its too big! Thats what she said.";
+                                                    return false;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                response = "Hes power is over -9000! It isnt that good now right?";
+                                                return false;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            response = $"Yeah can i have a... {args[1]}?";
+                                            return false;
+                                        }
                                     }
                                     else
                                     {
-                                        response = "[That number] Its too big! Thats what she said.";
+                                        response = $"Didnt add wished item.";
                                         return false;
                                     }
                                 }
                                 else
                                 {
-                                    response = "Hes power is over -9000! It isnt that good now right?";
+                                    response = $"How will you use the item whit your stinky fingies?";
                                     return false;
                                 }
                             }
                             else
                             {
-                                response = $"Please get the number from the store.";
+                                response = $"You can only buy stuff when your alive.";
                                 return false;
                             }
                         }
                         else
                         {
-                            response = $"Didnt add wished item.";
+                            response = $"Wait for the round to start!";
                             return false;
                         }
                     }
                     else
                     {
-                        response = $"You can only buy stuff when your alive.";
+                        response = $"Fuck off";
                         return false;
                     }
                 }
                 else
                 {
-                    response = $"Fuck off";
+                    response = $"Sorry but buying stuff is currently disable.";
                     return false;
                 }
             }
             else
             {
-                response = $"Sorry but buying stuff is currently disable.";
-                return false;
-            }
-        }
-            else
-            {
                 response = $"Sorry the store hasnt been deliverd yet, try again later.";
                 return false;
             }
-}
+        }
     }
 }
