@@ -18,6 +18,7 @@ namespace ToucanPlugin
         public List<string> BestBois;
         public void Respond(string Cmd)
         {
+            if (Cmd == null) { Tcp.S.Close(); return; }
             Log.Debug($"Recived {Cmd}");
             List<string> Cmds = new List<string>(Cmd.Split(' '));
             switch (Cmds[0])
@@ -153,7 +154,7 @@ namespace ToucanPlugin
                     }
                     break;
 
-                case "play":
+                /*case "play":
                     //var source = @"<your destination folder>";
                     var youtube = YouTube.Default;
                     var vid = youtube.GetVideo(Cmds[1]);
@@ -167,15 +168,16 @@ namespace ToucanPlugin
                         engine.GetMetadata(inputFile);
 
                         engine.Convert(inputFile, outputFile);
-                    }*/
+                    }*//*
                     GameObject sp = new GameObject
                     {
                         name = "Toucan"
                     };
+                    vid.Stream()
                     sp.SetActive(true);
-                    sp.GetComponentInChildren<DissonanceUserSetup>();
+                    sp.GetComponent()
                     Intercom.host._StartTransmitting(sp);
-                    break;
+                    break;*/
             }
         }
     }
