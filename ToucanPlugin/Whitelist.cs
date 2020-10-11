@@ -8,10 +8,10 @@ namespace ToucanPlugin
 {
     public class Whitelist
     {
-        public bool Whitelisted { get; set; } = false;
-        readonly private string WhitelistLocation = $"./config/{Server.Port}/UserIDWhitelist.txt";
-        private List<String> WhitelistUsersRaw { get; set; } = new List<string> { };
-        public List<String> WhitelistUsers { get; set; } = new List<string> { };
+        public static bool Whitelisted { get; set; } = false;
+        readonly private string WhitelistLocation = $"C:/Users/Kelvin Kersna/AppData/Roaming/SCP Secret Laboratory/config/{Server.Port}/UserIDWhitelist.txt";
+        private List<string> WhitelistUsersRaw { get; set; } = new List<string> { };
+        public static List<string> WhitelistUsers { get; set; } = new List<string> { };
         public void Read()
         {
             string[] whitelistRaw = File.ReadAllLines(WhitelistLocation);

@@ -111,18 +111,6 @@ namespace ToucanPlugin
                     Log.Info("Store Retrived");
                     break;
 
-                case "list":
-                    string playerList = $"List of players ({Player.List.ToList().Count}):";
-                    Player.List.ToList().ForEach(player =>
-                    {
-                        playerList = $"{playerList}\n - [{player.Id}]{player.DisplayNickname} ({player.UserId})";
-                    });
-                    /*for(int i = 0; i < Player.List.ToList().Count; i++) {
-                        playerList = $"{playerList}\n - [{Player.List.ToList()[i].Id}]{Player.List.ToList()[i].DisplayNickname} ({Player.List.ToList()[i].UserId})";
-                    };*/
-                    Tcp.Send($"list {Cmds[1]} {playerList}".Trim());
-                    break;
-
                 case "pet":
                     Player petOwner = Player.List.ToList().Find(x => x.UserId == Cmds[1]);
                     Npc pet = NPCS.Methods.CreateNPC(new UnityEngine.Vector3(int.Parse(Cmds[2]), int.Parse(Cmds[3]), int.Parse(Cmds[4])), new UnityEngine.Vector2(int.Parse(Cmds[5]), int.Parse(Cmds[6])), new UnityEngine.Vector3(int.Parse(Cmds[7]), int.Parse(Cmds[8]), int.Parse(Cmds[9])), (RoleType)int.Parse(Cmds[10]), (ItemType)int.Parse(Cmds[11]), Cmds[12], Cmds[13]);
@@ -139,20 +127,20 @@ namespace ToucanPlugin
                     // whitelist {message channel} {comment} {whitelist user}
                     if (Cmds[3] == null)
                     {
-                        if (wl.Whitelisted)
+                        if (Whitelist.Whitelisted)
                         {
-                            wl.Whitelisted = false;
+                            Whitelist.Whitelisted = false;
                             Tcp.Send($"msg {Cmd[1]} Server is now open!");
                         }
                         else
                         {
-                            wl.Whitelisted = true;
+                            Whitelist.Whitelisted = true;
                             Tcp.Send($"msg {Cmd[1]} Server is now closed!");
                         }
                     }
                     else
                     {
-                        if (!wl.WhitelistUsers.Contains(Cmds[3]))
+                        if (!Whitelist.WhitelistUsers.Contains(Cmds[3]))
                         {
                             wl.Add(Cmds[3], Cmds[2]);
                             Tcp.Send($"msg {Cmd[1]} User ({Cmd[3]}) now whitelisted!");

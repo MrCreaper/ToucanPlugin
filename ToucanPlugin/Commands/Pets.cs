@@ -10,7 +10,7 @@ namespace ToucanPlugin.Commands
         private readonly Tcp Tcp = new Tcp();
         public string Command { get; } = "pets";
 
-        public string[] Aliases { get; } = { "petslist" };
+        public string[] Aliases { get; } = { "pets" };
 
         public string Description { get; } = "Know what pets you have unlocked.";
 

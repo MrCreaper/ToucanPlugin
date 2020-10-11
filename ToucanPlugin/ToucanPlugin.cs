@@ -268,8 +268,9 @@ namespace ToucanPlugin
             Server.RespawningTeam += server.OnRespawningTeam;
             Server.SendingRemoteAdminCommand += server.OnSendingRemoteAdminCommand;
 
-            Player.Left += player.OnLeft;
+            Player.PreAuthenticating += player.OnPreAuthenticating;
             Player.Joined += player.OnJoin;
+            Player.Left += player.OnLeft;
             Player.Escaping += player.OnEscape;
             Player.Died += player.OnDead;
             //Player.Spawning += player.OnSpawned;
@@ -285,24 +286,27 @@ namespace ToucanPlugin
 
         public void UnRegisterEvents()
         {
-            Server.WaitingForPlayers -= server.OnWaitingForPlayers;
-            Server.RoundStarted -= server.OnRoundStarted;
-            Server.RestartingRound -= server.OnRestartingRound;
-            Server.RoundEnded -= server.OnRoundEnded;
-            Server.RespawningTeam -= server.OnRespawningTeam;
-            Server.SendingRemoteAdminCommand -= server.OnSendingRemoteAdminCommand;
+            Server.WaitingForPlayers += server.OnWaitingForPlayers;
+            Server.RoundStarted += server.OnRoundStarted;
+            Server.RestartingRound += server.OnRestartingRound;
+            Server.RoundEnded += server.OnRoundEnded;
+            Server.RespawningTeam += server.OnRespawningTeam;
+            Server.SendingRemoteAdminCommand += server.OnSendingRemoteAdminCommand;
 
-            Player.Left -= player.OnLeft;
+            Player.PreAuthenticating -= player.OnPreAuthenticating;
             Player.Joined -= player.OnJoin;
+            Player.Left -= player.OnLeft;
             Player.Escaping -= player.OnEscape;
             Player.Died -= player.OnDead;
-            //Player.Spawning -= player.OnSpawned;
+            Player.Spawning -= player.OnSpawned;
             Player.InteractingDoor -= player.OnInteractingDoor;
             Player.Banned -= player.OnBanned;
             Player.Kicked -= player.OnKicked;
             Player.MedicalItemUsed -= player.OnMedicalItemUsed;
             Player.ThrowingGrenade -= player.OnThrowingGrenade;
             Player.EnteringFemurBreaker -= player.OnEnteringFemurBreaker;
+            Player.Hurting -= player.OnHurting;
+            Player.ChangingRole -= player.OnChangingRole;
             player = null;
             server = null;
         }

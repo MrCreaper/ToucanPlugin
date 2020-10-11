@@ -31,44 +31,6 @@ namespace ToucanPlugin.Handlers
         {
             Tcp.Send("log Round started");
             Map.Broadcast(5, ToucanPlugin.Instance.Config.RoundStartMessage);
-            //Janitor spawning
-            List<Exiled.API.Features.Player> playerList = new List<Exiled.API.Features.Player>((IEnumerable<Exiled.API.Features.Player>)Exiled.API.Features.Player.List.ToList());
-            if (playerList.Count >= 0 && rnd.Next(0, 5) == 1)
-            {
-                Exiled.API.Features.Player Janitor = playerList.Find(x => x.Role == RoleType.ClassD);
-                Janitor.MaxHealth = 100;
-                Janitor.MaxEnergy = 110;
-                Janitor.MaxAdrenalineHealth = 100;
-                Janitor.ClearInventory();
-                ToucanPlugin.Instance.Config.JanitorItems.ForEach(item => Janitor.Inventory.AddNewItem((ItemType)item));
-                Janitor.Position = Exiled.API.Features.Map.GetRandomSpawnPoint(RoleType.Scientist);
-                Janitor.ShowHint("<i>You are a <color=yellow>Janior</color>... life sucz</i>");
-            }
-            //Containment Engineer spawning
-            if (playerList.Count >= 0 && rnd.Next(0, 5) == 1)
-            {
-                if (playerList.Find(x => x.Role == RoleType.Scp106) == null) return;
-                Exiled.API.Features.Player CE = playerList.Find(x => x.Role == RoleType.Scientist);
-                CE.MaxHealth = 90;
-                CE.MaxEnergy = 90;
-                CE.MaxAdrenalineHealth = 120;
-                CE.ClearInventory();
-                ToucanPlugin.Instance.Config.JanitorItems.ForEach(item => CE.Inventory.AddNewItem((ItemType)item));
-                CE.Position = Map.GetRandomSpawnPoint(RoleType.Scp106);
-                CE.ShowHint("<i>You are a <color=yellow>Containment Engineer</color>. You had <color=yellow>one</color> job.</i>");
-            }
-            //Speedy boi spawning
-            /*if (playerList.Count >= 5 && rnd.Next(0, 5) == 1)
-            {
-                if (playerList.Find(x => x.Role == RoleType.Scp106) == null) return;
-                Exiled.API.Features.Player CE = playerList.Find(x => x.Role == RoleType.ClassD);
-                CE.MaxEnergy = 9999;
-                CE.Energy = CE.MaxEnergy;
-                CE.ClearInventory();
-                ToucanPlugin.Instance.Config.JanitorItems.ForEach(item => CE.Inventory.AddNewItem((ItemType)item));
-                CE.Position = Exiled.API.Features.Map.GetRandomSpawnPoint(RoleType.ClassD);
-                CE.ShowHint("<i>You are a <color=yellow>Speedy Fucker</color>. You are <color=yellow><b>FAST</b></color>.</i>");
-            }*/
         }
 
         public void OnRestartingRound()
@@ -97,6 +59,30 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
             Player.SCPKills = 0;
             SpecMode.TUTSpecList = null;
             mr.ChaosHacker = null;
+
+            int Count0492 = 0;
+            int Count939 = 0;
+            int CountChaos = 0;
+            Exiled.API.Features.Player DocPetReciver = null;
+            Exiled.API.Features.Player DogPetReciver = null;
+            Exiled.API.Features.Player.List.ToList().ForEach(p => {
+                if (p.Role == RoleType.Scp0492)
+                {
+                    Count0492++;
+                    DocPetReciver = p;
+                }
+                if (p.Role == RoleType.Scp93953 || p.Role == RoleType.Scp93989)
+                {
+                    Count939++;
+                    DogPetReciver = p;
+                }
+                if (p.Role == RoleType.ChaosInsurgency)
+                    CountChaos++;
+            });
+            if (Count0492 == 1 && DocPetReciver != null)
+                Tcp.Send($"stats {DocPetReciver.UserId} ZOMBPET");
+            if(CountChaos > 3 && Count939 == 1 && DogPetReciver != null)
+                Tcp.Send($"stats {DogPetReciver.UserId} DOGPET");
         }
         public void OnRespawningTeam(RespawningTeamEventArgs ev)
         {

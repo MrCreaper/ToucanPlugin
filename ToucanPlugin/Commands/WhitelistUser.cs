@@ -29,7 +29,7 @@ namespace ToucanPlugin.Commands
                 }
                 else
                 {
-                    if (!wl.WhitelistUsers.Contains(args[1]))
+                    if (!Whitelist.WhitelistUsers.Contains(args[1]))
                     {
                         wl.Add(args[1]);
                         response = $"User whit id of {args[1]} now whitelisted!";

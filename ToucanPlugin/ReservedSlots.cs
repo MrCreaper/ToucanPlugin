@@ -9,7 +9,7 @@ namespace ToucanPlugin
     {
         readonly private string ReservedSlotsLocation = $"./config/{Server.Port}/UserIDReservedSlots.txt";
         private List<String> ReservedSlotsRaw { get; set; } = new List<string> { };
-        public List<String> ReservedSlotsUsers { get; set; } = new List<string> { };
+        public static List<String> ReservedSlotsUsers { get; set; } = new List<string> { };
         public void Read()
         {
             string[] whitelistRaw = File.ReadAllLines(ReservedSlotsLocation);
@@ -28,6 +28,7 @@ new StreamWriter(ReservedSlotsLocation, true))
                 else
                     file.WriteLine($"{User}");
             }
+            Read();
         }
         public void Remove(string User)
         {
@@ -39,6 +40,7 @@ new StreamWriter(ReservedSlotsLocation, true))
                     if (!line.Contains(User)) file.WriteLine(line);
                 }
             }
+            Read();
         }
     }
 }

@@ -33,6 +33,7 @@ namespace ToucanPlugin
         public bool ReplaceAdvertismentNames { get; set; } = true;
         [Description("Thing to replace advertisment part of a name whit")]
         public string ReplaceAdvertismentNamesWhit { get; set; } = "[ADVERTISMENT DENIED]";
+        public List<string> ADThing { get; set; } = new List<string> { ".com", ".tf", "ttv/", "yt" };
         public bool MentionRoles { get; set; } = false;
         public string FivePlayerRole { get; set; } = "";
         public string TenPlayerRole { get; set; } = "";
@@ -50,10 +51,12 @@ namespace ToucanPlugin
         public List<int> RedHandSpawnItems { get; set; } = new List<int> { 24, 30, 8, 17, 12, 19, 27 };
         public bool CanMedicMTFSpawn { get; set; } = false;
         public List<int> MTFMedicItems { get; set; } = new List<int> { 17, 33, 33, 33, 34, 12, 13 };
-        public bool CanJanitorSpawn { get; set; } = false;
-        public List<int> JanitorItems { get; set; } = new List<int> { 0, 34, 35 };
         public bool CanChaosHackerSpawn { get; set; } = false;
         public List<int> ChaosHackerItems { get; set; } = new List<int> { 23, 14, 15, 12 };
+        public bool CanJanitorSpawn { get; set; } = false;
+        public List<int> JanitorItems { get; set; } = new List<int> { 0, 34, 35 };
+        public bool CanMayorScietistSpawn { get; set; } = false;
+        public List<int> MayorScientistItems { get; set; } = new List<int> {  };
         public bool CanContainmentEngineerSpawn { get; set; } = false;
         public List<int> ContainmentEngineerItems { get; set; } = new List<int> {  };
         [Description("Start the round automaticly after a minute")]

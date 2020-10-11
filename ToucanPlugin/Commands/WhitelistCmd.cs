@@ -21,15 +21,16 @@ namespace ToucanPlugin.Commands
         {
             if (Sender.CheckPermission(PlayerPermissions.PermissionsManagement))
             {
-                if (wl.Whitelisted)
+                if (Whitelist.Whitelisted)
                 {
-                    wl.Whitelisted = false;
+                    Whitelist.Whitelisted = false;
                     response = $"Server is now open!";
                     return true;
                 }
                 else
                 {
-                    wl.Whitelisted = true;
+                    Whitelist.Whitelisted = true;
+                    wl.Read();
                     wl.KickAllNoneWhite();
                     response = $"Server is now closed!";
                     return true;
