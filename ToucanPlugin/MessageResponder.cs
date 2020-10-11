@@ -3,17 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ToucanPlugin.Commands;
-using MediaToolkit;
 using VideoLibrary;
-using MediaToolkit.Model;
 using Assets._Scripts.Dissonance;
-using CommandSystem.Commands;
-using System.Drawing;
-using System.IO;
-using System.Net;
-using System.Drawing.Imaging;
-using MEC;
 using UnityEngine;
+using NPCS;
 
 namespace ToucanPlugin
 {
@@ -34,13 +27,21 @@ namespace ToucanPlugin
                     Player p = Player.List.ToList().Find(x => x.UserId.Contains(Cmds[1]));
                     p.AddItem((ItemType)int.Parse(Cmds[2].ToString()));
                     p.SendConsoleMessage($"Thanks for buying a {(ItemType)int.Parse(Cmds[2])}", "#fffff");
-                    p.ShowHint($"<i>Item Bought a <color=yellow>{ (ItemType)int.Parse(Cmds[2])}</color></i>");
+                    p.ShowHint($"<i>Item Bought a <color=yellow>{ (ItemType)int.Parse(Cmds[2])}</color></i>", 6);
                     Tcp.Send($"log {p.Nickname} ({Cmds[1]}) Bought an {(ItemType)int.Parse(Cmds[2].ToString())}");
                     Tcp.Send($"stats {p.UserId} itemsbought 1");
                     break;
 
                 case "consoleMsg":
                     Player.List.ToList().Find(x => x.UserId.Contains(Cmds[1])).SendConsoleMessage(Cmd.Replace($"consoleMsg {Cmds[1]} ", ""), "#fffff");
+                    break;
+
+                case "bcMsg":
+                    Player.List.ToList().Find(x => x.UserId.Contains(Cmds[1])).Broadcast(ushort.Parse(Cmds[2]), Cmd.Replace($"hintMsg {Cmds[1]} {Cmds[2]} ", ""));
+                    break;
+
+                case "hintMsg":
+                    Player.List.ToList().Find(x => x.UserId.Contains(Cmds[1])).ShowHint(Cmd.Replace($"hintMsg {Cmds[1]} {Cmds[2]} ", ""), int.Parse(Cmds[2]));
                     break;
 
                 case "rcoins": //recived coins
@@ -110,12 +111,6 @@ namespace ToucanPlugin
                     Log.Info("Store Retrived");
                     break;
 
-                case "msg":
-                    string msg = Cmd.Remove(0, 3);
-                    Player.List.ToList().ForEach(player =>
-                        player.SendConsoleMessage(msg, "#fffff"));
-                    break;
-
                 case "list":
                     string playerList = $"List of players ({Player.List.ToList().Count}):";
                     Player.List.ToList().ForEach(player =>
@@ -126,6 +121,13 @@ namespace ToucanPlugin
                         playerList = $"{playerList}\n - [{Player.List.ToList()[i].Id}]{Player.List.ToList()[i].DisplayNickname} ({Player.List.ToList()[i].UserId})";
                     };*/
                     Tcp.Send($"list {Cmds[1]} {playerList}".Trim());
+                    break;
+
+                case "pet":
+                    Player petOwner = Player.List.ToList().Find(x => x.UserId == Cmds[1]);
+                    Npc pet = NPCS.Methods.CreateNPC(new UnityEngine.Vector3(int.Parse(Cmds[2]), int.Parse(Cmds[3]), int.Parse(Cmds[4])), new UnityEngine.Vector2(int.Parse(Cmds[5]), int.Parse(Cmds[6])), new UnityEngine.Vector3(int.Parse(Cmds[7]), int.Parse(Cmds[8]), int.Parse(Cmds[9])), (RoleType)int.Parse(Cmds[10]), (ItemType)int.Parse(Cmds[11]), Cmds[12], Cmds[13]);
+                    pet.Follow(petOwner);
+                    Handlers.Player.petConnections.Add(petOwner.UserId, pet.GetInstanceID());
                     break;
 
                 case "bestbois":
@@ -150,7 +152,7 @@ namespace ToucanPlugin
                     }
                     else
                     {
-                        if (wl.WhitelistUsers.Contains(Cmds[3]))
+                        if (!wl.WhitelistUsers.Contains(Cmds[3]))
                         {
                             wl.Add(Cmds[3], Cmds[2]);
                             Tcp.Send($"msg {Cmd[1]} User ({Cmd[3]}) now whitelisted!");

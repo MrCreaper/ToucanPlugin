@@ -21,8 +21,6 @@ namespace ToucanPlugin
         readonly static List<String> messageQueue = new List<string>();
         static public Stopwatch topicUpdateTimer;
         private bool connecting = false;
-        //Removed Static
-        // Fucking Kill me
         public void Main()
         {
             if (connecting) return;
@@ -76,10 +74,9 @@ namespace ToucanPlugin
                             try
                             {
                                 byte[] bytes = new byte[2000]; //256
-                                if (bytes == null) return;
                                 int i = S.Receive(bytes);
                                 MessageResponder mr = new MessageResponder();
-                                if (Encoding.UTF8.GetString(bytes) == null) S.Close();
+                                if (Encoding.UTF8.GetString(bytes) == "") S.Close();
                                 mr.Respond(Encoding.UTF8.GetString(bytes));
                             }
                             catch (Exception e)

@@ -81,6 +81,9 @@
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="NPCS">
+      <HintPath>..\..\..\..\AppData\Roaming\EXILED\Plugins\NPCS.dll</HintPath>
+    </Reference>
     <Reference Include="scp035">
       <HintPath>..\..\..\..\Desktop\exiled\scp035.dll</HintPath>
     </Reference>
@@ -232,6 +235,8 @@
     <Compile Include="Commands\HackRadio.cs" />
     <Compile Include="Commands\HackLights.cs" />
     <Compile Include="Commands\Kick.cs" />
+    <Compile Include="Commands\PetEquip.cs" />
+    <Compile Include="Commands\Pets.cs" />
     <Compile Include="Commands\Plugins.cs" />
     <Compile Include="Commands\Link.cs" />
     <Compile Include="Commands\ListGame.cs" />
@@ -246,11 +251,11 @@
     <Compile Include="Commands\Nuke.cs" />
     <Compile Include="Commands\Report.cs" />
     <Compile Include="Commands\Scale.cs" />
-    <Compile Include="Commands\Rotation.cs" />
-    <Compile Include="Commands\Rotations.cs" />
     <Compile Include="Commands\SpecMode.cs" />
     <Compile Include="Commands\StartDec.cs" />
     <Compile Include="Commands\Store.cs" />
+    <Compile Include="Commands\WhitelistCmd.cs" />
+    <Compile Include="Commands\WhitelistUser.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="GamemodeSelector.cs" />
     <Compile Include="Gamemodes\AmongUs.cs" />

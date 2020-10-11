@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Exiled.API.Features;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -6,7 +7,7 @@ namespace ToucanPlugin
 {
     public class ReservedSlots
     {
-        readonly private string ReservedSlotsLocation = @"C:\Users\Kelvin Kersna\AppData\Roaming\SCP Secret Laboratory\config\7777\UserIDReservedSlots.txt";
+        readonly private string ReservedSlotsLocation = $"./config/{Server.Port}/UserIDReservedSlots.txt";
         private List<String> ReservedSlotsRaw { get; set; } = new List<string> { };
         public List<String> ReservedSlotsUsers { get; set; } = new List<string> { };
         public void Read()

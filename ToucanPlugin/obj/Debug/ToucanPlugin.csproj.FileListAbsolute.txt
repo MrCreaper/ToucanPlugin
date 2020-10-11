@@ -30,3 +30,4 @@ C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Debug\S
 C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Debug\System.Diagnostics.DiagnosticSource.xml
 C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\obj\Debug\ToucanPlugin.csprojAssemblyReference.cache
 C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Debug\Assembly-CSharp-firstpass.dll
+C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Debug\NPCS.dll
