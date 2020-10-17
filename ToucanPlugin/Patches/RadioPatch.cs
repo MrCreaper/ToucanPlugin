@@ -10,6 +10,8 @@ namespace ToucanPlugin.Patches
         {
             if (__instance.ccm.CurRole.team == Team.MTF)
             {
+                __instance.name = "RADIO-SPAMMER 9000";
+                RadioDisplay.label = "CUM";
                 return true;
             }
             else

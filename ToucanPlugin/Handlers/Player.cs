@@ -8,10 +8,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ToucanPlugin.Gamemodes;
-using scp035;
-using SerpentsHand;
-using System.Numerics;
-using UnityEngine;
 
 namespace ToucanPlugin.Handlers
 {
@@ -31,6 +27,9 @@ namespace ToucanPlugin.Handlers
         }
         public void OnJoin(JoinedEventArgs ev)
         {
+            Log.Info(Exiled.API.Features.Player.List.Count() - 1);
+            if (Exiled.API.Features.Player.List.Count() - 1 == 0 && Round.IsStarted)
+                Round.Restart();
             if (ToucanPlugin.Instance.Config.ReplaceAdvertismentNames)
             {
                 List<string> PlayerNameSplit = new List<string>(ev.Player.Nickname.Split(' '));
@@ -50,13 +49,13 @@ namespace ToucanPlugin.Handlers
             if (ToucanPlugin.Instance.Config.MentionRoles)
             {
                 if (Exiled.API.Features.Player.List.Count() == 5)
-                    Tcp.Send($"log 5 PLAYERS <@&{ToucanPlugin.Instance.Config.FivePlayerRole}>");
+                    Tcp.SendLog($"log 5 PLAYERS <@&{ToucanPlugin.Instance.Config.FivePlayerRole}>");
                 if (Exiled.API.Features.Player.List.Count() == 10)
-                    Tcp.Send($"log 10 PLAYERS <@&{ToucanPlugin.Instance.Config.TenPlayerRole}>");
+                    Tcp.SendLog($"log 10 PLAYERS <@&{ToucanPlugin.Instance.Config.TenPlayerRole}>");
                 if (Exiled.API.Features.Player.List.Count() == 15)
-                    Tcp.Send($"log 15 PLAYERS <@&{ToucanPlugin.Instance.Config.FifteenPlayerRole}>");
+                    Tcp.SendLog($"log 15 PLAYERS <@&{ToucanPlugin.Instance.Config.FifteenPlayerRole}>");
             }
-            Tcp.Send($"log **{ev.Player.Nickname} ({ev.Player.UserId}) Joined [{Exiled.API.Features.Player.List.Count()}/20]**");
+            Tcp.SendLog($"log **{ev.Player.Nickname} ({ev.Player.UserId}) Joined [{Exiled.API.Features.Player.List.Count()}/20]**");
 
             //Top ranker Role
             if (mr.BestBois != null && mr.BestBois.Contains(ev.Player.UserId))
@@ -77,9 +76,7 @@ namespace ToucanPlugin.Handlers
         {
             string message = ToucanPlugin.Instance.Config.LeftMessage.Replace("{player}", ev.Player.Nickname);
             Map.Broadcast(2, message);
-            Tcp.Send($"log **{ev.Player.Nickname} ({ev.Player.UserId}) Left [{Exiled.API.Features.Player.List.Count() - 1}/20]**");
-            if (Exiled.API.Features.Player.List.Count() - 1 == 0 && Round.IsStarted)
-                Round.Restart();
+            Tcp.SendLog($"log **{ev.Player.Nickname} ({ev.Player.UserId}) Left [{Exiled.API.Features.Player.List.Count() - 1}/20]**");
         }
         public void LonelyRound()
         {
@@ -99,7 +96,7 @@ namespace ToucanPlugin.Handlers
         private string GeneratePlayerListJson()
         {
             string playerList = "[";
-            Exiled.API.Features.Player.List.ToList().ForEach(p => playerList += $"{{id:{p.Id},name:{p.Nickname},userid:{p.UserId}}},");
+            Exiled.API.Features.Player.List.ToList().ForEach(p => playerList += $"{{id:{p.Id},name:'{p.Nickname}',userid:'{p.UserId}'}},");
             playerList += "]";
             return playerList;
         }
@@ -130,7 +127,7 @@ namespace ToucanPlugin.Handlers
                     Tcp.Send($"stats {cuffer.UserId} escortScientist 1");
             }
             Tcp.Send(escapeMsg);
-            Tcp.Send($"log **{ev.Player.Nickname} ({ev.Player.UserId}) Escaped**");
+            Tcp.SendLog($"log **{ev.Player.Nickname} ({ev.Player.UserId}) Escaped**");
         }
         public void OnDead(DiedEventArgs ev)
         {
@@ -221,7 +218,7 @@ namespace ToucanPlugin.Handlers
             }
             if (scp035.API.Scp035Data.GetScp035() == ev.Killer) isff = false;
             Tcp.Send($"died {isff} {ev.Killer.UserId} {ev.Target.UserId} {ev.HitInformations.Tool} {isScp}");
-            Tcp.Send($"log {ev.Target.Nickname} ({ev.Target.UserId}) killed by {ev.Killer.Nickname} ({ev.Killer.UserId}) whit {ev.HitInformations.Tool}");
+            Tcp.SendLog($"log {ev.Target.Nickname} ({ev.Target.UserId}) killed by {ev.Killer.Nickname} ({ev.Killer.UserId}) whit {ev.HitInformations.Tool}");
 
             //Event bullshit
             switch (AcGame.RoundGamemode)
@@ -370,11 +367,11 @@ namespace ToucanPlugin.Handlers
         }
         public void OnBanned(BannedEventArgs ev)
         {
-            Tcp.Send($"log **{ev.Details.Issuer} ({ev.Details.OriginalName}) banned player {ev.Player.Nickname} ({ev.Player.UserId}). Ban duration: {ev.Details.Expires}. Reason: {ev.Details.Reason}.**");
+            Tcp.SendLog($"log **{ev.Details.Issuer} ({ev.Details.OriginalName}) banned player {ev.Player.Nickname} ({ev.Player.UserId}). Ban duration: {ev.Details.Expires}. Reason: {ev.Details.Reason}.**");
         }
         public void OnKicked(KickedEventArgs ev)
         {
-            Tcp.Send($"log **{ev.Player.Nickname} ({ev.Player.UserId}) has been kicked. Reason: {ev.Reason}**");
+            Tcp.SendLog($"log **{ev.Player.Nickname} ({ev.Player.UserId}) has been kicked. Reason: {ev.Reason}**");
         }
         public void OnMedicalItemUsed(UsedMedicalItemEventArgs ev)
         {
@@ -422,7 +419,7 @@ namespace ToucanPlugin.Handlers
         }
         public void OnThrowingGrenade(ThrowingGrenadeEventArgs ev)
         {
-            Tcp.Send($"log {ev.Player.Nickname} threw a {(GrenadeType)ev.Id}");
+            Tcp.SendLog($"log {ev.Player.Nickname} threw a {(GrenadeType)ev.Id}");
             if ((GrenadeType)ev.Id == GrenadeType.FlashGrenade)
                 Tcp.Send($"stats {ev.Player.UserId} flashThrown 1");
             if ((GrenadeType)ev.Id == GrenadeType.Grenade)
@@ -446,7 +443,7 @@ namespace ToucanPlugin.Handlers
             }
             else
             {
-                if (ToucanPlugin.Instance.Config.ReflectTeamDMG && ev.Target.Side == ev.Attacker.Side && ev.Target != ev.Attacker && scp035.API.Scp035Data.GetScp035() != ev.Attacker && scp035.API.Scp035Data.GetScp035() != ev.Target)
+                if (ToucanPlugin.Instance.Config.ReflectTeamDMG && ev.Target.Side == ev.Attacker.Side && ev.Target != ev.Attacker && scp035.API.Scp035Data.GetScp035() != ev.Attacker && scp035.API.Scp035Data.GetScp035() != ev.Target && !ev.Attacker.Sender.CheckPermission(PlayerPermissions.FriendlyFireDetectorImmunity) && Exiled.API.Features.Server.FriendlyFire)
                 {
                     if (ev.Target.Health < ev.Target.MaxHealth)
                         ev.Target.Health = ev.Target.Health + ev.Amount;
