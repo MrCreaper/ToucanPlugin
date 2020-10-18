@@ -2,6 +2,7 @@
 using Exiled.API.Extensions;
 using Exiled.API.Features;
 using Exiled.Events.EventArgs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -11,6 +12,65 @@ using UnityEngine;
 
 namespace ToucanPlugin.Handlers
 {
+    public class XYZ : IEquatable<XYZ>
+    {
+        public float X { get; set; }
+        public float Y { get; set; }
+        public float Z { get; set; }
+
+        public bool Equals(XYZ other) // Why is this here?!
+        {
+            if (other == null) return false;
+            return (this.X.Equals(other.X));
+        }
+    }
+    public class CustomSquadSpawns : IEquatable<CustomSquadSpawns>
+    {
+        public string Name { get; set; } // Just for the user
+        public Respawning.SpawnableTeamType Team { get; set; }
+        public int ReplaceChance { get; set; } // Chance 1-100 for [name] to spawn insteed of [team] (0 for scpKill)
+        public RoleType Role { get; set; }
+        public int MaxHealth { get; set; }
+        public int MaxAdrenalin { get; set; }
+        public int MaxEnergy { get; set; }
+        public List<int> Items { get; set; }
+        public List<int> CommanderItems { get; set; }
+        public RoleType PreSetSpawnPos { get; set; }
+        public XYZ SpawnPos { get; set; }
+        public int SquadMaxSize { get; set; }
+        public int MaxSCPKills { get; set; }
+        public int MinSCPKills { get; set; }
+        public string CassieAnnc { get; set; }
+
+        public bool Equals(CustomSquadSpawns other)
+        {
+            if (other == null) return false;
+            return (this.Name.Equals(other.Name));
+        }
+        // Should also override == and != operators.
+    }
+    public class CustomPersonelSpawns : IEquatable<CustomPersonelSpawns>
+    {
+        public string Name { get; set; } // Just for the user
+        public RoleType Role { get; set; }
+        public int PlayerCountNeeded { get; set; }
+        public int ReplaceChance { get; set; } // Chance 1-100 for [name] to spawn insteed of [team] (0 for scpKill)
+        public int MaxHealth { get; set; }
+        public int MaxEnergy { get; set; }
+        public int MaxAdrenalin { get; set; }
+        public List<int> Items { get; set; }
+        public RoleType PreSetSpawnPos { get; set; }
+        public RoomType PreSetSpawnPosRoom { get; set; }
+        public XYZ SpawnPos { get; set; }
+        public string Hint { get; set; }
+
+        public bool Equals(CustomPersonelSpawns other)
+        {
+            if (other == null) return false;
+            return (this.Name.Equals(other.Name));
+        }
+        // Should also override == and != operators.
+    }
     class Server
     {
         readonly System.Random rnd = new System.Random();
@@ -24,27 +84,24 @@ namespace ToucanPlugin.Handlers
                 AcGame.NextGamemode = 0;
                 new GamemodeSelector();
             }
-            Tcp.Send("log Waiting for players...");
+            Tcp.Send("Waiting for players...");
             Tcp.Send("bestbois");
         }
 
         public void OnRoundStarted()
         {
-            Tcp.Send("log Round started");
+            Tcp.Send("Round started");
             Map.Broadcast(5, ToucanPlugin.Instance.Config.RoundStartMessage);
-
-            if (rnd.Next(1, 3) == 1 && Exiled.API.Features.Player.List.ToList().Find(x => x.Role == RoleType.Scp173) != null)
-                Map.Doors.ToList().Find(x => x.DoorName == "173").SetLock(true);
+            if (rnd.Next(0, 3) == 0 && Exiled.API.Features.Player.List.ToList().Find(x => x.Role == RoleType.Scp173) == null)
+                Map.Doors.ToList().Find(x => x.DoorName == "173").locked = true;
         }
 
-        public void OnRestartingRound()
-        {
-            Tcp.SendLog($"log Round restarting...");
-        }
+        public void OnRestartingRound() =>
+            Tcp.SendLog($"Round restarting...");
         public void OnRoundEnded(RoundEndedEventArgs ev)
         {
             if (ToucanPlugin.Instance.Config.DetonateAtRoundEnded && Exiled.API.Features.Warhead.IsDetonated) Exiled.API.Features.Warhead.Detonate();
-            Tcp.SendLog($"log Round Ended\n```Winning Class: {ev.LeadingTeam}\nEscaped D-Class: {ev.ClassList.class_ds}\nRescued Scientists: {ev.ClassList.scientists}\nContained SCPs: {ev.ClassList.scps_except_zombies}\nWas warhead detonated: {Exiled.API.Features.Warhead.IsDetonated}\nKilled by warhead: {ev.ClassList.warhead_kills}```");
+            Tcp.SendLog($"Round Ended\n```Winning Class: {ev.LeadingTeam}\nEscaped D-Class: {ev.ClassList.class_ds}\nRescued Scientists: {ev.ClassList.scientists}\nContained SCPs: {ev.ClassList.scps_except_zombies}\nWas warhead detonated: {Exiled.API.Features.Warhead.IsDetonated}\nKilled by warhead: {ev.ClassList.warhead_kills}```");
             Exiled.API.Features.Player.List.ToList().ForEach(u => Tcp.Send($"stats {u.UserId} gamesplayed 1"));
             Exiled.API.Features.Player.List.ToList().ForEach(u =>
             {
@@ -56,7 +113,6 @@ if (ev.LeadingTeam == LeadingTeam.Anomalies && u.Team == Team.SCP || SerpentsHan
                 else
 if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team == Team.RSC)
                     Tcp.Send($"stats {u.UserId} gameswonMTF 1");
-                //else Tcp.Send($"stats {u.UserId} gameswonSTALEMATE 1");
             });
             AcGame.RoundGamemode = 0;
             Player.Has008RandomSpawned = false;
@@ -91,106 +147,64 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
         }
         public void OnRespawningTeam(RespawningTeamEventArgs ev)
         {
-            Vector3 MTFSpawnLocaltion = new Vector3(0, 0, 0);
             SpecMode.TUTSpecList.ForEach(id => ev.Players.Add(Exiled.API.Features.Player.List.ToList().Find(x => x.Id.ToString() == id)));
-            SpecMode.TUTSpecList = new List<string>();
-            List<Exiled.API.Features.Player> playerList = new List<Exiled.API.Features.Player>((IEnumerable<Exiled.API.Features.Player>)ev.Players);
-            if (rnd.Next(0, 50) == 1)
-            { //Zipper gang
-                ev.Players.Clear();
+            SpecMode.TUTSpecList.Clear();
+            List<Exiled.API.Features.Player> playerList = new List<Exiled.API.Features.Player>(ev.Players);
+            Vector3 MTFSpawnLocaltion = new Vector3(0, 0, 0);
+            ToucanPlugin.Instance.Config.CustomSquads.ForEach(s =>
+            {
+                if (s.Team == ev.NextKnownTeam && rnd.Next(s.ReplaceChance, 100) <= s.ReplaceChance && s.MaxSCPKills >= Player.SCPKills && s.MinSCPKills <= Player.SCPKills) return;
                 playerList.ForEach(p =>
                 {
-                    p.SetRole(RoleType.Tutorial);
-                    p.MaxHealth = 69;
-                    p.MaxEnergy = 420;
-                    p.MaxAdrenalineHealth = 360;
-                    p.ClearInventory();
-                    ToucanPlugin.Instance.Config.RedHandSpawnItems.ForEach(item => p.Inventory.AddNewItem((ItemType)14));
-                    p.Position = new Vector3(176f, 984f, 39f);
+                    p.SetRole(s.Role);
+                    if (s.MaxHealth != -1) p.MaxHealth = s.MaxHealth;
+                    if (s.MaxAdrenalin != -1) p.MaxAdrenalineHealth = s.MaxAdrenalin;
+                    if (s.MaxEnergy != -1) p.MaxEnergy = s.MaxEnergy;
+                    s.Items.ForEach(item => p.Inventory.AddNewItem((ItemType)item));
+                    if (s.PreSetSpawnPos != RoleType.None)
+                        p.Position = s.PreSetSpawnPos.GetRandomSpawnPoint();
+                    else
+                        p.Position = new Vector3(s.SpawnPos.X, s.SpawnPos.Y, s.SpawnPos.Z);
                 });
-                Cassie.Message($"the z i p HasEntered", false, false);
-            }
-            else
-            {
-                if (ev.NextKnownTeam == Respawning.SpawnableTeamType.NineTailedFox)
+                int leaderIndex = rnd.Next(0, playerList.Count);
+                if (s.CommanderItems.Count != 0)
                 {
-                    if (Player.SCPKills <= 2 && ToucanPlugin.Instance.Config.CanUIUSpawn)
-                    { // UIU
-                        ev.Players.Clear();
-                        List<int> spawnerNumList = new List<int>();
-                        playerList.ForEach(p =>
-                            {
-                                spawnerNumList.Add(p.Id);
-                                p.SetRole(RoleType.FacilityGuard);
-                                p.ClearInventory();
-                                ToucanPlugin.Instance.Config.UIUSpawnItems.ForEach(item => p.Inventory.AddNewItem((ItemType)item));
-                                MTFSpawnLocaltion = new Vector3(176f, 984f, 39f);
-                                p.Position = MTFSpawnLocaltion;
-                            });
-                        int leaderIndex = rnd.Next(0, spawnerNumList.Count);
-                        playerList[leaderIndex].Inventory.AddNewItem(ItemType.KeycardNTFLieutenant);
-                        Cassie.Message($"the u i u HasEntered", false, false);
-                    }
-                    else
-                    if (Player.SCPKills <= 15 && Player.SCPKills >= 10 && ToucanPlugin.Instance.Config.CanHammerDownSpawn)
-                    { // NU7 (hammer down)
-                        ev.Players.Clear();
-                        playerList.ForEach(p =>
-                            {
-                                p.SetRole(RoleType.NtfLieutenant);
-                                p.ClearInventory();
-                                ToucanPlugin.Instance.Config.HammerDownSpawnItems.ForEach(item => p.Inventory.AddNewItem((ItemType)item));
-                                MTFSpawnLocaltion = new Vector3(0f, 1005f, -10f);
-                                p.Position = MTFSpawnLocaltion;
-                            });
-                        Cassie.Message($"MTFUNIT n u 7 HasEntered ", false, false);
-                    }
-                    else
-                    if (Player.SCPKills <= 20 && Player.SCPKills >= 16 && ToucanPlugin.Instance.Config.CanRedHandSpawn)
-                    { //RED RIGHT HAND
-                        ev.Players.Clear();
-                        playerList.ForEach(p =>
-                            {
-                                p.SetRole(RoleType.NtfCommander);
-                                p.MaxHealth = 200;
-                                p.MaxEnergy = 999;
-                                p.MaxAdrenalineHealth = 300;
-                                p.ClearInventory();
-                                ToucanPlugin.Instance.Config.RedHandSpawnItems.ForEach(item => p.Inventory.AddNewItem((ItemType)item));
-                                MTFSpawnLocaltion = new Vector3(86f, 988f, -68f);
-                                p.Position = MTFSpawnLocaltion;
-                            });
-                        Cassie.Message($"the MTFUNIT red right hand HasEntered the o 5 have disignated this a x k event", false, false);
-                    }
-                    if (Player.SCPKills <= 15 && playerList.Count >= 2 && ToucanPlugin.Instance.Config.CanMedicMTFSpawn)
-                    { // MTF Medic
-                        Exiled.API.Features.Player p = playerList[rnd.Next(0, playerList.Count)];
-                        p.SetRole(RoleType.NtfLieutenant);
-                        p.MaxHealth = 75;
-                        p.MaxEnergy = 75;
-                        p.MaxAdrenalineHealth = 300;
-                        p.ClearInventory();
-                        ToucanPlugin.Instance.Config.MTFMedicItems.ForEach(item => p.Inventory.AddNewItem((ItemType)item));
-                        p.Position = MTFSpawnLocaltion;
-                        p.Broadcast(5, $"< size = 60 > You are < color = #185ede><b>A MTF Medic</b></color></size>\n\n < i > Help the < color = \"cyan\" > MTF </ color > by healing them and giving them aid! </ i > ");
-                    }
+                    Exiled.API.Features.Player Commander = playerList[leaderIndex];
+                    Commander.ClearInventory();
+                    s.CommanderItems.ForEach(item => Commander.Inventory.AddNewItem((ItemType)item));
+                    Commander.ShowHint($"<i>You are the Commander of {s.Name}, you have something special in your inventory</i>", 6);
                 }
-                else if (ev.NextKnownTeam == Respawning.SpawnableTeamType.ChaosInsurgency)
-                { // Is chaos spawn.
-                    if (Player.SCPKills <= 15 && playerList.Count >= 2 && ToucanPlugin.Instance.Config.CanChaosHackerSpawn)
-                    {
-                        Exiled.API.Features.Player p = playerList[rnd.Next(0, playerList.Count)];
-                        p.MaxHealth = 75;
-                        p.MaxEnergy = 75;
-                        p.MaxAdrenalineHealth = 50; //AP
-                        p.AdrenalineHealth = p.MaxAdrenalineHealth;
-                        p.ClearInventory();
-                        ToucanPlugin.Instance.Config.ChaosHackerItems.ForEach(item => p.Inventory.AddNewItem((ItemType)item));
-                        p.Position = Map.GetRandomSpawnPoint(RoleType.ChaosInsurgency);
-                        p.Broadcast(5, $"< size = 60 > You are < color = #2a6e02><b>A Chaos Hacker</b></color></size>\n\n < i > Help the < color = \"green\" > Chaos </ color > by hacking doors, your ahp is you ap! </ i > ");
-                        mr.ChaosHacker.Add(p);
-                        Task.Factory.StartNew(() => ChaosHackerCharge(p));
-                    }
+            });
+            if (ev.NextKnownTeam == Respawning.SpawnableTeamType.NineTailedFox)
+            {
+                if (Player.SCPKills <= 15 && playerList.Count >= 2 && ToucanPlugin.Instance.Config.CanMedicMTFSpawn)
+                { // MTF Medic
+                    Exiled.API.Features.Player p = playerList[rnd.Next(0, playerList.Count)];
+                    p.SetRole(RoleType.NtfLieutenant);
+                    p.MaxHealth = 75;
+                    p.MaxEnergy = 75;
+                    p.MaxAdrenalineHealth = 300;
+                    p.ClearInventory();
+                    ToucanPlugin.Instance.Config.MTFMedicItems.ForEach(item => p.Inventory.AddNewItem((ItemType)item));
+                    p.Position = MTFSpawnLocaltion;
+                    p.Broadcast(5, $"< size = 60 > You are < color = #185ede><b>A MTF Medic</b></color></size>\n\n < i > Help the < color = \"cyan\" > MTF </ color > by healing them and giving them aid! </ i > ");
+                }
+            }
+            else if (ev.NextKnownTeam == Respawning.SpawnableTeamType.ChaosInsurgency)
+            { // Is chaos spawn.
+                if (Player.SCPKills <= 15 && playerList.Count >= 2 && ToucanPlugin.Instance.Config.CanChaosHackerSpawn)
+                {
+                    Exiled.API.Features.Player p = playerList[rnd.Next(0, playerList.Count)];
+                    p.MaxHealth = 75;
+                    p.MaxEnergy = 75;
+                    p.MaxAdrenalineHealth = 50; //AP
+                    p.AdrenalineHealth = p.MaxAdrenalineHealth;
+                    p.ClearInventory();
+                    ToucanPlugin.Instance.Config.ChaosHackerItems.ForEach(item => p.Inventory.AddNewItem((ItemType)item));
+                    p.Position = Map.GetRandomSpawnPoint(RoleType.ChaosInsurgency);
+                    p.Broadcast(5, $"< size = 60 > You are < color = #2a6e02><b>A Chaos Hacker</b></color></size>\n\n < i > Help the < color = \"green\" > Chaos </ color > by hacking doors, your ahp is you ap! </ i > ");
+                    mr.ChaosHacker.Add(p);
+                    Task.Factory.StartNew(() => ChaosHackerCharge(p));
                 }
             }
         }

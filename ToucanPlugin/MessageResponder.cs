@@ -29,7 +29,7 @@ namespace ToucanPlugin
                     p.AddItem((ItemType)int.Parse(Cmds[2].ToString()));
                     p.SendConsoleMessage($"Thanks for buying a {(ItemType)int.Parse(Cmds[2])}", "#fffff");
                     p.ShowHint($"<i>Thanks for Buying a <color=yellow>{ (ItemType)int.Parse(Cmds[2])}</color></i>", 6);
-                    Tcp.SendLog($"log {p.Nickname} ({Cmds[1]}) Bought an {(ItemType)int.Parse(Cmds[2].ToString())}");
+                    Tcp.SendLog($"{p.Nickname} ({Cmds[1]}) Bought an {(ItemType)int.Parse(Cmds[2].ToString())}");
                     Tcp.Send($"stats {p.UserId} itemsbought 1");
                     break;
 
@@ -82,7 +82,7 @@ namespace ToucanPlugin
                     }
                     Player.List.ToList().ForEach(user => user.Kick(kickallreason));
                     Tcp.Send(Cmd);
-                    Tcp.SendLog($"log Everyone was kicked remotly by {Cmds[1]}");
+                    Tcp.SendLog($"Everyone was kicked remotly by {Cmds[1]}");
                     break;
 
                 case "ban":
@@ -98,7 +98,7 @@ namespace ToucanPlugin
                     }
                     Player.List.ToList().Find(x => x.UserId.Contains(Cmds[1])).Ban(int.Parse(Cmds[1]), banreason, Cmds[2]);
                     Tcp.Send(Cmd);
-                    Tcp.SendLog($"log {Cmds[2]} was banned for {Cmds[1]} by {Cmds[3]} for the reason of; {Cmds[4]}");
+                    Tcp.SendLog($"{Cmds[2]} was banned for {Cmds[1]} by {Cmds[3]} for the reason of; {Cmds[4]}");
                     break;
 
                 case "restartRound":

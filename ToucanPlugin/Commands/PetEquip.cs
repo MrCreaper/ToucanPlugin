@@ -1,4 +1,5 @@
 ﻿using CommandSystem;
+using Exiled.API.Features;
 using RemoteAdmin;
 using System;
 using System.Linq;
@@ -45,7 +46,10 @@ namespace ToucanPlugin.Commands
                 }
                 else
                 {
-                    if (Handlers.Player.petConnections[PCplayer.CCM.UserId] != null) // ???
+                    Log.Info(Handlers.Player.petConnections[PCplayer.CCM.UserId]);
+                    response = $"No pet equiped!";
+                    return false;
+                    /*if (Handlers.Player.petConnections[PCplayer.CCM.UserId]) // ???
                     {
                         Handlers.Player.petConnections.Remove(PCplayer.CCM.UserId);
                         NPCS.Npc.Dictionary.ToList().Find(x => x.Value.GetInstanceID() == Handlers.Player.petConnections[PCplayer.CCM.UserId]).Value.Kill(false);
@@ -56,7 +60,7 @@ namespace ToucanPlugin.Commands
                     {
                         response = $"No pet equiped!";
                         return false;
-                    }
+                    }*/
                 }
             }
             else

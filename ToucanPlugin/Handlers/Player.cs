@@ -2,12 +2,13 @@
 using Exiled.API.Extensions;
 using Exiled.API.Features;
 using Exiled.Events.EventArgs;
-using ToucanPlugin.Commands;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ToucanPlugin.Commands;
 using ToucanPlugin.Gamemodes;
+using UnityEngine;
 
 namespace ToucanPlugin.Handlers
 {
@@ -27,8 +28,7 @@ namespace ToucanPlugin.Handlers
         }
         public void OnJoin(JoinedEventArgs ev)
         {
-            Log.Info(Exiled.API.Features.Player.List.Count() - 1);
-            if (Exiled.API.Features.Player.List.Count() - 1 == 0 && Round.IsStarted)
+            if (Exiled.API.Features.Player.List.Count() == 0 && Round.IsStarted)
                 Round.Restart();
             if (ToucanPlugin.Instance.Config.ReplaceAdvertismentNames)
             {
@@ -49,13 +49,13 @@ namespace ToucanPlugin.Handlers
             if (ToucanPlugin.Instance.Config.MentionRoles)
             {
                 if (Exiled.API.Features.Player.List.Count() == 5)
-                    Tcp.SendLog($"log 5 PLAYERS <@&{ToucanPlugin.Instance.Config.FivePlayerRole}>");
+                    Tcp.SendLog($"5 PLAYERS <@&{ToucanPlugin.Instance.Config.FivePlayerRole}>");
                 if (Exiled.API.Features.Player.List.Count() == 10)
-                    Tcp.SendLog($"log 10 PLAYERS <@&{ToucanPlugin.Instance.Config.TenPlayerRole}>");
+                    Tcp.SendLog($"10 PLAYERS <@&{ToucanPlugin.Instance.Config.TenPlayerRole}>");
                 if (Exiled.API.Features.Player.List.Count() == 15)
-                    Tcp.SendLog($"log 15 PLAYERS <@&{ToucanPlugin.Instance.Config.FifteenPlayerRole}>");
+                    Tcp.SendLog($"15 PLAYERS <@&{ToucanPlugin.Instance.Config.FifteenPlayerRole}>");
             }
-            Tcp.SendLog($"log **{ev.Player.Nickname} ({ev.Player.UserId}) Joined [{Exiled.API.Features.Player.List.Count()}/20]**");
+            Tcp.SendLog($"**{ev.Player.Nickname} ({ev.Player.UserId}) Joined [{Exiled.API.Features.Player.List.Count()}/20]**");
 
             //Top ranker Role
             if (mr.BestBois != null && mr.BestBois.Contains(ev.Player.UserId))
@@ -76,7 +76,7 @@ namespace ToucanPlugin.Handlers
         {
             string message = ToucanPlugin.Instance.Config.LeftMessage.Replace("{player}", ev.Player.Nickname);
             Map.Broadcast(2, message);
-            Tcp.SendLog($"log **{ev.Player.Nickname} ({ev.Player.UserId}) Left [{Exiled.API.Features.Player.List.Count() - 1}/20]**");
+            Tcp.SendLog($"**{ev.Player.Nickname} ({ev.Player.UserId}) Left [{Exiled.API.Features.Player.List.Count() - 1}/20]**");
         }
         public void LonelyRound()
         {
@@ -127,7 +127,7 @@ namespace ToucanPlugin.Handlers
                     Tcp.Send($"stats {cuffer.UserId} escortScientist 1");
             }
             Tcp.Send(escapeMsg);
-            Tcp.SendLog($"log **{ev.Player.Nickname} ({ev.Player.UserId}) Escaped**");
+            Tcp.SendLog($"**{ev.Player.Nickname} ({ev.Player.UserId}) Escaped**");
         }
         public void OnDead(DiedEventArgs ev)
         {
@@ -145,7 +145,6 @@ namespace ToucanPlugin.Handlers
                     Cassie.Message($"biological infection at {ev.Target.CurrentRoom.Zone}");
                 }
             }
-            Log.Info(ev.Target.Team);
             switch (ev.Target.Team)
             {
                 case Team.SCP:
@@ -174,51 +173,46 @@ namespace ToucanPlugin.Handlers
                             Tcp.Send($"stats {ev.Killer.UserId} killed939 1");
                             break;
                     }
-                    Tcp.Send($"stats {ev.Target.UserId} scpdeaths 1");
+                    //Tcp.Send($"stats {ev.Target.UserId} scpdeaths 1");
                     break;
                 case Team.MTF:
                     Tcp.Send($"stats {ev.Killer.UserId} mtfkilled 1");
-                    Tcp.Send($"stats {ev.Target.UserId} mtfdeaths 1");
+                    //Tcp.Send($"stats {ev.Target.UserId} mtfdeaths 1");
                     break;
                 case Team.CHI:
                     Tcp.Send($"stats {ev.Killer.UserId} chaoskilled 1");
-                    Tcp.Send($"stats {ev.Target.UserId} chaosdeaths 1");
+                    //Tcp.Send($"stats {ev.Target.UserId} chaosdeaths 1");
                     break;
                 case Team.RSC:
                     Tcp.Send($"stats {ev.Killer.UserId} scikilled 1");
-                    Tcp.Send($"stats {ev.Target.UserId} scideaths 1");
+                    //Tcp.Send($"stats {ev.Target.UserId} scideaths 1");
                     break;
                 case Team.CDP:
                     Tcp.Send($"stats {ev.Killer.UserId} dclasskilled 1");
-                    Tcp.Send($"stats {ev.Target.UserId} dclassdeaths 1");
+                    //Tcp.Send($"stats {ev.Target.UserId} dclassdeaths 1");
                     break;
                 /*case Team.RIP:
                     Tcp.Send($"stats {ev.Target.UserId} scikilled 1");
                     break;*/
                 case Team.TUT:
                     Tcp.Send($"stats {ev.Killer.UserId} scikilled 1");
-                    Tcp.Send($"stats {ev.Target.UserId} scideaths 1");
+                    //Tcp.Send($"stats {ev.Target.UserId} scideaths 1");
                     break;
             }
             if (SerpentsHand.API.SerpentsHand.GetSHPlayers().Contains(ev.Target) || scp035.API.Scp035Data.GetScp035() == ev.Target)
             {
                 Tcp.Send($"stats {ev.Killer.UserId} scpkilled 1");
-                Tcp.Send($"stats {ev.Target.UserId} scpdeaths 1");
+                //Tcp.Send($"stats {ev.Target.UserId} scpdeaths 1");
             }
             if (ev.Killer.UserId == ev.Target.UserId) return;
             bool isff = false;
             if (ev.Killer.Team == ev.Target.Team)
-            {
                 isff = true;
-            }
             bool isScp = false;
-            if (ev.Target.Team == Team.SCP)
-            {
+            if (ev.Target.Team == Team.SCP || scp035.API.Scp035Data.GetScp035() == ev.Killer)
                 isScp = true;
-            }
-            if (scp035.API.Scp035Data.GetScp035() == ev.Killer) isff = false;
             Tcp.Send($"died {isff} {ev.Killer.UserId} {ev.Target.UserId} {ev.HitInformations.Tool} {isScp}");
-            Tcp.SendLog($"log {ev.Target.Nickname} ({ev.Target.UserId}) killed by {ev.Killer.Nickname} ({ev.Killer.UserId}) whit {ev.HitInformations.Tool}");
+            Tcp.SendLog($"{ev.Target.Nickname} ({ev.Target.UserId}) killed by {ev.Killer.Nickname} ({ev.Killer.UserId}) whit {ev.HitInformations.Tool}");
 
             //Event bullshit
             switch (AcGame.RoundGamemode)
@@ -233,57 +227,22 @@ namespace ToucanPlugin.Handlers
         public void OnSpawned(SpawningEventArgs ev)
         {
             System.Random rnd = new System.Random();
-            //Janitor spawning
+            Exiled.API.Features.Player p = ev.Player;
             List<Exiled.API.Features.Player> playerList = new List<Exiled.API.Features.Player>((IEnumerable<Exiled.API.Features.Player>)Exiled.API.Features.Player.List.ToList());
-            if (ToucanPlugin.Instance.Config.CanJanitorSpawn && playerList.Count >= 0 && rnd.Next(0, 5) == 1 && ev.RoleType == RoleType.ClassD)
+            ToucanPlugin.Instance.Config.CustomPersonel.ForEach(per =>
             {
-                Exiled.API.Features.Player Janitor = ev.Player;//playerList.Find(x => x.Role == RoleType.ClassD);
-                Janitor.MaxHealth = 100;
-                Janitor.MaxEnergy = 110;
-                Janitor.MaxAdrenalineHealth = 100;
-                Janitor.ClearInventory();
-                ToucanPlugin.Instance.Config.JanitorItems.ForEach(item => Janitor.Inventory.AddNewItem((ItemType)item));
-                Janitor.Position = Exiled.API.Features.Map.GetRandomSpawnPoint(RoleType.Scientist);
-                Janitor.ShowHint("<i>You are a <color=yellow>Janior</color>... life sucz</i>");
-            }
-            //Mayor Scientist spawning
-            if (ToucanPlugin.Instance.Config.CanMayorScietistSpawn && playerList.Count >= 0 && rnd.Next(0, 5) == 1 && ev.RoleType == RoleType.FacilityGuard)
-            {
-                if (playerList.Find(x => x.Role == RoleType.Scp173) != null) return;
-                Exiled.API.Features.Player MS = ev.Player; //playerList.Find(x => x.Role == RoleType.Scientist);
-                MS.MaxHealth = 90;
-                MS.MaxEnergy = 90;
-                MS.MaxAdrenalineHealth = 120;
-                MS.ClearInventory();
-                ToucanPlugin.Instance.Config.MayorScientistItems.ForEach(item => MS.Inventory.AddNewItem((ItemType)item));
-                MS.Position = Map.GetRandomSpawnPoint(RoleType.Scp106);
-                MS.ShowHint("<i>You are a <color=yellow>Mayor Scientist</color>.</i>");
-            }
-            //Containment Engineer spawning
-            if (ToucanPlugin.Instance.Config.CanContainmentEngineerSpawn && playerList.Count >= 0 && rnd.Next(0, 5) == 1 && ev.RoleType == RoleType.FacilityGuard)
-            {
-                if (playerList.Find(x => x.Role == RoleType.Scp106) == null) return;
-                Exiled.API.Features.Player CE = ev.Player; //playerList.Find(x => x.Role == RoleType.Scientist);
-                CE.MaxHealth = 90;
-                CE.MaxEnergy = 90;
-                CE.MaxAdrenalineHealth = 120;
-                CE.ClearInventory();
-                ToucanPlugin.Instance.Config.ContainmentEngineerItems.ForEach(item => CE.Inventory.AddNewItem((ItemType)item));
-                CE.Position = Map.GetRandomSpawnPoint(RoleType.Scp106);
-                CE.ShowHint("<i>You are a <color=yellow>Containment Engineer</color>. You had <color=yellow>one</color> job.</i>");
-            }
-            //Speedy boi spawning
-            /*if (playerList.Count >= 5 && rnd.Next(0, 5) == 1)
-            {
-                if (playerList.Find(x => x.Role == RoleType.Scp106) == null) return;
-                Exiled.API.Features.Player CE = playerList.Find(x => x.Role == RoleType.ClassD);
-                CE.MaxEnergy = 9999;
-                CE.Energy = CE.MaxEnergy;
-                CE.ClearInventory();
-                ToucanPlugin.Instance.Config.JanitorItems.ForEach(item => CE.Inventory.AddNewItem((ItemType)item));
-                CE.Position = Exiled.API.Features.Map.GetRandomSpawnPoint(RoleType.ClassD);
-                CE.ShowHint("<i>You are a <color=yellow>Speedy Fucker</color>. You are <color=yellow><b>FAST</b></color>.</i>");
-            }*/
+                if (per.Role == ev.RoleType && rnd.Next(per.ReplaceChance, 100) <= per.ReplaceChance) return;
+                p.SetRole(per.Role);
+                if (per.MaxHealth != -1) p.MaxHealth = per.MaxHealth;
+                if (per.MaxAdrenalin != -1) p.MaxAdrenalineHealth = per.MaxAdrenalin;
+                if (per.MaxEnergy != -1) p.MaxEnergy = per.MaxEnergy;
+                per.Items.ForEach(item => p.Inventory.AddNewItem((ItemType)item));
+                if (per.PreSetSpawnPos != RoleType.None)
+                    p.Position = per.PreSetSpawnPos.GetRandomSpawnPoint();
+                else
+                    p.Position = new Vector3(per.SpawnPos.X, per.SpawnPos.Y, per.SpawnPos.Z);
+                p.ShowHint(per.Hint, 6);
+            });
         }
         public void OnInteractingDoor(InteractingDoorEventArgs ev)
         {
@@ -367,11 +326,11 @@ namespace ToucanPlugin.Handlers
         }
         public void OnBanned(BannedEventArgs ev)
         {
-            Tcp.SendLog($"log **{ev.Details.Issuer} ({ev.Details.OriginalName}) banned player {ev.Player.Nickname} ({ev.Player.UserId}). Ban duration: {ev.Details.Expires}. Reason: {ev.Details.Reason}.**");
+            Tcp.SendLog($"**{ev.Details.Issuer} ({ev.Details.OriginalName}) banned player {ev.Player.Nickname} ({ev.Player.UserId}). Ban duration: {ev.Details.Expires}. Reason: {ev.Details.Reason}.**");
         }
         public void OnKicked(KickedEventArgs ev)
         {
-            Tcp.SendLog($"log **{ev.Player.Nickname} ({ev.Player.UserId}) has been kicked. Reason: {ev.Reason}**");
+            Tcp.SendLog($"**{ev.Player.Nickname} ({ev.Player.UserId}) has been kicked. Reason: {ev.Reason}**");
         }
         public void OnMedicalItemUsed(UsedMedicalItemEventArgs ev)
         {
@@ -419,7 +378,7 @@ namespace ToucanPlugin.Handlers
         }
         public void OnThrowingGrenade(ThrowingGrenadeEventArgs ev)
         {
-            Tcp.SendLog($"log {ev.Player.Nickname} threw a {(GrenadeType)ev.Id}");
+            Tcp.SendLog($"{ev.Player.Nickname} threw a {(GrenadeType)ev.Id}");
             if ((GrenadeType)ev.Id == GrenadeType.FlashGrenade)
                 Tcp.Send($"stats {ev.Player.UserId} flashThrown 1");
             if ((GrenadeType)ev.Id == GrenadeType.Grenade)
@@ -443,7 +402,7 @@ namespace ToucanPlugin.Handlers
             }
             else
             {
-                if (ToucanPlugin.Instance.Config.ReflectTeamDMG && ev.Target.Side == ev.Attacker.Side && ev.Target != ev.Attacker && scp035.API.Scp035Data.GetScp035() != ev.Attacker && scp035.API.Scp035Data.GetScp035() != ev.Target && !ev.Attacker.Sender.CheckPermission(PlayerPermissions.FriendlyFireDetectorImmunity) && Exiled.API.Features.Server.FriendlyFire)
+                if (ToucanPlugin.Instance.Config.ReflectTeamDMG && ev.Target.Side == ev.Attacker.Side && ev.Target != ev.Attacker && scp035.API.Scp035Data.GetScp035() != ev.Attacker && scp035.API.Scp035Data.GetScp035() != ev.Target && !ev.Attacker.Sender.CheckPermission(PlayerPermissions.FriendlyFireDetectorImmunity) && !Exiled.API.Features.Server.FriendlyFire && ReflectControl.Reflect)
                 {
                     if (ev.Target.Health < ev.Target.MaxHealth)
                         ev.Target.Health = ev.Target.Health + ev.Amount;

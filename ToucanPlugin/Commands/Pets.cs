@@ -1,4 +1,5 @@
 ﻿using CommandSystem;
+using Exiled.API.Features;
 using RemoteAdmin;
 using System;
 
@@ -18,7 +19,7 @@ namespace ToucanPlugin.Commands
         {
             if (Sender is PlayerCommandSender PCplayer)
             {
-                Tcp.Send($"petsList {PCplayer.CCM.UserId}");
+                Tcp.Send($"petsList {PCplayer.SenderId}");
                 response = $"Getting Pets list...";
                 return true;
             }

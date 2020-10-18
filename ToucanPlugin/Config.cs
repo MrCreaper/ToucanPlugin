@@ -1,7 +1,10 @@
-﻿using Exiled.API.Interfaces;
+﻿using Exiled.API.Enums;
+using Exiled.API.Features;
+using Exiled.API.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using UnityEngine;
 
 namespace ToucanPlugin
 {
@@ -33,32 +36,118 @@ namespace ToucanPlugin
         public bool ReplaceAdvertismentNames { get; set; } = true;
         [Description("Thing to replace advertisment part of a name whit")]
         public string ReplaceAdvertismentNamesWhit { get; set; } = "[ADVERTISMENT DENIED]";
-        public List<string> ADThing { get; set; } = new List<string> { ".com", ".tf", "ttv/", "yt" };
+        public List<string> ADThing { get; set; } = new List<string> { ".com", ".tf", "ttv/", "YT" };
         public bool MentionRoles { get; set; } = false;
         public string FivePlayerRole { get; set; } = "";
         public string TenPlayerRole { get; set; } = "";
         public string FifteenPlayerRole { get; set; } = "";
         [Description("Detonate the alpha warhead at the end of the round.")]
         public bool DetonateAtRoundEnded { get; set; } = false;
-        [Description("Have a 1 in a 100 % chance to turn into a zombie when killed")]
-        public bool Random008Spawn { get; set; } = false;
-
-        public bool CanUIUSpawn { get; set; } = false;
-        public List<int> UIUSpawnItems { get; set; } = new List<int> { 13, 34 };
-        public bool CanHammerDownSpawn { get; set; } = false;
-        public List<int> HammerDownSpawnItems { get; set; } = new List<int> { 16, 30, 7, 14, 34, 12, 19, 27 };
-        public bool CanRedHandSpawn { get; set; } = false;
-        public List<int> RedHandSpawnItems { get; set; } = new List<int> { 24, 30, 8, 17, 12, 19, 27 };
+        [Description("Read the github wiki to know more")]
+        public List<Handlers.CustomSquadSpawns> CustomSquads { get; set; } = new List<Handlers.CustomSquadSpawns>
+        {
+            new Handlers.CustomSquadSpawns() {
+                Name="The UIU",
+                Team=Respawning.SpawnableTeamType.NineTailedFox,
+                ReplaceChance = 100,
+                Role = RoleType.FacilityGuard,
+                MaxHealth = -1,
+                MaxAdrenalin = 30,
+                MaxEnergy = 60,
+                Items = new List<int> { 13, 34 },
+                CommanderItems = new List<int> { 13, 34, 7 },
+                PreSetSpawnPos = RoleType.None,
+                SpawnPos =new Handlers.XYZ(){X=176,Y=984,Z=39},
+                SquadMaxSize = 0,
+                MaxSCPKills = 2,
+                MinSCPKills = 0,
+                CassieAnnc =$"the u i u HasEntered"
+            },
+            new Handlers.CustomSquadSpawns() {
+                Name="NU7 (Hammer Down)",
+                Team=Respawning.SpawnableTeamType.NineTailedFox,
+                ReplaceChance = 100,
+                Role = RoleType.NtfLieutenant,
+                MaxHealth = -1,
+                MaxAdrenalin = 85,
+                MaxEnergy = 120,
+                Items = new List<int> { 16, 30, 7, 14, 34, 12, 19, 27 },
+                CommanderItems = new List<int> { },
+                PreSetSpawnPos = RoleType.None,
+                SpawnPos =new Handlers.XYZ() {X=0f,Y=1005f,Z=-10f},
+                SquadMaxSize = 0,
+                MaxSCPKills = 15,
+                MinSCPKills = 10,
+                CassieAnnc =$"MTFUNIT n u 7 HasEntered"
+            },
+            new Handlers.CustomSquadSpawns() {
+                Name="Red Right Hand",
+                Team=Respawning.SpawnableTeamType.NineTailedFox,
+                ReplaceChance = 100,
+                Role = RoleType.NtfCommander,
+                MaxHealth = 200,
+                MaxAdrenalin = 300,
+                MaxEnergy = 999,
+                Items = new List<int> { 24, 30, 8, 17, 12, 19, 27 },
+                CommanderItems = new List<int> { },
+                PreSetSpawnPos = RoleType.NtfCommander,
+                SpawnPos =new Handlers.XYZ() {X=0,Y=0,Z=0},
+                SquadMaxSize = 0,
+                MaxSCPKills = -1,
+                MinSCPKills = 16,
+                CassieAnnc =$"the u i u HasEntered"
+            },
+        };
+        public List<Handlers.CustomPersonelSpawns> CustomPersonel { get; set; } = new List<Handlers.CustomPersonelSpawns>
+        {
+            new Handlers.CustomPersonelSpawns() {
+                Name="Janitor",
+                Role=RoleType.ClassD,
+                PlayerCountNeeded=4,
+                ReplaceChance=10,
+                MaxHealth=110,
+                MaxEnergy=120,
+                MaxAdrenalin=100,
+                Items=new List<int> { 0, 34, 35 },
+                PreSetSpawnPos=RoleType.None,
+                PreSetSpawnPosRoom=RoomType.LczToilets,
+                SpawnPos=new Handlers.XYZ() {X=0,Y=0,Z=0},
+                Hint=$"<i>You are a <color=yellow>Janior</color>... LIFi SUCZ</i>",
+            },
+            new Handlers.CustomPersonelSpawns() {
+                Name="Mayor Scientist",
+                Role=RoleType.Scientist,
+                PlayerCountNeeded=5,
+                ReplaceChance=10,
+                MaxHealth=90,
+                MaxEnergy=90,
+                MaxAdrenalin=120,
+                Items=new List<int> { },
+                PreSetSpawnPos=RoleType.None,
+                PreSetSpawnPosRoom=RoomType.LczToilets,
+                SpawnPos=new Handlers.XYZ() {X=0,Y=0,Z=0},
+                Hint=$"<i>You are a <color=yellow>Mayor Scientist</color>.</i>",
+            },
+            new Handlers.CustomPersonelSpawns() {
+                Name="Containment Engineer",
+                Role=RoleType.ClassD,
+                PlayerCountNeeded=6,
+                ReplaceChance=10,
+                MaxHealth=110,
+                MaxEnergy=120,
+                MaxAdrenalin=100,
+                Items=new List<int> { 0, 34, 35 },
+                PreSetSpawnPos=RoleType.None,
+                PreSetSpawnPosRoom=RoomType.LczToilets,
+                SpawnPos=new Handlers.XYZ() {X=0,Y=0,Z=0},
+                Hint=$"<i>You are a <color=yellow>Containment Engineer</color>. You had <color=yellow>one</color> job.</i>",
+            },
+        };
         public bool CanMedicMTFSpawn { get; set; } = false;
         public List<int> MTFMedicItems { get; set; } = new List<int> { 17, 33, 33, 33, 34, 12, 13 };
         public bool CanChaosHackerSpawn { get; set; } = false;
         public List<int> ChaosHackerItems { get; set; } = new List<int> { 23, 14, 15, 12 };
-        public bool CanJanitorSpawn { get; set; } = false;
-        public List<int> JanitorItems { get; set; } = new List<int> { 0, 34, 35 };
-        public bool CanMayorScietistSpawn { get; set; } = false;
-        public List<int> MayorScientistItems { get; set; } = new List<int> {  };
-        public bool CanContainmentEngineerSpawn { get; set; } = false;
-        public List<int> ContainmentEngineerItems { get; set; } = new List<int> {  };
+        public bool Random008Spawn { get; set; } = false;
         [Description("Start the round automaticly after a minute")]
         public bool LonelyRound { get; set; } = false;
     }

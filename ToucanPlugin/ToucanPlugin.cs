@@ -195,7 +195,7 @@ namespace ToucanPlugin
         public void SendLog(string log)
         {
             string time = DateTime.Now.ToString("h:mm:ss tt");
-            Send($"[{time}] {log}");
+            Send($"log [{time}] {log}");
         }
     }
 
