@@ -145,6 +145,27 @@ namespace ToucanPlugin.Handlers
                     Cassie.Message($"biological infection at {ev.Target.CurrentRoom.Zone}");
                 }
             }
+            switch (ev.Killer.Team)
+            {
+                case Team.SCP:
+                    Tcp.Send($"stats {ev.Killer.UserId} scpkills 1");
+                    break;
+                case Team.MTF:
+                    Tcp.Send($"stats {ev.Killer.UserId} mtfkills 1");
+                    break;
+                case Team.CHI:
+                    Tcp.Send($"stats {ev.Killer.UserId} chaoskills 1");
+                    break;
+                case Team.RSC:
+                    Tcp.Send($"stats {ev.Killer.UserId} scikills 1");
+                    break;
+                case Team.CDP:
+                    Tcp.Send($"stats {ev.Killer.UserId} dclasskills 1");
+                    break;
+                case Team.TUT:
+                    Tcp.Send($"stats {ev.Killer.UserId} scikills 1");
+                    break;
+            }
             switch (ev.Target.Team)
             {
                 case Team.SCP:
@@ -173,36 +194,29 @@ namespace ToucanPlugin.Handlers
                             Tcp.Send($"stats {ev.Killer.UserId} killed939 1");
                             break;
                     }
-                    //Tcp.Send($"stats {ev.Target.UserId} scpdeaths 1");
+                    Tcp.Send($"stats {ev.Target.UserId} scpdeaths 1");
                     break;
                 case Team.MTF:
                     Tcp.Send($"stats {ev.Killer.UserId} mtfkilled 1");
-                    //Tcp.Send($"stats {ev.Target.UserId} mtfdeaths 1");
+                    Tcp.Send($"stats {ev.Target.UserId} mtfdeaths 1");
                     break;
                 case Team.CHI:
                     Tcp.Send($"stats {ev.Killer.UserId} chaoskilled 1");
-                    //Tcp.Send($"stats {ev.Target.UserId} chaosdeaths 1");
+                    Tcp.Send($"stats {ev.Target.UserId} chaosdeaths 1");
                     break;
                 case Team.RSC:
                     Tcp.Send($"stats {ev.Killer.UserId} scikilled 1");
-                    //Tcp.Send($"stats {ev.Target.UserId} scideaths 1");
+                    Tcp.Send($"stats {ev.Target.UserId} scideaths 1");
                     break;
                 case Team.CDP:
                     Tcp.Send($"stats {ev.Killer.UserId} dclasskilled 1");
-                    //Tcp.Send($"stats {ev.Target.UserId} dclassdeaths 1");
-                    break;
-                /*case Team.RIP:
-                    Tcp.Send($"stats {ev.Target.UserId} scikilled 1");
-                    break;*/
-                case Team.TUT:
-                    Tcp.Send($"stats {ev.Killer.UserId} scikilled 1");
-                    //Tcp.Send($"stats {ev.Target.UserId} scideaths 1");
+                    Tcp.Send($"stats {ev.Target.UserId} dclassdeaths 1");
                     break;
             }
             if (SerpentsHand.API.SerpentsHand.GetSHPlayers().Contains(ev.Target) || scp035.API.Scp035Data.GetScp035() == ev.Target)
             {
                 Tcp.Send($"stats {ev.Killer.UserId} scpkilled 1");
-                //Tcp.Send($"stats {ev.Target.UserId} scpdeaths 1");
+                Tcp.Send($"stats {ev.Target.UserId} scpdeaths 1");
             }
             if (ev.Killer.UserId == ev.Target.UserId) return;
             bool isff = false;
@@ -373,8 +387,8 @@ namespace ToucanPlugin.Handlers
         public enum GrenadeType
         {
             Grenade = 0,
-            SCP018 = 1,
-            FlashGrenade = 2,
+            FlashGrenade = 1,
+            SCP018 = 2,
         }
         public void OnThrowingGrenade(ThrowingGrenadeEventArgs ev)
         {

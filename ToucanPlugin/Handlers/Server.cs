@@ -84,13 +84,13 @@ namespace ToucanPlugin.Handlers
                 AcGame.NextGamemode = 0;
                 new GamemodeSelector();
             }
-            Tcp.Send("Waiting for players...");
+            Tcp.SendLog("Waiting for players...");
             Tcp.Send("bestbois");
         }
 
         public void OnRoundStarted()
         {
-            Tcp.Send("Round started");
+            Tcp.SendLog("Round started");
             Map.Broadcast(5, ToucanPlugin.Instance.Config.RoundStartMessage);
             if (rnd.Next(0, 3) == 0 && Exiled.API.Features.Player.List.ToList().Find(x => x.Role == RoleType.Scp173) == null)
                 Map.Doors.ToList().Find(x => x.DoorName == "173").locked = true;

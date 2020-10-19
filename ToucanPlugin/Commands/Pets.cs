@@ -19,9 +19,17 @@ namespace ToucanPlugin.Commands
         {
             if (Sender is PlayerCommandSender PCplayer)
             {
-                Tcp.Send($"petsList {PCplayer.SenderId}");
-                response = $"Getting Pets list...";
-                return true;
+                if (Tcp.IsConnected())
+                {
+                    Tcp.Send($"petsList {PCplayer.SenderId}");
+                    response = $"Getting Pets list...";
+                    return true;
+                }
+                else
+                {
+                    response = $"Sorry, we have lost connection to Toucan Servers. Try again in a few minutes.";
+                    return false;
+                }
             }
             else
             {

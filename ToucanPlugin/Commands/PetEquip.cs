@@ -20,47 +20,55 @@ namespace ToucanPlugin.Commands
         {
             if (Sender is PlayerCommandSender PCplayer)
             {
-                string[] args = arguments.Array;
-                if (args[1] != null)
+                if (Tcp.IsConnected())
                 {
-                    var isNumeric = int.TryParse(args[1], out int itemNum);
-                    if (isNumeric == true)
+                    string[] args = arguments.Array;
+                    if (args[1] != null)
                     {
-                        if (itemNum >= 1)
+                        var isNumeric = int.TryParse(args[1], out int itemNum);
+                        if (isNumeric == true)
                         {
-                            Tcp.Send($"pet {PCplayer.CCM.UserId} {arguments.Array[1]}");
-                            response = $"Equiping pet...";
-                            return true;
+                            if (itemNum >= 1)
+                            {
+                                Tcp.Send($"pet {PCplayer.CCM.UserId} {arguments.Array[1]}");
+                                response = $"Equiping pet...";
+                                return true;
+                            }
+                            else
+                            {
+                                response = "OK, maybe, if i (Mr.Creaper) am asked to make the pets into dinnerbone then maybe, one day, you can use this command.\nFor now dont.";
+                                return false;
+                            }
                         }
                         else
                         {
-                            response = "OK, maybe, if i (Mr.Creaper) am asked to make the pets into dinnerbone then maybe, one day, you can use this command.\nFor now dont.";
+                            response = $"A number would be nice...";
                             return false;
                         }
                     }
                     else
                     {
-                        response = $"A number would be nice...";
+                        Log.Info(Handlers.Player.petConnections[PCplayer.CCM.UserId]);
+                        response = $"No pet equiped!";
                         return false;
+                        /*if (Handlers.Player.petConnections[PCplayer.CCM.UserId]) // ???
+                        {
+                            Handlers.Player.petConnections.Remove(PCplayer.CCM.UserId);
+                            NPCS.Npc.Dictionary.ToList().Find(x => x.Value.GetInstanceID() == Handlers.Player.petConnections[PCplayer.CCM.UserId]).Value.Kill(false);
+                            response = $"Unequiping...";
+                            return true;
+                        }
+                        else
+                        {
+                            response = $"No pet equiped!";
+                            return false;
+                        }*/
                     }
                 }
                 else
                 {
-                    Log.Info(Handlers.Player.petConnections[PCplayer.CCM.UserId]);
-                    response = $"No pet equiped!";
+                    response = $"Sorry, we have lost connection to Toucan Servers. Try again in a few minutes.";
                     return false;
-                    /*if (Handlers.Player.petConnections[PCplayer.CCM.UserId]) // ???
-                    {
-                        Handlers.Player.petConnections.Remove(PCplayer.CCM.UserId);
-                        NPCS.Npc.Dictionary.ToList().Find(x => x.Value.GetInstanceID() == Handlers.Player.petConnections[PCplayer.CCM.UserId]).Value.Kill(false);
-                        response = $"Unequiping...";
-                        return true;
-                    }
-                    else
-                    {
-                        response = $"No pet equiped!";
-                        return false;
-                    }*/
                 }
             }
             else

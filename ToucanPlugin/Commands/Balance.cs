@@ -17,9 +17,17 @@ namespace ToucanPlugin.Commands
         {
             if (Sender is CommandSender player)
             {
-                tcp.Send($"balance {player.SenderId}");
-                response = $"Getting balance...";
-                return true;
+                if (Tcp.IsConnected())
+                {
+                    tcp.Send($"balance {player.SenderId}");
+                    response = $"Getting balance...";
+                    return true;
+                }
+                else
+                {
+                    response = $"Sorry, we have lost connection to Toucan Servers. Try again in a few minutes.";
+                    return false;
+                }
             }
             else
             {

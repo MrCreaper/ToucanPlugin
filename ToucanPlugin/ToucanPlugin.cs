@@ -73,7 +73,7 @@ namespace ToucanPlugin
                             //SendQueue();
                             try
                             {
-                                byte[] bytes = new byte[2000]; //256
+                                byte[] bytes = new byte[2222]; // 2000 256
                                 int i = S.Receive(bytes);
                                 MessageResponder mr = new MessageResponder();
                                 if (Encoding.UTF8.GetString(bytes) == "") S.Close();
@@ -217,6 +217,7 @@ namespace ToucanPlugin
         private ToucanPlugin()
         {
         }
+        static bool LastLights = false;
         public override void OnEnabled()
         {
             base.OnEnabled();
@@ -226,6 +227,21 @@ namespace ToucanPlugin
             Tcp.topicUpdateTimer = Stopwatch.StartNew();
             Tcp.topicUpdateTimer.Start();
             Task.Factory.StartNew(() => Tcp.Start());
+
+            try
+            {
+                if (SCP_575.Plugin.TimerOn != LastLights)
+                {
+                    Tcp.Send($"blackout {SCP_575.Plugin.TimerOn}");
+                    LastLights = SCP_575.Plugin.TimerOn;
+                }
+                else
+                    return;
+            }
+            catch
+            {
+                return;
+            }
         }
         public override void OnDisabled()
         {

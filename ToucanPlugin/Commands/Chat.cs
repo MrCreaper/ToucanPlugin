@@ -19,7 +19,8 @@ namespace ToucanPlugin.Commands
         {
             if (Sender is PlayerCommandSender player) //CommandSender
             {
-                String Message = "msg ";
+                if (Tcp.IsConnected()) {
+                    String Message = "msg ";
                 String msg = "";
                 for (int i = 0; i <= arguments.Array.Length; i++)
                 {
@@ -33,9 +34,15 @@ namespace ToucanPlugin.Commands
             }
             else
             {
+                response = $"Sorry, we have lost connection to Toucan Servers. Try again in a few minutes.";
+                return false;
+            }
+        }
+            else
+            {
                 response = "Sorry, cant do that.";
                 return true;
             }
-        }
+}
     }
 }
