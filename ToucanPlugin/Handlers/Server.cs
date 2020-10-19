@@ -92,7 +92,8 @@ namespace ToucanPlugin.Handlers
         {
             Tcp.SendLog("Round started");
             Map.Broadcast(5, ToucanPlugin.Instance.Config.RoundStartMessage);
-            if (rnd.Next(0, 3) == 0 && Exiled.API.Features.Player.List.ToList().Find(x => x.Role == RoleType.Scp173) == null)
+            Log.Info(Exiled.API.Features.Player.List.ToList().Find(x => x.Role == RoleType.Scp173).UserId);
+            if (rnd.Next(0, 3) == 0 && Exiled.API.Features.Player.List.ToList().Find(x => x.Role == RoleType.Scp173).UserId == null)
                 Map.Doors.ToList().Find(x => x.DoorName == "173").locked = true;
         }
 

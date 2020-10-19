@@ -43,7 +43,7 @@ namespace ToucanPlugin.Commands
                                                 {
                                                     if (itemNum < Store.StoreStock.Split('\n').Length)
                                                     {
-                                                        tcp.Send($"give {player.SenderId} {args[1]}");
+                                                        tcp.Send($"buy {player.SenderId} {args[1]}");
                                                         response = "Please standby...";
                                                         return true;
                                                     }

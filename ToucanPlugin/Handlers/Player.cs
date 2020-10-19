@@ -28,8 +28,6 @@ namespace ToucanPlugin.Handlers
         }
         public void OnJoin(JoinedEventArgs ev)
         {
-            if (Exiled.API.Features.Player.List.Count() == 0 && Round.IsStarted)
-                Round.Restart();
             if (ToucanPlugin.Instance.Config.ReplaceAdvertismentNames)
             {
                 List<string> PlayerNameSplit = new List<string>(ev.Player.Nickname.Split(' '));
@@ -77,6 +75,8 @@ namespace ToucanPlugin.Handlers
             string message = ToucanPlugin.Instance.Config.LeftMessage.Replace("{player}", ev.Player.Nickname);
             Map.Broadcast(2, message);
             Tcp.SendLog($"**{ev.Player.Nickname} ({ev.Player.UserId}) Left [{Exiled.API.Features.Player.List.Count() - 1}/20]**");
+            if (Exiled.API.Features.Player.List.Count() - 1 == 0 && Round.IsStarted)
+                Round.Restart();
         }
         public void LonelyRound()
         {
@@ -226,7 +226,7 @@ namespace ToucanPlugin.Handlers
             if (ev.Target.Team == Team.SCP || scp035.API.Scp035Data.GetScp035() == ev.Killer)
                 isScp = true;
             Tcp.Send($"died {isff} {ev.Killer.UserId} {ev.Target.UserId} {ev.HitInformations.Tool} {isScp}");
-            Tcp.SendLog($"{ev.Target.Nickname} ({ev.Target.UserId}) killed by {ev.Killer.Nickname} ({ev.Killer.UserId}) whit {ev.HitInformations.Tool}");
+            Tcp.SendLog($"{ev.Target.Nickname} ({ev.Target.UserId}) killed by {ev.Killer.Nickname} ({ev.Killer.UserId}) whit {(ItemType)ev.HitInformations.Tool}");
 
             //Event bullshit
             switch (AcGame.RoundGamemode)
