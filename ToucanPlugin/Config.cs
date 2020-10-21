@@ -17,9 +17,7 @@ namespace ToucanPlugin
         [Description("Sets the for when someone joins the server. {players} will be replaced with the players name")]
         public string JoinedMessage { get; set; } = "{player} has joined the server.";
         [Description("Sets the for when someone leaves the server. {players} will be replaced with the players name")]
-
         public string LeftMessage { get; set; } = "{player} has left the server.";
-
         [Description("Sets the message when the round starts")]
         public string RoundStartMessage { get; set; } = "";
         [Description("Reflect team damage")]
@@ -95,7 +93,7 @@ namespace ToucanPlugin
                 SquadMaxSize = 0,
                 MaxSCPKills = -1,
                 MinSCPKills = 16,
-                CassieAnnc =$"the u i u HasEntered"
+                CassieAnnc =$"RED RIGHT HAND HasEntered . be advised"
             },
         };
         public List<Handlers.CustomPersonelSpawns> CustomPersonel { get; set; } = new List<Handlers.CustomPersonelSpawns>

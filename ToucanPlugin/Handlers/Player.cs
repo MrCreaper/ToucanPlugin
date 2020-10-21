@@ -2,6 +2,7 @@
 using Exiled.API.Extensions;
 using Exiled.API.Features;
 using Exiled.Events.EventArgs;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -68,7 +69,7 @@ namespace ToucanPlugin.Handlers
             }
             if (Exiled.API.Features.Player.List.Count() == 1 && !Round.IsStarted && ToucanPlugin.Instance.Config.LonelyRound)
                 Task.Factory.StartNew(() => LonelyRound());
-            Tcp.Send($"list {GeneratePlayerListJson()}");
+            UpdatePlayerList();
         }
         public void OnLeft(LeftEventArgs ev)
         {
@@ -77,6 +78,7 @@ namespace ToucanPlugin.Handlers
             Tcp.SendLog($"**{ev.Player.Nickname} ({ev.Player.UserId}) Left [{Exiled.API.Features.Player.List.Count() - 1}/20]**");
             if (Exiled.API.Features.Player.List.Count() - 1 == 0 && Round.IsStarted)
                 Round.Restart();
+            UpdatePlayerList();
         }
         public void LonelyRound()
         {
@@ -85,20 +87,27 @@ namespace ToucanPlugin.Handlers
                 if (Exiled.API.Features.Player.List.Count() == 1 && !Round.IsStarted && !Round.IsLobbyLocked)
                 {
                     if (i == 59) Round.Start();
-                    if (i == 30) Map.Broadcast(5, "Automatic round Starting in Tminus");
+                    if (i == 30) Map.Broadcast(5, "Automatic round Starting in...");
                     if (i >= 35) Map.Broadcast(1, $"{60 - i}");
                     if (i == 59) Map.Broadcast(5, $"Starting a really lonely round..!");
-                    Thread.Sleep(1500);
+                    Thread.Sleep(1200);
                 }
                 else return;
             }
         }
-        private string GeneratePlayerListJson()
+        private void UpdatePlayerList()
         {
             string playerList = "[";
-            Exiled.API.Features.Player.List.ToList().ForEach(p => playerList += $"{{id:{p.Id},name:'{p.Nickname}',userid:'{p.UserId}'}},");
+            for (int i = 0; i <= Exiled.API.Features.Player.List.ToList().Count; i++)
+            {
+                Exiled.API.Features.Player p = Exiled.API.Features.Player.List.ToList()[i];
+                string Coma = "";
+                if (Exiled.API.Features.Player.List.ToList()[i + 1] == null)
+                    Coma = ",";
+                playerList += $"{{\"id\":{p.Id},\"name\":\"{p.Nickname}\",\"userid\":\"{p.UserId}\"}}{Coma}"; 
+            }
             playerList += "]";
-            return playerList;
+            Tcp.Send($"list {playerList}");
         }
         public void OnEscape(EscapingEventArgs ev)
         {
@@ -338,14 +347,10 @@ namespace ToucanPlugin.Handlers
                     ev.Door.isOpen = true;
             }
         }
-        public void OnBanned(BannedEventArgs ev)
-        {
+        public void OnBanned(BannedEventArgs ev) =>
             Tcp.SendLog($"**{ev.Details.Issuer} ({ev.Details.OriginalName}) banned player {ev.Player.Nickname} ({ev.Player.UserId}). Ban duration: {ev.Details.Expires}. Reason: {ev.Details.Reason}.**");
-        }
-        public void OnKicked(KickedEventArgs ev)
-        {
+        public void OnKicked(KickedEventArgs ev) =>
             Tcp.SendLog($"**{ev.Player.Nickname} ({ev.Player.UserId}) has been kicked. Reason: {ev.Reason}**");
-        }
         public void OnMedicalItemUsed(UsedMedicalItemEventArgs ev)
         {
             if (ev.Item == ItemType.SCP207) Tcp.Send($"stats {ev.Player.UserId} cokedrunk 1");
@@ -443,6 +448,13 @@ namespace ToucanPlugin.Handlers
             if (SerpentsHand.API.SerpentsHand.GetSHPlayers().Contains(ev.Player)) PlayerTeam = Team.SCP;
             if (scp035.API.Scp035Data.GetScp035() == ev.Player) PlayerTeam = Team.SCP;
             Tcp.Send($"vc {ev.Player.UserId} {PlayerTeam}");
+        }
+        public void OnTriggeringTesla(TriggeringTeslaEventArgs ev)
+        {
+            if (ev.Player.IsNTF)
+                ev.IsTriggerable = false;
+            if (ev.Player.Role == RoleType.Scp0492 && ev.IsInHurtingRange)
+                ev.Player.Position = new Vector3(ev.Player.Position.x + 5, ev.Player.Position.y, ev.Player.Position.z);
         }
     }
 }

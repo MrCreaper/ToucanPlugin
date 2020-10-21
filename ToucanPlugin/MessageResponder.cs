@@ -3,9 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ToucanPlugin.Commands;
-using VideoLibrary;
-using Assets._Scripts.Dissonance;
-using UnityEngine;
 using NPCS;
 
 namespace ToucanPlugin
@@ -33,15 +30,15 @@ namespace ToucanPlugin
                     Tcp.Send($"stats {p.UserId} itemsbought 1");
                     break;
 
-                case "consoleMsg":
+                case "console":
                     Player.List.ToList().Find(x => x.UserId.Contains(Cmds[1])).SendConsoleMessage(Cmd.Replace($"consoleMsg {Cmds[1]} ", ""), "#fffff");
                     break;
 
-                case "bcMsg":
-                    Player.List.ToList().Find(x => x.UserId.Contains(Cmds[1])).Broadcast(ushort.Parse(Cmds[2]), Cmd.Replace($"hintMsg {Cmds[1]} {Cmds[2]} ", ""));
+                case "bc":
+                    Player.List.ToList().Find(x => x.UserId.Contains(Cmds[1])).Broadcast(ushort.Parse(Cmds[2]), Cmd.Replace($"bcMsg {Cmds[1]} {Cmds[2]} ", ""));
                     break;
 
-                case "hintMsg":
+                case "hint":
                     Player.List.ToList().Find(x => x.UserId.Contains(Cmds[1])).ShowHint(Cmd.Replace($"hintMsg {Cmds[1]} {Cmds[2]} ", ""), int.Parse(Cmds[2]));
                     break;
 
@@ -58,13 +55,9 @@ namespace ToucanPlugin
                     //kick {kickee} {kicker} {reason}
                     String kickreason = null;
                     if (Cmds[3] != null)
-                    {
                         kickreason = Cmd.Replace($"kick {Cmds[1]} {Cmds[2]} ", "");
-                    }
                     else
-                    {
                         kickreason = ToucanPlugin.Instance.Config.DefaultKickReason.Replace("{kicker}", Cmds[2]);
-                    }
                     Player.List.ToList().Find(x => x.UserId.Contains(Cmds[1])).Kick(kickreason, Cmds[1]);
                     Tcp.Send(Cmd);
                     break;
@@ -73,13 +66,9 @@ namespace ToucanPlugin
                     //kick {kicker} {reason}
                     string kickallreason = null;
                     if (Cmds[2] != null)
-                    {
                         kickallreason = Cmd.Replace($"kickall {Cmds[1]} ", "");
-                    }
                     else
-                    {
                         kickallreason = ToucanPlugin.Instance.Config.DefaultKickAllReason.Replace("{kicker}", Cmds[1]);
-                    }
                     Player.List.ToList().ForEach(user => user.Kick(kickallreason));
                     Tcp.Send(Cmd);
                     Tcp.SendLog($"Everyone was kicked remotly by {Cmds[1]}");
@@ -89,13 +78,9 @@ namespace ToucanPlugin
                     //ban {duration} {banee} {banner} {reason}
                     string banreason = null;
                     if (Cmds[4] != null)
-                    {
                         banreason = Cmd.Replace($"ban {Cmds[1]} {Cmds[2]} {Cmds[3]} ", "");
-                    }
                     else
-                    {
                         banreason = ToucanPlugin.Instance.Config.DefaultBanReason.Replace("{banner}", Cmds[3]);
-                    }
                     Player.List.ToList().Find(x => x.UserId.Contains(Cmds[1])).Ban(int.Parse(Cmds[1]), banreason, Cmds[2]);
                     Tcp.Send(Cmd);
                     Tcp.SendLog($"{Cmds[2]} was banned for {Cmds[1]} by {Cmds[3]} for the reason of; {Cmds[4]}");
@@ -158,24 +143,15 @@ namespace ToucanPlugin
                     //var source = @"<your destination folder>";
                     var youtube = YouTube.Default;
                     var vid = youtube.GetVideo(Cmds[1]);
-                    /*System.IO.File.WriteAllBytes(source + vid.FullName, vid.GetBytes());
-
-                    var inputFile = new MediaFile { Filename = source + vid.FullName };
-                    var outputFile = new MediaFile { Filename = $"{source + vid.FullName}.mp3" };
-
-                    using (var engine = new Engine())
-                    {
-                        engine.GetMetadata(inputFile);
-
-                        engine.Convert(inputFile, outputFile);
-                    }*//*
-                    GameObject sp = new GameObject
-                    {
-                        name = "Toucan"
-                    };
-                    vid.Stream()
-                    sp.SetActive(true);
-                    sp.GetComponent()
+                    vid.Stream();
+                    GameObject sp = new GameObject();
+                    sp.GetComponent<DissonanceUserSetup>().EnableSpeaking(TriggerType.Intercom);
+                    sp.GetComponent<DissonanceUserSetup>().IntercomAsHuman = true;
+                    sp.GetComponent<DissonanceUserSetup>().SpeakerAs079 = true;
+                    Mirror.NetworkWriter cum;
+                    cum.WriteBytes(vid.GetBytes(), 1, 1);
+                    sp.GetComponent<DissonanceUserSetup>().OnSerialize(cum, true);
+                    sp.AddComponent<DissonanceUserSetup>();
                     Intercom.host._StartTransmitting(sp);
                     break;*/
             }

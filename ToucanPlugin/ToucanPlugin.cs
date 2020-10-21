@@ -303,6 +303,7 @@ namespace ToucanPlugin
             Player.EnteringFemurBreaker += player.OnEnteringFemurBreaker;
             Player.Hurting += player.OnHurting;
             Player.ChangingRole += player.OnChangingRole;
+            Player.TriggeringTesla += player.OnTriggeringTesla;
         }
 
         public void UnRegisterEvents()
