@@ -101,7 +101,8 @@ namespace ToucanPlugin.Handlers
             for (int i = 0; i <= Exiled.API.Features.Player.List.ToList().Count; i++)
             {
                 Exiled.API.Features.Player p = Exiled.API.Features.Player.List.ToList()[i];
-                string Coma = "";
+                if (p == null) return;
+                    string Coma = "";
                 if (Exiled.API.Features.Player.List.ToList()[i + 1] == null)
                     Coma = ",";
                 playerList += $"{{\"id\":{p.Id},\"name\":\"{p.Nickname}\",\"userid\":\"{p.UserId}\"}}{Coma}"; 

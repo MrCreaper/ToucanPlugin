@@ -138,21 +138,9 @@ namespace ToucanPlugin
         }
         public void Send(String data) =>
             messageQueue.Add(data);
-        /*public void SendQueue() //Dosent Work
-        {
-            if (!IsConnected()) return;
-            if (topicUpdateTimer.ElapsedMilliseconds >= 10000)
-            {
-                topicUpdateTimer.Reset();
-                topicUpdateTimer.Start();
-            }
-            String EpicData = null;
-            for (int i = 0; i < messageQueue.Count; i++)
-                    EpicData += $"{messageQueue[i]} ||| ";
-            SendShit(EpicData);
-            messageQueue.Clear();
-            EpicData = null;
-        }*/
+        public void SendLog(string log) =>
+    Send($"log [{DateTime.Now.ToString("h:mm:ss tt")}] {log}");
+
         public void SendQueue()
         {
             if (!IsConnected()) return;
@@ -191,11 +179,6 @@ namespace ToucanPlugin
                     Log.Error($"Could not connect: {e}");
                 }
             }
-        }
-        public void SendLog(string log)
-        {
-            string time = DateTime.Now.ToString("h:mm:ss tt");
-            Send($"log [{time}] {log}");
         }
     }
 
@@ -329,6 +312,7 @@ namespace ToucanPlugin
             Player.EnteringFemurBreaker -= player.OnEnteringFemurBreaker;
             Player.Hurting -= player.OnHurting;
             Player.ChangingRole -= player.OnChangingRole;
+            Player.TriggeringTesla -= player.OnTriggeringTesla;
             player = null;
             server = null;
         }
