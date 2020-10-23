@@ -19,15 +19,15 @@ namespace ToucanPlugin.Commands
 
         public bool Execute(ArraySegment<string> arguments, ICommandSender Sender, out string response)
         {
-            if (Sender is PlayerCommandSender PCplayer)
+            if (Sender is CommandSender PCplayer)
             {
-                Player p = Player.List.ToList().Find(x => x.UserId == PCplayer.CCM.UserId);
+                Player p = Player.List.ToList().Find(x => x.Sender == PCplayer);
                 if (mr.ChaosHacker.Contains(p))
                 {
                     if (p.AdrenalineHealth >= 60)
                     {
                         Intercom.host.remainingCooldown =+ 35;
-                        Intercom.host._intercomText = $"Lol u ben haxed\n-CI haxer men ({PCplayer.Nickname})";
+                        Intercom.host.Network_intercomText = $"Lol u ben haxed\n-CI haxer men ({PCplayer.Nickname})";
                         response = $"Hacking the intercom...";
                         return false;
                     }

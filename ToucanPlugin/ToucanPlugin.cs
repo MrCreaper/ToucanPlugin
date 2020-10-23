@@ -291,6 +291,9 @@ namespace ToucanPlugin
 
         public void UnRegisterEvents()
         {
+            player = null;
+            server = null;
+
             Server.WaitingForPlayers += server.OnWaitingForPlayers;
             Server.RoundStarted += server.OnRoundStarted;
             Server.RestartingRound += server.OnRestartingRound;
@@ -313,8 +316,6 @@ namespace ToucanPlugin
             Player.Hurting -= player.OnHurting;
             Player.ChangingRole -= player.OnChangingRole;
             Player.TriggeringTesla -= player.OnTriggeringTesla;
-            player = null;
-            server = null;
         }
     }
 }

@@ -21,9 +21,10 @@ namespace ToucanPlugin.Commands
 
         public bool Execute(ArraySegment<string> arguments, ICommandSender Sender, out string response)
         {
-            if (Sender is PlayerCommandSender PCplayer)
+            if (Sender is CommandSender PCplayer)
             {
-                if (PCplayer.CCM.CurClass != RoleType.Spectator || PCplayer.CCM.CurClass != RoleType.Tutorial)
+                Player p = Player.List.ToList().Find(x => x.Sender == PCplayer);
+                if (p.Role != RoleType.Spectator || p.Role != RoleType.Tutorial)
                 {
                     response = $"Can only use this command while being a dead";
                     return true;
@@ -33,8 +34,8 @@ namespace ToucanPlugin.Commands
                     if (!TUTSpecList.Contains(PCplayer.SenderId))
                     {
                         TUTSpecList.Add(PCplayer.SenderId);
-                        PCplayer.CCM.SetClassID(RoleType.Tutorial);
-                        PCplayer.CCM.NoclipEnabled = true;
+                        p.SetRole(RoleType.Tutorial);
+                        p.NoClipEnabled = true;
                         for (int i = 0; i <= 8; i++)
                             Player.List.ToList().Find(x => x.Id.ToString() == PCplayer.SenderId).Inventory.AddNewItem(ItemType.Coin);
                         Player.List.ToList().Find(x => x.Id.ToString() == PCplayer.SenderId).ReferenceHub.playerEffectsController.EnableEffect<Scp268>();
@@ -45,8 +46,8 @@ namespace ToucanPlugin.Commands
                     else
                     {
                         TUTSpecList.Remove(PCplayer.SenderId);
-                        PCplayer.CCM.SetClassID(RoleType.Spectator);
-                        PCplayer.CCM.NoclipEnabled = false;
+                        p.SetRole(RoleType.Spectator);
+                        p.NoClipEnabled = false;
                         Player.List.ToList().Find(x => x.Id.ToString() == PCplayer.SenderId).ReferenceHub.playerEffectsController.DisableEffect<Scp268>();
                         Player.List.ToList().Find(x => x.Id.ToString() == PCplayer.SenderId).ReferenceHub.playerEffectsController.DisableEffect<Amnesia>();
                         response = $"Back to spectating.";

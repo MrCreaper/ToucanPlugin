@@ -2,6 +2,8 @@
 using GameCore;
 using RemoteAdmin;
 using System;
+using Exiled.API.Features;
+using System.Linq;
 
 namespace ToucanPlugin.Commands
 {
@@ -16,14 +18,15 @@ namespace ToucanPlugin.Commands
 
         public bool Execute(ArraySegment<string> arguments, ICommandSender Sender, out string response)
         {
-            if (Sender is PlayerCommandSender PCplayer)
+            if (Sender is CommandSender PCplayer)
             {
+                Player p = Player.List.ToList().Find(x => x.Sender == PCplayer);
                 response = $"Hello {PCplayer.Nickname}";
                 return false;
             }
             else
             {
-                if (Sender is ConsoleCommandSender CCplayer)
+                if (Sender is CommandSender CCplayer)
                 {
                     response = $"hello {CCplayer.Nickname}";
                     return false;

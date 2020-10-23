@@ -19,15 +19,16 @@ namespace ToucanPlugin.Commands
 
         public bool Execute(ArraySegment<string> arguments, ICommandSender Sender, out string response)
         {
-            if (Sender is PlayerCommandSender player) //CommandSender
+            if (Sender is CommandSender PCplayer)
             {
+                Player p = Player.List.ToList().Find(x => x.Sender == PCplayer);
                 string[] args = arguments.Array;
                 if (args[1] != null)
                 {
                     if (args[1].Contains("#"))
                     {
                         response = "Connecting...";
-                        tcp.Send($"link {player.SenderId} {args[1]}");
+                        tcp.Send($"link {p.Sender.SenderId} {args[1]}");
                         return true;
                     }
                     else

@@ -17,7 +17,7 @@ namespace ToucanPlugin.Commands
 
         public bool Execute(ArraySegment<string> arguments, ICommandSender Sender, out string response)
         {
-            if (Sender is PlayerCommandSender player) //CommandSender
+            if (Sender is CommandSender player) //CommandSender
             {
                 if (Tcp.IsConnected()) {
                     String Message = "msg ";

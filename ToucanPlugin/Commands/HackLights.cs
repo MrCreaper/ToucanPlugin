@@ -10,7 +10,7 @@ namespace ToucanPlugin.Commands
     [CommandHandler(typeof(ClientCommandHandler))]
     class HackLights : ICommand
     {
-        MessageResponder mr = new MessageResponder();
+        readonly MessageResponder mr = new MessageResponder();
         public string Command { get; } = "HackLight";
 
         public string[] Aliases { get; } = { "HackLights", "HackL", "HaL" };
@@ -19,9 +19,9 @@ namespace ToucanPlugin.Commands
 
         public bool Execute(ArraySegment<string> arguments, ICommandSender Sender, out string response)
         {
-            if (Sender is PlayerCommandSender PCplayer)
+            if (Sender is CommandSender PCplayer)
             {
-                Player p = Player.List.ToList().Find(x => x.UserId == PCplayer.CCM.UserId);
+                Player p = Player.List.ToList().Find(x => x.Sender == PCplayer);
                 if (mr.ChaosHacker.Contains(p))
                 {
                     if (p.AdrenalineHealth >= 75)

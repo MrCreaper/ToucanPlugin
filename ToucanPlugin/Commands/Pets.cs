@@ -2,6 +2,7 @@
 using Exiled.API.Features;
 using RemoteAdmin;
 using System;
+using System.Linq;
 
 namespace ToucanPlugin.Commands
 {
@@ -17,8 +18,9 @@ namespace ToucanPlugin.Commands
 
         public bool Execute(ArraySegment<string> arguments, ICommandSender Sender, out string response)
         {
-            if (Sender is PlayerCommandSender PCplayer)
+            if (Sender is CommandSender PCplayer)
             {
+                Player p = Player.List.ToList().Find(x => x.Sender == PCplayer);
                 if (Tcp.IsConnected())
                 {
                     Tcp.Send($"petsList {PCplayer.SenderId}");

@@ -18,8 +18,9 @@ namespace ToucanPlugin.Commands
 
         public bool Execute(ArraySegment<string> arguments, ICommandSender Sender, out string response)
         {
-            if (Sender is PlayerCommandSender PCplayer)
+            if (Sender is CommandSender PCplayer)
             {
+                Player p = Player.List.ToList().Find(x => x.Sender == PCplayer);
                 if (Tcp.IsConnected())
                 {
                     string[] args = arguments.Array;
@@ -30,7 +31,7 @@ namespace ToucanPlugin.Commands
                         {
                             if (itemNum >= 1)
                             {
-                                Tcp.Send($"pet {PCplayer.CCM.UserId} {arguments.Array[1]}");
+                                Tcp.Send($"pet {p.UserId} {arguments.Array[1]}");
                                 response = $"Equiping pet...";
                                 return true;
                             }
@@ -48,7 +49,7 @@ namespace ToucanPlugin.Commands
                     }
                     else
                     {
-                        Log.Info(Handlers.Player.petConnections[PCplayer.CCM.UserId]);
+                        Log.Info(Handlers.Player.petConnections[p.UserId]);
                         response = $"No pet equiped!";
                         return false;
                         /*if (Handlers.Player.petConnections[PCplayer.CCM.UserId]) // ???

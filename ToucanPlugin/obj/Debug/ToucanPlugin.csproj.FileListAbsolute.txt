@@ -22,7 +22,6 @@ C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\obj\Debug\T
 C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\obj\Debug\ToucanPlugin.csproj.CopyComplete
 C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\obj\Debug\ToucanPlugin.dll
 C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\obj\Debug\ToucanPlugin.pdb
-C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Debug\Assembly-CSharp_publicized.dll
 C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Debug\Exiled.Updater.dll
 C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Debug\libvideo.dll
 C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Debug\MediaToolkit.dll
@@ -32,3 +31,4 @@ C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Debug\A
 C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Debug\NPCS.dll
 C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\obj\Debug\ToucanPlugin.csprojAssemblyReference.cache
 C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Debug\SCP_575-3.5.1.dll
+C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Debug\Assembly-CSharp.dll

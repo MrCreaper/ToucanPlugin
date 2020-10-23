@@ -1,9 +1,9 @@
 ﻿using HarmonyLib;
 
-namespace ToucanPlugin.Patches
+/*namespace ToucanPlugin.Patches
 {
     [HarmonyPatch(typeof(Radio))]
-    [HarmonyPatch(nameof(Radio.UseBattery))]
+    [HarmonyPatch(nameof(Radio.Us))]
     internal static class RadioPatch
     {
         static bool Prefix(Radio __instance)
@@ -20,4 +20,4 @@ namespace ToucanPlugin.Patches
             }
         }
     }
-}
+}*/

@@ -19,9 +19,10 @@ namespace ToucanPlugin.Commands
 
         public bool Execute(ArraySegment<string> arguments, ICommandSender Sender, out string response)
         {
-            if (Sender is PlayerCommandSender PCplayer)
+            if (Sender is CommandSender PCplayer)
             {
-                if (PCplayer.CCM.IsAlive)
+                Player p = Player.List.ToList().Find(x => x.Sender == PCplayer);
+                if (p.IsAlive)
                 {
                     bool bodyClose = false;
                     AmongUs.DeathCords.ForEach(cords => {
@@ -29,7 +30,7 @@ namespace ToucanPlugin.Commands
                             bodyClose = true;
                             });
                     if (bodyClose) {
-                        AmongUs.ReportBody(PCplayer.CCM.UserId);
+                        AmongUs.ReportBody(p.UserId);
                         response = "Reporting!";
                         return false;
                     }

@@ -27,7 +27,7 @@ namespace ToucanPlugin.Commands
                         {
                             Player.List.ToList().ForEach(p =>
                             {
-                               p.GrenadeManager.CmdThrowGrenade(p.Id, bool.Parse(arguments.Array[2]), int.Parse(arguments.Array[3]));
+                               p.GrenadeManager.CallCmdThrowGrenade(p.Id, bool.Parse(arguments.Array[2]), int.Parse(arguments.Array[3]));
                             });
                             response = "Grenaded everyone";
                             return true;
@@ -40,14 +40,14 @@ namespace ToucanPlugin.Commands
                                 Player.List.ToList().ForEach(user =>
                                 {
                                     if (usersToSize.Contains(user.Id.ToString()))
-                                        user.GrenadeManager.CmdThrowGrenade(user.Id, bool.Parse(arguments.Array[2]), int.Parse(arguments.Array[3]));
+                                        user.GrenadeManager.CallCmdThrowGrenade(user.Id, bool.Parse(arguments.Array[2]), int.Parse(arguments.Array[3]));
                                 });
                                 response = "Grenaded";
                                 return true;
                             }
                             else
                             {
-                                Player.List.ToList().Find(x => x.Id.ToString().Contains(arguments.Array[1])).GrenadeManager.CmdThrowGrenade(int.Parse(arguments.Array[1]), bool.Parse(arguments.Array[2]), int.Parse(arguments.Array[3]));
+                                Player.List.ToList().Find(x => x.Id.ToString().Contains(arguments.Array[1])).GrenadeManager.CallCmdThrowGrenade(int.Parse(arguments.Array[1]), bool.Parse(arguments.Array[2]), int.Parse(arguments.Array[3]));
                                 response = "Grenaded";
                                 return true;
                             }

@@ -1,13 +1,13 @@
 ﻿using HarmonyLib;
 using ToucanPlugin.Commands;
 
-namespace ToucanPlugin.Patches
+/*namespace ToucanPlugin.Patches
 {
     [HarmonyPatch(typeof(Radio))]
     [HarmonyPatch(nameof(Radio.Start))]
     internal static class RadioHackPatch
     {
-        static bool Prefix(/*Radio __instance*/)
+        static bool Prefix(/*Radio __instance*//*)
         {
             if (HackRadio.radioHacked)
             {
@@ -20,4 +20,4 @@ namespace ToucanPlugin.Patches
             }
         }
     }
-}
+}*/

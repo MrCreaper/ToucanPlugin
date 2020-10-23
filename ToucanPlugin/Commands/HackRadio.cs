@@ -11,9 +11,9 @@ namespace ToucanPlugin.Commands
     [CommandHandler(typeof(ClientCommandHandler))]
     class HackRadio : ICommand
     {
-        MessageResponder mr = new MessageResponder();
+        readonly MessageResponder mr = new MessageResponder();
 
-        public static bool radioHacked { get; set; } = false;
+        public static bool RadioHacked { get; set; } = false;
         public string Command { get; } = "HackRadio";
 
         public string[] Aliases { get; } = { "HackR", "HaR" };
@@ -22,18 +22,18 @@ namespace ToucanPlugin.Commands
 
         public bool Execute(ArraySegment<string> arguments, ICommandSender Sender, out string response)
         {
-            if (Sender is PlayerCommandSender PCplayer)
+            if (Sender is CommandSender PCplayer)
             {
-                Player p = Player.List.ToList().Find(x => x.UserId == PCplayer.CCM.UserId);
+                Player p = Player.List.ToList().Find(x => x.Sender == PCplayer);
                 if (mr.ChaosHacker.Contains(p))
                 {
                     if (p.AdrenalineHealth >= 65)
                     {
                         Task.Factory.StartNew(() =>
                         {
-                            radioHacked = true;
+                            RadioHacked = true;
                             Task.Delay(25000); // 25s
-                            radioHacked = false;
+                            RadioHacked = false;
                         });
                         response = $"Hacking the radio...";
                         return false;

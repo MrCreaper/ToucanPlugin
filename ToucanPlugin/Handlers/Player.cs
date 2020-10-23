@@ -114,13 +114,9 @@ namespace ToucanPlugin.Handlers
         {
             bool classBool;
             if (ev.Player.Role == RoleType.ClassD)
-            {
                 classBool = false;
-            }
             else //is scientist
-            {
                 classBool = true;
-            }
             if (classBool == true) Tcp.Send($"stats {ev.Player.UserId} descapses 1");
             else
                 Tcp.Send($"stats {ev.Player.UserId} sescapses 1");

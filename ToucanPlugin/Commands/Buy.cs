@@ -25,7 +25,7 @@ namespace ToucanPlugin.Commands
                 {
                     if (ToucanPlugin.Instance.Config.CanBuy)
                     {
-                        if (Sender is PlayerCommandSender player) //CommandSender
+                        if (Sender is CommandSender player) //CommandSender
                         {
                             if (Round.IsStarted)
                             {
