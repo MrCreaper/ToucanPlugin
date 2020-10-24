@@ -258,6 +258,7 @@
     <Compile Include="Commands\ReflectControl.cs" />
     <Compile Include="Commands\Report.cs" />
     <Compile Include="Commands\Scale.cs" />
+    <Compile Include="Commands\SpawnEffect.cs" />
     <Compile Include="Commands\SpecMode.cs" />
     <Compile Include="Commands\StartDec.cs" />
     <Compile Include="Commands\Store.cs" />

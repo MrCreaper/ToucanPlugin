@@ -103,7 +103,7 @@ namespace ToucanPlugin.Handlers
                 Exiled.API.Features.Player p = Exiled.API.Features.Player.List.ToList()[i];
                 if (p == null) return;
                     string Coma = "";
-                if (Exiled.API.Features.Player.List.ToList()[i + 1] == null)
+                if (Exiled.API.Features.Player.List.ToList().Count + 1 == i)
                     Coma = ",";
                 playerList += $"{{\"id\":{p.Id},\"name\":\"{p.Nickname}\",\"userid\":\"{p.UserId}\"}}{Coma}"; 
             }
@@ -232,7 +232,7 @@ namespace ToucanPlugin.Handlers
             if (ev.Target.Team == Team.SCP || scp035.API.Scp035Data.GetScp035() == ev.Killer)
                 isScp = true;
             Tcp.Send($"died {isff} {ev.Killer.UserId} {ev.Target.UserId} {ev.HitInformations.Tool} {isScp}");
-            Tcp.SendLog($"{ev.Target.Nickname} ({ev.Target.UserId}) killed by {ev.Killer.Nickname} ({ev.Killer.UserId}) whit {(ItemType)ev.HitInformations.Tool}");
+            Tcp.SendLog($"{ev.Target.Nickname} ({ev.Target.UserId}) killed by {ev.Killer.Nickname} ({ev.Killer.UserId}) whit {ev.HitInformations.Tool}");
 
             //Event bullshit
             switch (AcGame.RoundGamemode)
@@ -241,8 +241,8 @@ namespace ToucanPlugin.Handlers
                     ev.Target.SetRole(RoleType.Scp173);
                     break;
             }
-            if (ev.Target.Role == RoleType.Scp173 && (ItemType)ev.HitInformations.Tool == ItemType.MicroHID)
-                Tcp.Send($"stats {ev.Killer.UserId} microedNuts 1");
+            /*if (ev.Target.Role == RoleType.Scp173 && ev.HitInformations)
+                Tcp.Send($"stats {ev.Killer.UserId} microedNuts 1");*/
         }
         public void OnSpawned(SpawningEventArgs ev)
         {

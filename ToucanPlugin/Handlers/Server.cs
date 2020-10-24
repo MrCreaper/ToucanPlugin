@@ -156,7 +156,7 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
             Vector3 MTFSpawnLocaltion = new Vector3(0, 0, 0);
             ToucanPlugin.Instance.Config.CustomSquads.ForEach(s =>
             {
-                if (s.Team == ev.NextKnownTeam && rnd.Next(s.ReplaceChance, 100) <= s.ReplaceChance && s.MaxSCPKills >= Player.SCPKills && s.MinSCPKills <= Player.SCPKills) return;
+                if (s.Team != ev.NextKnownTeam && rnd.Next(s.ReplaceChance, 100) > s.ReplaceChance && s.MaxSCPKills < Player.SCPKills && s.MinSCPKills > Player.SCPKills) return;
                 playerList.ForEach(p =>
                 {
                     p.SetRole(s.Role);
