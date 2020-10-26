@@ -1,10 +1,7 @@
-﻿using Exiled.API;
-using Exiled.API.Enums;
+﻿using Exiled.API.Enums;
 using Exiled.API.Extensions;
 using Exiled.API.Features;
 using Exiled.Events.EventArgs;
-using Grenades;
-using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -80,9 +77,9 @@ namespace ToucanPlugin.Handlers
             Tcp.SendLog($"**{ev.Player.Nickname} ({ev.Player.UserId}) Left [{Exiled.API.Features.Player.List.Count() - 1}/20]**");
             if (Exiled.API.Features.Player.List.Count() - 1 == 0 && Round.IsStarted)
                 Round.Restart();
-            UpdatePlayerList();
+            UpdatePlayerList(ev.Player);
         }
-        public void LonelyRound()
+        private void LonelyRound()
         {
             for (int i = 0; i < 60; i++)
             {
@@ -97,13 +94,14 @@ namespace ToucanPlugin.Handlers
                 else return;
             }
         }
-        private void UpdatePlayerList()
+        public void UpdatePlayerList(Exiled.API.Features.Player Exclude = null)
         {
             string playerList = "[";
             for (int i = 0; i <= Exiled.API.Features.Player.List.ToList().Count - 1; i++)
             {
                 Exiled.API.Features.Player p = Exiled.API.Features.Player.List.ToList()[i];
                 if (p == null) return;
+                if (Exclude.UserId == p.UserId) return;
                 string Coma = ",";
                 if (Exiled.API.Features.Player.List.ToList().Count - 1 == i)
                     Coma = "";
@@ -136,6 +134,7 @@ namespace ToucanPlugin.Handlers
             }
             Tcp.Send(escapeMsg);
             Tcp.SendLog($"**{ev.Player.Nickname} ({ev.Player.UserId}) Escaped**");
+            UpdatePlayerList();
         }
         public void OnDead(DiedEventArgs ev)
         {
@@ -245,6 +244,7 @@ namespace ToucanPlugin.Handlers
             }
             /*if (ev.Target.Role == RoleType.Scp173 && ev.HitInformations)
                 Tcp.Send($"stats {ev.Killer.UserId} microedNuts 1");*/
+            UpdatePlayerList();
         }
         public void OnSpawned(SpawningEventArgs ev)
         {
