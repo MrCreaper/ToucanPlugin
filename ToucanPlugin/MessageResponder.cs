@@ -98,16 +98,16 @@ namespace ToucanPlugin
                     Log.Info("Store Retrived");
                     break;
 
+                case "bestbois":
+                    BestBois = new List<string>(Cmd.Replace("bestbois ", "").Split(' '));
+                    Log.Info("Best bois recived!");
+                    break;
+
                 case "pet":
                     Player petOwner = Player.List.ToList().Find(x => x.UserId == Cmds[1]);
                     Npc pet = NPCS.Methods.CreateNPC(new UnityEngine.Vector3(int.Parse(Cmds[2]), int.Parse(Cmds[3]), int.Parse(Cmds[4])), new UnityEngine.Vector2(int.Parse(Cmds[5]), int.Parse(Cmds[6])), new UnityEngine.Vector3(int.Parse(Cmds[7]), int.Parse(Cmds[8]), int.Parse(Cmds[9])), (RoleType)int.Parse(Cmds[10]), (ItemType)int.Parse(Cmds[11]), Cmds[12], Cmds[13]);
                     pet.Follow(petOwner);
                     Handlers.Player.petConnections.Add(petOwner.UserId, pet.GetInstanceID());
-                    break;
-
-                case "bestbois":
-                    BestBois = new List<string>(Cmd.Replace("bestbois ", "").Split(' '));
-                    Log.Info("Best bois recived!");
                     break;
 
                 case "whitelist":

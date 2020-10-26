@@ -134,7 +134,6 @@ namespace ToucanPlugin.Handlers
             }
             Tcp.Send(escapeMsg);
             Tcp.SendLog($"**{ev.Player.Nickname} ({ev.Player.UserId}) Escaped**");
-            UpdatePlayerList();
         }
         public void OnDead(DiedEventArgs ev)
         {
@@ -244,7 +243,6 @@ namespace ToucanPlugin.Handlers
             }
             /*if (ev.Target.Role == RoleType.Scp173 && ev.HitInformations)
                 Tcp.Send($"stats {ev.Killer.UserId} microedNuts 1");*/
-            UpdatePlayerList();
         }
         public void OnSpawned(SpawningEventArgs ev)
         {
