@@ -1,7 +1,9 @@
-﻿using Exiled.API.Enums;
+﻿using Exiled.API;
+using Exiled.API.Enums;
 using Exiled.API.Extensions;
 using Exiled.API.Features;
 using Exiled.Events.EventArgs;
+using Grenades;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
@@ -98,14 +100,14 @@ namespace ToucanPlugin.Handlers
         private void UpdatePlayerList()
         {
             string playerList = "[";
-            for (int i = 0; i <= Exiled.API.Features.Player.List.ToList().Count; i++)
+            for (int i = 0; i <= Exiled.API.Features.Player.List.ToList().Count - 1; i++)
             {
                 Exiled.API.Features.Player p = Exiled.API.Features.Player.List.ToList()[i];
                 if (p == null) return;
-                    string Coma = "";
-                if (Exiled.API.Features.Player.List.ToList().Count + 1 == i)
-                    Coma = ",";
-                playerList += $"{{\"id\":{p.Id},\"name\":\"{p.Nickname}\",\"userid\":\"{p.UserId}\"}}{Coma}"; 
+                string Coma = ",";
+                if (Exiled.API.Features.Player.List.ToList().Count - 1 == i)
+                    Coma = "";
+                playerList += $"{{\"id\":{p.Id},\"name\":\"{p.Nickname}\",\"userid\":\"{p.UserId}\"}}{Coma}";
             }
             playerList += "]";
             Tcp.Send($"list {playerList}");
@@ -386,19 +388,23 @@ namespace ToucanPlugin.Handlers
                 else
                     ev.Player.Health = ev.Player.Health - dmgHealed;
         }
-        public enum GrenadeType
-        {
-            Grenade = 0,
-            FlashGrenade = 1,
-            SCP018 = 2,
-        }
         public void OnThrowingGrenade(ThrowingGrenadeEventArgs ev)
         {
-            Tcp.SendLog($"{ev.Player.Nickname} threw a {(GrenadeType)ev.Id}");
-            if ((GrenadeType)ev.Id == GrenadeType.FlashGrenade)
+            if (ev.Type == GrenadeType.Flashbang)
+            {
+                Tcp.SendLog($"{ev.Player.Nickname} ({ev.Player.UserId}) threw a Flashbang!");
                 Tcp.Send($"stats {ev.Player.UserId} flashThrown 1");
-            if ((GrenadeType)ev.Id == GrenadeType.Grenade)
+            }
+            if (ev.Type == GrenadeType.FragGrenade)
+            {
+                Tcp.SendLog($"{ev.Player.Nickname} ({ev.Player.UserId}) threw a Grenade!");
                 Tcp.Send($"stats {ev.Player.UserId} grenadeThrown 1");
+            }
+            if (ev.Type == GrenadeType.Scp018)
+            {
+                Tcp.SendLog($"{ev.Player.Nickname} ({ev.Player.UserId}) threw a SCP-018!");
+                Tcp.Send($"stats {ev.Player.UserId} scp018Thrown 1");
+            }
         }
         public void OnEnteringFemurBreaker(EnteringFemurBreakerEventArgs ev)
         {

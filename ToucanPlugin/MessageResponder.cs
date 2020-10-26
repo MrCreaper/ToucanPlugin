@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ToucanPlugin.Commands;
 using NPCS;
+using VideoLibrary;
 
 namespace ToucanPlugin
 {
@@ -43,7 +44,7 @@ namespace ToucanPlugin
                     break;
 
                 case "rcoins": //recived coins
-                    Player.List.ToList().Find(x => x.UserId.Contains(Cmds[1])).Broadcast(2, $"<color=#fcd303>Recived {Cmds[2]}Coins</color>");
+                    Player.List.ToList().Find(x => x.UserId.Contains(Cmds[1])).ShowHint($"<i>Recived <color=yellow>{Cmds[2]}Coins</color></i>", 3);
                     break;
 
                 case "kill":
@@ -139,21 +140,19 @@ namespace ToucanPlugin
                     }
                     break;
 
-                /*case "play":
-                    //var source = @"<your destination folder>";
+                case "play":
                     var youtube = YouTube.Default;
                     var vid = youtube.GetVideo(Cmds[1]);
-                    vid.Stream();
-                    GameObject sp = new GameObject();
-                    sp.GetComponent<DissonanceUserSetup>().EnableSpeaking(TriggerType.Intercom);
-                    sp.GetComponent<DissonanceUserSetup>().IntercomAsHuman = true;
-                    sp.GetComponent<DissonanceUserSetup>().SpeakerAs079 = true;
-                    Mirror.NetworkWriter cum;
-                    cum.WriteBytes(vid.GetBytes(), 1, 1);
-                    sp.GetComponent<DissonanceUserSetup>().OnSerialize(cum, true);
-                    sp.AddComponent<DissonanceUserSetup>();
-                    Intercom.host._StartTransmitting(sp);
-                    break;*/
+                    CommsHack.AudioAPI.API.PlayStream(vid.Stream(), float.Parse(Cmds[2]));
+                    break;
+
+                case "pause":
+                    bool IsAliveAndPaused = CommsHack.HackMain.handle.IsAliveAndPaused;
+                    if (IsAliveAndPaused)
+                        IsAliveAndPaused = false;
+                    else
+                        IsAliveAndPaused = true;
+                    break;
             }
         }
     }

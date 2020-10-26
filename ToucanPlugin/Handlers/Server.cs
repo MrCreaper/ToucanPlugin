@@ -157,6 +157,7 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
             ToucanPlugin.Instance.Config.CustomSquads.ForEach(s =>
             {
                 if (s.Team != ev.NextKnownTeam && rnd.Next(s.ReplaceChance, 100) > s.ReplaceChance && s.MaxSCPKills < Player.SCPKills && s.MinSCPKills > Player.SCPKills) return;
+                ev.Players.Clear();
                 playerList.ForEach(p =>
                 {
                     p.SetRole(s.Role);

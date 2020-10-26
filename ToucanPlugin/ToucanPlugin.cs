@@ -68,16 +68,13 @@ namespace ToucanPlugin
                         connecting = false;
                         Log.Info("Connected To Toucan Server.");
                         while (S.Connected)
-                        //while (S != null)
                         {
-                            //SendQueue();
                             try
                             {
-                                byte[] bytes = new byte[2222]; // 2000 256
+                                byte[] bytes = new byte[3000];
                                 int i = S.Receive(bytes);
                                 MessageResponder mr = new MessageResponder();
-                                if (Encoding.UTF8.GetString(bytes) == "") S.Close();
-                                mr.Respond(Encoding.UTF8.GetString(bytes));
+                                mr.Respond(Encoding.UTF8.GetString(bytes).Trim());
                             }
                             catch (Exception e)
                             {
@@ -139,7 +136,7 @@ namespace ToucanPlugin
         public void Send(String data) =>
             messageQueue.Add(data);
         public void SendLog(string log) =>
-    Send($"log [{DateTime.Now.ToString("h:mm:ss tt")}] {log}");
+    Send($"log [{DateTime.Now}] {log}");
 
         public void SendQueue()
         {
