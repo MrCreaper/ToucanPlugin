@@ -230,7 +230,7 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
         {
             string cmd = ev.Name;
             ev.Arguments.ForEach(arg => cmd += $" {arg}");
-            if (!ev.Sender.IsHost) Tcp.Send($"slog **{ev.Sender.Nickname}** Sent:\n```{cmd}```");
+            if (!ev.Sender.IsHost) Tcp.Send($"slog [{DateTime.Now}] **{ev.Sender.Nickname}** Sent:\n```{cmd}```");
         }
     }
 }
