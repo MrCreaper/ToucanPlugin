@@ -233,9 +233,6 @@
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
-    <Reference Include="TextChat">
-      <HintPath>..\..\..\..\AppData\Roaming\EXILED\Plugins\TextChat.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\SCP Secret Laboratory ServerMod\SCPSL_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
     </Reference>

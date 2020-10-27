@@ -241,8 +241,8 @@ namespace ToucanPlugin.Handlers
                     ev.Target.SetRole(RoleType.Scp173);
                     break;
             }
-            /*if (ev.Target.Role == RoleType.Scp173 && ev.HitInformations)
-                Tcp.Send($"stats {ev.Killer.UserId} microedNuts 1");*/
+            if (ev.Target.Role == RoleType.Scp173 && ev.Killer.CurrentItem.id == ItemType.MicroHID)
+                Tcp.Send($"stats {ev.Killer.UserId} microedNuts 1");
         }
         public void OnSpawned(SpawningEventArgs ev)
         {
