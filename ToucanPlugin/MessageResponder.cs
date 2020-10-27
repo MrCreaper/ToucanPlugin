@@ -16,7 +16,7 @@ namespace ToucanPlugin
         public List<string> BestBois;
         public void Respond(string Cmd)
         {
-            if (Cmd == null) { Tcp.S.Close(); return; }
+            if (Cmd == "") { Tcp.S.Close(); Log.Error($"ERR: RECIVED NOTHING"); return; }
             Log.Debug($"Recived {Cmd}");
             List<string> Cmds = new List<string>(Cmd.Split(' '));
             switch (Cmds[0])
@@ -26,7 +26,7 @@ namespace ToucanPlugin
                     Player p = Player.List.ToList().Find(x => x.UserId.Contains(Cmds[1]));
                     p.AddItem((ItemType)int.Parse(Cmds[2].ToString()));
                     p.SendConsoleMessage($"Thanks for buying a {(ItemType)int.Parse(Cmds[2])}", "#fffff");
-                    p.ShowHint($"<i>Thanks for Buying a <color=yellow>{ (ItemType)int.Parse(Cmds[2])}</color></i>", 6);
+                    p.ShowHint($"<i>Thanks for Buying a <color=yellow>{ (ItemType)int.Parse(Cmds[2])}</color>, {Cmds[3]} Coins left</i>", 6);
                     Tcp.SendLog($"{p.Nickname} ({Cmds[1]}) Bought an {(ItemType)int.Parse(Cmds[2].ToString())}");
                     Tcp.Send($"stats {p.UserId} itemsbought 1");
                     break;
@@ -113,7 +113,6 @@ namespace ToucanPlugin
                 case "whitelist":
                     // whitelist {message channel} {comment} {whitelist user}
                     if (Cmds[3] == null)
-                    {
                         if (Whitelist.Whitelisted)
                         {
                             Whitelist.Whitelisted = false;
@@ -124,9 +123,7 @@ namespace ToucanPlugin
                             Whitelist.Whitelisted = true;
                             Tcp.Send($"msg {Cmd[1]} Server is now closed!");
                         }
-                    }
                     else
-                    {
                         if (!Whitelist.WhitelistUsers.Contains(Cmds[3]))
                         {
                             wl.Add(Cmds[3], Cmds[2]);
@@ -137,13 +134,12 @@ namespace ToucanPlugin
                             wl.Remove(Cmds[3]);
                             Tcp.Send($"msg {Cmd[1]} User ({Cmd[3]}) taken off the whitelist.");
                         }
-                    }
                     break;
 
                 case "play":
                     var youtube = YouTube.Default;
                     var vid = youtube.GetVideo(Cmds[1]);
-                    CommsHack.AudioAPI.API.PlayStream(vid.Stream(), float.Parse(Cmds[2]));
+                    //CommsHack.AudioAPI.API.PlayStream(vid.Stream(), float.Parse(Cmds[2]));
                     break;
 
                 case "pause":

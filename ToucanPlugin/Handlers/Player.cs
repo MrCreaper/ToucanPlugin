@@ -75,9 +75,9 @@ namespace ToucanPlugin.Handlers
             string message = ToucanPlugin.Instance.Config.LeftMessage.Replace("{player}", ev.Player.Nickname);
             Map.Broadcast(2, message);
             Tcp.SendLog($"**{ev.Player.Nickname} ({ev.Player.UserId}) Left [{Exiled.API.Features.Player.List.Count() - 1}/20]**");
+            UpdatePlayerList(ev.Player.UserId);
             if (Exiled.API.Features.Player.List.Count() - 1 == 0 && Round.IsStarted)
                 Round.Restart();
-            UpdatePlayerList(ev.Player);
         }
         private void LonelyRound()
         {
@@ -94,14 +94,14 @@ namespace ToucanPlugin.Handlers
                 else return;
             }
         }
-        public void UpdatePlayerList(Exiled.API.Features.Player Exclude = null)
+        public void UpdatePlayerList(string ExcludedId = "")
         {
             string playerList = "[";
             for (int i = 0; i <= Exiled.API.Features.Player.List.ToList().Count - 1; i++)
             {
                 Exiled.API.Features.Player p = Exiled.API.Features.Player.List.ToList()[i];
                 if (p == null) return;
-                if (Exclude.UserId == p.UserId) return;
+                if (ExcludedId == p.UserId) return;
                 string Coma = ",";
                 if (Exiled.API.Features.Player.List.ToList().Count - 1 == i)
                     Coma = "";
