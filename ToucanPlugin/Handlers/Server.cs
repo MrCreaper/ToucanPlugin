@@ -84,7 +84,6 @@ namespace ToucanPlugin.Handlers
                 new GamemodeSelector();
             }
             Tcp.SendLog("Waiting for players...");
-            Tcp.Send("bestbois");
         }
 
         public void OnRoundStarted()
