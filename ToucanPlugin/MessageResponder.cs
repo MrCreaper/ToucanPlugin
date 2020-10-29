@@ -16,9 +16,10 @@ namespace ToucanPlugin
         public List<string> BestBois;
         public void Respond(string Cmd)
         {
-            if (Cmd == "") { Tcp.S.Close(); Log.Error($"ERR: RECIVED NOTHING"); return; }
-            Log.Debug($"Recived {Cmd}");
             List<string> Cmds = new List<string>(Cmd.Split(' '));
+            if (Cmds[0].Length == Tcp.MaxMessageLenght)
+                Tcp.S.Close();
+            Log.Debug($"Recived |{Cmd}|");
             switch (Cmds[0])
             {
                 case "itemBought":

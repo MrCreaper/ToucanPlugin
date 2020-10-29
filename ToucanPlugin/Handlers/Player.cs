@@ -86,9 +86,9 @@ namespace ToucanPlugin.Handlers
                 if (Exiled.API.Features.Player.List.Count() == 1 && !Round.IsStarted && !Round.IsLobbyLocked)
                 {
                     if (i == 59) Round.Start();
-                    if (i == 30) Map.Broadcast(5, "Automatic round Starting in...");
-                    if (i >= 35) Map.Broadcast(1, $"{60 - i}");
-                    if (i == 59) Map.Broadcast(5, $"Starting a really lonely round..!");
+                    if (i == 30) Map.ShowHint("Automatic round Starting in...", 5);
+                    if (i >= 35) Map.ShowHint($"{60 - i}", 1);
+                    if (i == 59) Map.ShowHint($"Starting a really lonely round..!", 5);
                     Thread.Sleep(1200);
                 }
                 else return;
@@ -415,7 +415,7 @@ namespace ToucanPlugin.Handlers
         public void OnHurting(HurtingEventArgs ev)
         {
             // Among us game
-            if (AmongUs.ImpostersSet.Contains(ev.Attacker) && AcGame.RoundGamemode == GamemodeType.AmongUs)
+            if (AmongUs.Imposters.Contains(ev.Attacker) && AcGame.RoundGamemode == GamemodeType.AmongUs)
             {
                 ev.Target.Kill();
                 AmongUs.DeathCords.Add(ev.Target.Position);

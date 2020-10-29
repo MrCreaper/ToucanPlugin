@@ -21,6 +21,7 @@ namespace ToucanPlugin
         readonly static List<String> messageQueue = new List<string>();
         static public Stopwatch topicUpdateTimer;
         private bool connecting = false;
+        public int MaxMessageLenght = 3000;
         public void Main()
         {
             if (connecting) return;
@@ -71,10 +72,10 @@ namespace ToucanPlugin
                         {
                             try
                             {
-                                byte[] bytes = new byte[3000];
+                                byte[] bytes = new byte[MaxMessageLenght];
                                 int i = S.Receive(bytes);
                                 MessageResponder mr = new MessageResponder();
-                                mr.Respond(Encoding.UTF8.GetString(bytes).Trim());
+                                mr.Respond(Encoding.UTF8.GetString(bytes));
                             }
                             catch (Exception e)
                             {
@@ -101,10 +102,8 @@ namespace ToucanPlugin
             {
                 return !((S.Poll(1000, SelectMode.SelectRead) && (S.Available == 0)) || !S.Connected);
             }
-            catch (ObjectDisposedException e)
+            catch (ObjectDisposedException)
             {
-                Log.Warn("TCP client was unexpectedly closed.");
-                Log.Debug(e.ToString());
                 return false;
             }
         }

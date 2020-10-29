@@ -11,7 +11,7 @@ namespace ToucanPlugin.Gamemodes
 {
     public class AmongUs
     {
-        public static List<Player> ImpostersSet { get; } = new List<Player>();
+        public static List<Player> Imposters { get; } = new List<Player>();
         public static List<Vector2> DeathCords { get; } = new List<Vector2>();
         public void Amongus()
         {
@@ -20,14 +20,14 @@ namespace ToucanPlugin.Gamemodes
             System.Random rnd = new System.Random();
             playerList.ForEach(p =>
             {
-                if (imposterCount != ImpostersSet.Count)
+                if (imposterCount != Imposters.Count)
                 {
                     // The Imposter
                     p.SetRole(RoleType.ClassD);
                     p.Inventory.AddNewItem(ItemType.GunCOM15);
                     if (imposterCount == 1)
                         p.Broadcast(5, "<color=#db140d>You are a imposter...\nKill everyone to win.</color>");
-                    ImpostersSet.Add(p);
+                    Imposters.Add(p);
                 }
                 else
                 {
@@ -39,17 +39,16 @@ namespace ToucanPlugin.Gamemodes
             if (imposterCount != 1)
             {// Brodcast to multiple imposters
                 string ImposterNameList = "";
-                ImpostersSet.ForEach(imp => ImposterNameList = $"{ImposterNameList} {imp.Nickname}");
-                ImpostersSet.ForEach(imp => imp.Broadcast(5, $"< color =#db140d>You are a imposter whit {ImposterNameList}...\nKill everyone (whit your one shot com15) to win.</color>"));
+                Imposters.ForEach(imp => ImposterNameList = $"{ImposterNameList} {imp.Nickname}");
+                Imposters.ForEach(imp => imp.Broadcast(5, $"< color =#db140d>You are a imposter whit {ImposterNameList}...\nKill everyone (whit your one shot com15) to win.</color>"));
             }
         }
         static public void ReportBody(string reporterId)
         {
             Map.ClearBroadcasts();
             Map.Broadcast(6, $"!!!EMERGANY MEATING!!!\n({Player.List.ToList().Find(x => x.UserId == reporterId).Nickname})");
-            Player.List.ToList().ForEach(p => {
-                p.Position = new Vector3(1f, 1f, 1f);
-            });
+            Player.List.ToList().ForEach(p => 
+                p.Position = new Vector3(1f, 1f, 1f));
         }
     }
 }

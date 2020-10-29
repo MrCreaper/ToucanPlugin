@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ToucanPlugin.Commands;
+using ToucanPlugin.Gamemodes;
 using UnityEngine;
 
 namespace ToucanPlugin.Handlers
@@ -89,19 +90,58 @@ namespace ToucanPlugin.Handlers
         public void OnRoundStarted()
         {
             Tcp.SendLog("Round started");
-            if(AcGame.RoundGamemode == GamemodeType.None)
-            Map.Broadcast(5, ToucanPlugin.Instance.Config.RoundStartMessage);
+            if (AcGame.NextGamemode == GamemodeType.None)
+                Map.Broadcast(5, ToucanPlugin.Instance.Config.RoundStartMessage);
+            else
+                Map.Broadcast(5, $"Next Round Gamemode: <i><b>{AcGame.RoundGamemode}</b></i>");
+            if (AcGame.RoundGamemode == GamemodeType.None)
+                Map.Broadcast(5, ToucanPlugin.Instance.Config.RoundStartMessage);
             else
                 Map.Broadcast(5, $"Gamemode: <i><b>{AcGame.RoundGamemode}</b></i>");
             if (rnd.Next(0, 3) == 0 && Exiled.API.Features.Player.List.ToList().Find(x => x.Role == RoleType.Scp173) != null)
                 Map.Doors.ToList().Find(x => x.DoorName == "173").locked = true;
+            int CountChances = 0;
+            CountChances = +ToucanPlugin.Instance.Config.GamemodeChances[0].AmongUs;
+            CountChances = +ToucanPlugin.Instance.Config.GamemodeChances[0].CandyRush;
+            CountChances = +ToucanPlugin.Instance.Config.GamemodeChances[0].PeanutInfection;
+            CountChances = +ToucanPlugin.Instance.Config.GamemodeChances[0].QuietPlace;
+            if (CountChances != 100) 
+                Log.Warn($"Gamemode chances do NOT add up to 100.");
+            else
+            {
+                if (rnd.Next(0, 101) > ToucanPlugin.Instance.Config.RandomGamemodeChance) return;
+                int GAMEMODE = rnd.Next(0, 101);
+                int RandomCounter = 0;
+                if (GAMEMODE <= ToucanPlugin.Instance.Config.GamemodeChances[0].AmongUs)
+                    AcGame.NextGamemode = GamemodeType.AmongUs;
+                else
+                {
+                    RandomCounter = +ToucanPlugin.Instance.Config.GamemodeChances[0].AmongUs;
+                    if (GAMEMODE <= ToucanPlugin.Instance.Config.GamemodeChances[0].CandyRush + RandomCounter)
+                        AcGame.NextGamemode = GamemodeType.CandyRush;
+                    else
+                    {
+                        RandomCounter = +ToucanPlugin.Instance.Config.GamemodeChances[0].CandyRush;
+                        if (GAMEMODE <= ToucanPlugin.Instance.Config.GamemodeChances[0].PeanutInfection + RandomCounter)
+                            AcGame.NextGamemode = GamemodeType.PeanutInfection;
+                        else
+                        {
+                            RandomCounter = +ToucanPlugin.Instance.Config.GamemodeChances[0].CandyRush;
+                            if (GAMEMODE <= ToucanPlugin.Instance.Config.GamemodeChances[0].QuietPlace + RandomCounter)
+                                AcGame.NextGamemode = GamemodeType.QuitePlace;
+                            else
+                                AcGame.NextGamemode = GamemodeType.None;
+                        }
+                    }
+                }
+            }
         }
 
         public void OnRestartingRound() =>
             Tcp.SendLog($"Round restarting...");
         public void OnRoundEnded(RoundEndedEventArgs ev)
         {
-            if (ToucanPlugin.Instance.Config.DetonateAtRoundEnded && Exiled.API.Features.Warhead.IsDetonated) Exiled.API.Features.Warhead.Detonate();
+            if (ToucanPlugin.Instance.Config.DetonateAtRoundEnded && Warhead.IsDetonated) Warhead.Detonate();
             Tcp.SendLog($"Round Ended\n```Winning Class: {ev.LeadingTeam}\nEscaped D-Class: {ev.ClassList.class_ds}\nRescued Scientists: {ev.ClassList.scientists}\nContained SCPs: {ev.ClassList.scps_except_zombies}\nWas warhead detonated: {Exiled.API.Features.Warhead.IsDetonated}\nKilled by warhead: {ev.ClassList.warhead_kills}```");
             Exiled.API.Features.Player.List.ToList().ForEach(u => Tcp.Send($"stats {u.UserId} gamesplayed 1"));
             Exiled.API.Features.Player.List.ToList().ForEach(u =>
@@ -115,11 +155,6 @@ if (ev.LeadingTeam == LeadingTeam.Anomalies && u.Team == Team.SCP || SerpentsHan
 if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team == Team.RSC)
                     Tcp.Send($"stats {u.UserId} gameswonMTF 1");
             });
-            AcGame.RoundGamemode = 0;
-            Player.Has008RandomSpawned = false;
-            Player.SCPKills = 0;
-            SpecMode.TUTSpecList = null;
-            mr.ChaosHacker = null;
 
             int Count0492 = 0;
             int Count939 = 0;
@@ -145,6 +180,39 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
                 Tcp.Send($"stats {DocPetReciver.UserId} ZOMBPET");
             if (CountChaos > 3 && Count939 == 1 && DogPetReciver != null)
                 Tcp.Send($"stats {DogPetReciver.UserId} DOGPET");
+            switch (AcGame.RoundGamemode)
+            {
+                case GamemodeType.CandyRush:
+                    int DefusersAlive = 0;
+                    int BommbersAlive = 0;
+                    Exiled.API.Features.Player.List.ToList().ForEach(p =>
+                    {
+                        if (CandyRush.DefuserList.Contains(p.UserId) && p.IsAlive)
+                            DefusersAlive++;
+                        else
+                        if (CandyRush.BommerList.Contains(p.UserId) && p.IsAlive)
+                            BommbersAlive++;
+                    });
+                    if (DefusersAlive == BommbersAlive)
+                        Map.Broadcast(6, $"ITS A TIE?!");
+                    else
+                    if (DefusersAlive > BommbersAlive)
+                    {
+                        CandyRush.DefuserList.ForEach(id => Tcp.Send($"eventWin {id} CandyRush"));
+                        Map.Broadcast(6, $"<color=cyan>DEFUSERS WIN!</color>");
+                    }
+                    else
+                    if (DefusersAlive > BommbersAlive)
+                    {
+                        CandyRush.BommerList.ForEach(id => Tcp.Send($"eventWin {id} CandyRush"));
+                        Map.Broadcast(6, $"<color=red>BOMMERS WIN!</color>");
+                    }
+                    break;
+            }
+            Player.Has008RandomSpawned = false;
+            Player.SCPKills = 0;
+            SpecMode.TUTSpecList = null;
+            mr.ChaosHacker = null;
         }
         public void OnRespawningTeam(RespawningTeamEventArgs ev)
         {

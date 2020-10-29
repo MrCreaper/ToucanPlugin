@@ -148,5 +148,8 @@ namespace ToucanPlugin
         public bool Random008Spawn { get; set; } = false;
         [Description("Start the round automaticly after a minute")]
         public bool LonelyRound { get; set; } = false;
+        public bool RandomGamemodes { get; set; } = false;
+        public int RandomGamemodeChance { get; set; } = 10;
+        public List<GamemodeChances> GamemodeChances { get; set; } = new List<GamemodeChances>();
     }
 }
