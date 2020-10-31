@@ -265,6 +265,7 @@
     <Compile Include="Commands\SpecMode.cs" />
     <Compile Include="Commands\StartDec.cs" />
     <Compile Include="Commands\Store.cs" />
+    <Compile Include="Commands\TempPet.cs" />
     <Compile Include="Commands\WhitelistCmd.cs" />
     <Compile Include="Commands\WhitelistUser.cs" />
     <Compile Include="Config.cs" />

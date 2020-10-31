@@ -22,7 +22,6 @@ namespace ToucanPlugin
         static public Stopwatch topicUpdateTimer;
         private bool connecting = false;
         public int MaxMessageLenght = 3000;
-        static int TimesSent = 0;
         public void Main()
         {
             if (connecting) return;
@@ -155,9 +154,6 @@ namespace ToucanPlugin
                     Thread.Sleep(100);
                 }
             }
-            TimesSent++;
-            if (TimesSent > 100)
-                Send($"updateData");
             if (messageQueue.Count != 0)
                 Log.Error("Could not send all messages.");
         }

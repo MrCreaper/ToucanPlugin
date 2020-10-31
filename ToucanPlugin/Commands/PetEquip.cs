@@ -31,7 +31,7 @@ namespace ToucanPlugin.Commands
                         {
                             if (itemNum >= 1)
                             {
-                                Tcp.Send($"pet {p.UserId} {arguments.Array[1]}");
+                                Tcp.Send($"pet {p.UserId} {itemNum - 1}");
                                 response = $"Equiping pet...";
                                 return true;
                             }

@@ -101,11 +101,11 @@ namespace ToucanPlugin.Handlers
             if (rnd.Next(0, 3) == 0 && Exiled.API.Features.Player.List.ToList().Find(x => x.Role == RoleType.Scp173) != null)
                 Map.Doors.ToList().Find(x => x.DoorName == "173").locked = true;
             int CountChances = 0;
-            CountChances = +ToucanPlugin.Instance.Config.GamemodeChances[0].AmongUs;
-            CountChances = +ToucanPlugin.Instance.Config.GamemodeChances[0].CandyRush;
-            CountChances = +ToucanPlugin.Instance.Config.GamemodeChances[0].PeanutInfection;
-            CountChances = +ToucanPlugin.Instance.Config.GamemodeChances[0].QuietPlace;
-            if (CountChances != 100) 
+            CountChances += ToucanPlugin.Instance.Config.GamemodeChances[0].AmongUs;
+            CountChances += ToucanPlugin.Instance.Config.GamemodeChances[0].CandyRush;
+            CountChances += ToucanPlugin.Instance.Config.GamemodeChances[0].PeanutInfection;
+            CountChances += ToucanPlugin.Instance.Config.GamemodeChances[0].QuietPlace;
+            if (CountChances != 100)
                 Log.Warn($"Gamemode chances do NOT add up to 100.");
             else
             {

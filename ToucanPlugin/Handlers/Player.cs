@@ -76,7 +76,7 @@ namespace ToucanPlugin.Handlers
             Map.Broadcast(2, message);
             Tcp.SendLog($"**{ev.Player.Nickname} ({ev.Player.UserId}) Left [{Exiled.API.Features.Player.List.Count() - 1}/20]**");
             UpdatePlayerList(ev.Player.UserId);
-            if (Exiled.API.Features.Player.List.Count() - 1 == 0 && Round.IsStarted)
+            if (Exiled.API.Features.Player.List.Count() - 1 <= 0 && Round.IsStarted)
                 Round.Restart();
         }
         private void LonelyRound()
@@ -228,10 +228,10 @@ namespace ToucanPlugin.Handlers
             bool isff = false;
             if (ev.Killer.Team == ev.Target.Team)
                 isff = true;
-            bool isScp = false;
+            bool isTargetScp = false;
             if (ev.Target.Team == Team.SCP || scp035.API.Scp035Data.GetScp035() == ev.Killer)
-                isScp = true;
-            Tcp.Send($"died {isff} {ev.Killer.UserId} {ev.Target.UserId} {ev.HitInformations.Tool} {isScp}");
+                isTargetScp = true;
+            Tcp.Send($"died {isff} {ev.Target.UserId} {ev.Killer.UserId} {ev.HitInformations.Tool} {isTargetScp}");
             Tcp.SendLog($"{ev.Target.Nickname} ({ev.Target.UserId}) killed by {ev.Killer.Nickname} ({ev.Killer.UserId}) whit {ev.HitInformations.Tool}");
 
             //Event bullshit
@@ -345,9 +345,9 @@ namespace ToucanPlugin.Handlers
             }
         }
         public void OnBanned(BannedEventArgs ev) =>
-            Tcp.SendLog($"**{ev.Details.Issuer} ({ev.Details.OriginalName}) banned player {ev.Player.Nickname} ({ev.Player.UserId}). Ban duration: {ev.Details.Expires}. Reason: {ev.Details.Reason}.**");
+            Tcp.SendLog($"```{ev.Details.Issuer} ({ev.Details.OriginalName}) banned player {ev.Player.Nickname} ({ev.Player.UserId}). Ban duration: {ev.Details.Expires}. Reason: {ev.Details.Reason}.```");
         public void OnKicked(KickedEventArgs ev) =>
-            Tcp.SendLog($"**{ev.Player.Nickname} ({ev.Player.UserId}) has been kicked. Reason: {ev.Reason}**");
+            Tcp.SendLog($"```{ev.Player.Nickname} ({ev.Player.UserId}) has been kicked. Reason: {ev.Reason}```");
         public void OnMedicalItemUsed(UsedMedicalItemEventArgs ev)
         {
             if (ev.Item == ItemType.SCP207) Tcp.Send($"stats {ev.Player.UserId} cokedrunk 1");

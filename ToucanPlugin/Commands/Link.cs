@@ -25,17 +25,9 @@ namespace ToucanPlugin.Commands
                 string[] args = arguments.Array;
                 if (args[1] != null)
                 {
-                    if (args[1].Contains("#"))
-                    {
-                        response = "Connecting...";
-                        tcp.Send($"link {p.Sender.SenderId} {args[1]}");
-                        return true;
-                    }
-                    else
-                    {
-                        response = "Invalid discord user. Example: EpicPerson#0000";
-                        return true;
-                    }
+                    response = "Connecting...";
+                    tcp.Send($"link {p.Sender.SenderId} {args[1]}");
+                    return true;
                 }
                 else
                 {

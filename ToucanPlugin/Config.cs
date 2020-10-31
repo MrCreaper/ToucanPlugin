@@ -150,6 +150,14 @@ namespace ToucanPlugin
         public bool LonelyRound { get; set; } = false;
         public bool RandomGamemodes { get; set; } = false;
         public int RandomGamemodeChance { get; set; } = 10;
-        public List<GamemodeChances> GamemodeChances { get; set; } = new List<GamemodeChances>();
+        public List<GamemodeChances> GamemodeChances { get; set; } = new List<GamemodeChances>
+        {
+            new GamemodeChances() {
+                QuietPlace = 25,
+                PeanutInfection = 25,
+                AmongUs = 25,
+                CandyRush = 25,
+            }
+        };
     }
 }

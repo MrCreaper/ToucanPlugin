@@ -8,7 +8,7 @@ using Respawning;
 
 namespace ToucanPlugin.Commands
 {
-    [CommandHandler(typeof(ClientCommandHandler))]
+    [CommandHandler(typeof(RemoteAdminCommandHandler))]
     class SpwanEffect : ICommand
     {
         public string Command { get; } = "spawneffect";
@@ -21,9 +21,34 @@ namespace ToucanPlugin.Commands
         {
             if (Sender is CommandSender PCplayer)
             {
-                RespawnEffectsController.ExecuteAllEffects(RespawnEffectsController.EffectType.Selection, SpawnableTeamType.ChaosInsurgency);
-                response = $"Spawning chaos carrr";
-                return false;
+                if (Sender.CheckPermission(PlayerPermissions.RespawnEvents))
+                {
+                    if (arguments.Array[1] != null)
+                {
+                    if (arguments.Array[1] == "car")
+                    {
+                        RespawnEffectsController.ExecuteAllEffects(RespawnEffectsController.EffectType.Selection, SpawnableTeamType.ChaosInsurgency);
+                        response = $"Chaos Car Incoming!";
+                        return true;
+                    }
+                    else
+                    {
+                        RespawnEffectsController.ExecuteAllEffects(RespawnEffectsController.EffectType.Selection, SpawnableTeamType.NineTailedFox);
+                        response = $"MTF Helicopter Incoming!";
+                        return true;
+                    }
+                }
+                else
+                {
+                    response = $"Missing car or heli";
+                    return false;
+                }
+                }
+                else
+                {
+                    response = $"Missing Respawn Events Permission";
+                    return true;
+                }
             }
             else
             {

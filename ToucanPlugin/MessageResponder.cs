@@ -14,12 +14,20 @@ namespace ToucanPlugin
         readonly Whitelist wl = new Whitelist();
         public List<Player> ChaosHacker { get; set; } = new List<Player>();
         public List<string> BestBois;
+        public string RemoveThatShit(string DisgustingSpaces0)
+        {
+            string DisgustingSpaces = DisgustingSpaces0;
+            if (DisgustingSpaces.EndsWith(" "))
+                DisgustingSpaces.Remove(DisgustingSpaces.Length - 1);
+            return DisgustingSpaces;
+        }
         public void Respond(string Cmd)
         {
             List<string> Cmds = new List<string>(Cmd.Split(' '));
             if (Cmds[0].Length == Tcp.MaxMessageLenght)
                 Tcp.S.Close();
-            Log.Debug($"Recived |{Cmd}|");
+            else
+                Log.Debug($"Recived |{Cmd}|");
             switch (Cmds[0])
             {
                 case "itemBought":
@@ -33,19 +41,19 @@ namespace ToucanPlugin
                     break;
 
                 case "console":
-                    Player.List.ToList().Find(x => x.UserId.Contains(Cmds[1])).SendConsoleMessage(Cmd.Replace($"consoleMsg {Cmds[1]} ", ""), "#fffff");
+                    Player.List.ToList().Find(x => x.UserId.Contains(Cmds[1])).SendConsoleMessage(Cmd.Replace($"console {Cmds[1]} ", ""), "#fffff");
                     break;
 
                 case "bc":
-                    Player.List.ToList().Find(x => x.UserId.Contains(Cmds[1])).Broadcast(ushort.Parse(Cmds[2]), Cmd.Replace($"bcMsg {Cmds[1]} {Cmds[2]} ", ""));
+                    Player.List.ToList().Find(x => x.UserId.Contains(Cmds[1])).Broadcast(ushort.Parse(Cmds[2]), Cmd.Replace($"bc {Cmds[1]} {Cmds[2]} ", ""));
                     break;
 
                 case "hint":
-                    Player.List.ToList().Find(x => x.UserId.Contains(Cmds[1])).ShowHint(Cmd.Replace($"hintMsg {Cmds[1]} {Cmds[2]} ", ""), int.Parse(Cmds[2]));
+                    Player.List.ToList().Find(x => x.UserId.Contains(Cmds[1])).ShowHint(Cmd.Replace($"hint {Cmds[1]} {Cmds[2]} ", ""), int.Parse(Cmds[2]));
                     break;
 
                 case "rcoins": //recived coins
-                    Player.List.ToList().Find(x => x.UserId.Contains(Cmds[1])).ShowHint($"<i>Recived <color=yellow>{Cmds[2]}Coins</color></i>", 3);
+                    Player.List.ToList().Find(x => x.UserId.Contains(Cmds[1])).ShowHint($"<i>Recived <color=yellow>{Cmds[2]}Coins</color></i>", 5);
                     break;
 
                 case "kill":
@@ -95,8 +103,8 @@ namespace ToucanPlugin
 
                 case "store":
                     if (Store.StoreStock != null) return;
-                    Store.StoreStock = Cmd.ToString().Remove(0, 6);
-                    Log.Info("Store Retrived");
+                    Store.StoreStock = RemoveThatShit(Cmd.ToString().Remove(0, 6));
+                    Log.Info($"Store Retrived\n{Store.StoreStock}");
                     break;
 
                 case "bestbois":
@@ -106,10 +114,29 @@ namespace ToucanPlugin
 
                 case "pet":
                     Player petOwner = Player.List.ToList().Find(x => x.UserId == Cmds[1]);
-                    Npc pet = NPCS.Methods.CreateNPC(new UnityEngine.Vector3(int.Parse(Cmds[2]), int.Parse(Cmds[3]), int.Parse(Cmds[4])), new UnityEngine.Vector2(int.Parse(Cmds[5]), int.Parse(Cmds[6])), new UnityEngine.Vector3(int.Parse(Cmds[7]), int.Parse(Cmds[8]), int.Parse(Cmds[9])), (RoleType)int.Parse(Cmds[10]), (ItemType)int.Parse(Cmds[11]), Cmds[12], Cmds[13]);
+                    if (petOwner == null) return;
+                    Npc pet = NPCS.Methods.CreateNPC(
+                    new UnityEngine.Vector3(float.Parse(Cmds[2]), float.Parse(Cmds[3]), float.Parse(Cmds[4])),
+                    new UnityEngine.Vector2(float.Parse(Cmds[5]), float.Parse(Cmds[6])),
+                    new UnityEngine.Vector3(float.Parse(Cmds[7]), float.Parse(Cmds[8]), float.Parse(Cmds[9])),
+                        (RoleType)int.Parse(Cmds[10]),
+                        (ItemType)int.Parse(Cmds[11]),
+                        Cmd.Replace($"pet {Cmds[1]} {Cmds[2]} {Cmds[3]} {Cmds[4]} {Cmds[5]} {Cmds[6]} {Cmds[7]} {Cmds[8]} {Cmds[9]} {Cmds[10]} {Cmds[11]} {Cmds[12]}", ""),
+                        Cmds[12]);
                     pet.Follow(petOwner);
                     Handlers.Player.petConnections.Add(petOwner.UserId, pet.GetInstanceID());
+                    petOwner.SendConsoleMessage($"Equiped {Cmd.Replace($"pet {Cmds[1]} {Cmds[2]} {Cmds[3]} {Cmds[4]} {Cmds[5]} {Cmds[6]} {Cmds[7]} {Cmds[8]} {Cmds[9]} {Cmds[10]} {Cmds[11]} {Cmds[12]}", "")}", "#fffff");
+                    petOwner.ShowHint($"Equiped {Cmd.Replace($"pet {Cmds[1]} {Cmds[2]} {Cmds[3]} {Cmds[4]} {Cmds[5]} {Cmds[6]} {Cmds[7]} {Cmds[8]} {Cmds[9]} {Cmds[10]} {Cmds[11]} {Cmds[12]}", "")}", 10);
                     break;
+
+                /*Npc pet = NPCS.Methods.CreateNPC(
+                    new UnityEngine.Vector3(float.Parse(Cmds[2]), float.Parse(Cmds[3]), float.Parse(Cmds[4])),
+                    new UnityEngine.Vector2(float.Parse(Cmds[5]),float.Parse(Cmds[6])),
+                    new UnityEngine.Vector3(float.Parse(Cmds[7]),float.Parse(Cmds[8]),float.Parse(Cmds[9])),
+                    (RoleType)int.Parse(Cmds[10]),
+                    (ItemType)int.Parse(Cmds[11]),
+                    Cmd.Replace($"pet {Cmds[1]} {Cmds[2]} {Cmds[3]} {Cmds[4]} {Cmds[5]} {Cmds[6]} {Cmds[7]} {Cmds[8]} {Cmds[9]} {Cmds[10]} {Cmds[11]} {Cmds[12]}", ""),
+                    Cmds[12]);*/
 
                 case "whitelist":
                     // whitelist {message channel} {comment} {whitelist user}
@@ -126,15 +153,15 @@ namespace ToucanPlugin
                         }
                     else
                         if (!Whitelist.WhitelistUsers.Contains(Cmds[3]))
-                        {
-                            wl.Add(Cmds[3], Cmds[2]);
-                            Tcp.Send($"msg {Cmd[1]} User ({Cmd[3]}) now whitelisted!");
-                        }
-                        else
-                        {
-                            wl.Remove(Cmds[3]);
-                            Tcp.Send($"msg {Cmd[1]} User ({Cmd[3]}) taken off the whitelist.");
-                        }
+                    {
+                        wl.Add(Cmds[3], Cmds[2]);
+                        Tcp.Send($"msg {Cmd[1]} User ({Cmd[3]}) now whitelisted!");
+                    }
+                    else
+                    {
+                        wl.Remove(Cmds[3]);
+                        Tcp.Send($"msg {Cmd[1]} User ({Cmd[3]}) taken off the whitelist.");
+                    }
                     break;
 
                 case "play":
