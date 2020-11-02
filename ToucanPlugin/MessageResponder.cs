@@ -14,20 +14,29 @@ namespace ToucanPlugin
         readonly Whitelist wl = new Whitelist();
         public List<Player> ChaosHacker { get; set; } = new List<Player>();
         public List<string> BestBois;
-        public string RemoveThatShit(string DisgustingSpaces0)
+        public string RemoveThatShit(string DisgustingSpaces)
         {
-            string DisgustingSpaces = DisgustingSpaces0;
-            if (DisgustingSpaces.EndsWith(" "))
-                DisgustingSpaces.Remove(DisgustingSpaces.Length - 1);
-            return DisgustingSpaces;
+            List<string> DisgustingSpacesArray = DisgustingSpaces.Select(c => c.ToString()).ToList();
+            string NewString = "";
+            bool StoreFound = false;
+            for (int i = DisgustingSpacesArray.Count - 1; 0 < i; i--)
+            {
+                if (DisgustingSpacesArray[i] != " " && DisgustingSpacesArray[i] != "#" && !StoreFound)
+                    DisgustingSpacesArray[i] = "";
+                else
+                    StoreFound = true;
+            }
+            DisgustingSpacesArray.ForEach(c => NewString += c);
+            return NewString;
         }
-        public void Respond(string Cmd)
+        public void Respond(string Cmd0)
         {
+            string Cmd = RemoveThatShit(Cmd0);
             List<string> Cmds = new List<string>(Cmd.Split(' '));
             if (Cmds[0].Length == Tcp.MaxMessageLenght)
                 Tcp.S.Close();
             else
-                Log.Debug($"Recived |{Cmd}|");
+                Log.Debug($"Recived >{Cmd}<");
             switch (Cmds[0])
             {
                 case "itemBought":
@@ -103,7 +112,7 @@ namespace ToucanPlugin
 
                 case "store":
                     if (Store.StoreStock != null) return;
-                    Store.StoreStock = RemoveThatShit(Cmd.ToString().Remove(0, 6));
+                    Store.StoreStock = Cmd.ToString().Remove(0, 6);
                     Log.Info($"Store Retrived\n{Store.StoreStock}");
                     break;
 
@@ -125,18 +134,9 @@ namespace ToucanPlugin
                         Cmds[12]);
                     pet.Follow(petOwner);
                     Handlers.Player.petConnections.Add(petOwner.UserId, pet.GetInstanceID());
-                    petOwner.SendConsoleMessage($"Equiped {Cmd.Replace($"pet {Cmds[1]} {Cmds[2]} {Cmds[3]} {Cmds[4]} {Cmds[5]} {Cmds[6]} {Cmds[7]} {Cmds[8]} {Cmds[9]} {Cmds[10]} {Cmds[11]} {Cmds[12]}", "")}", "#fffff");
-                    petOwner.ShowHint($"Equiped {Cmd.Replace($"pet {Cmds[1]} {Cmds[2]} {Cmds[3]} {Cmds[4]} {Cmds[5]} {Cmds[6]} {Cmds[7]} {Cmds[8]} {Cmds[9]} {Cmds[10]} {Cmds[11]} {Cmds[12]}", "")}", 10);
+                    petOwner.SendConsoleMessage($"Equiped {Cmd.Replace($"pet {Cmds[1]} {Cmds[2]} {Cmds[3]} {Cmds[4]} {Cmds[5]} {Cmds[6]} {Cmds[7]} {Cmds[8]} {Cmds[9]} {Cmds[10]} {Cmds[11]} {Cmds[12]} ", "")}", "#fffff");
+                    petOwner.ShowHint($"Equiped {Cmd.Replace($"pet {Cmds[1]} {Cmds[2]} {Cmds[3]} {Cmds[4]} {Cmds[5]} {Cmds[6]} {Cmds[7]} {Cmds[8]} {Cmds[9]} {Cmds[10]} {Cmds[11]} {Cmds[12]} ", "")}", 10);
                     break;
-
-                /*Npc pet = NPCS.Methods.CreateNPC(
-                    new UnityEngine.Vector3(float.Parse(Cmds[2]), float.Parse(Cmds[3]), float.Parse(Cmds[4])),
-                    new UnityEngine.Vector2(float.Parse(Cmds[5]),float.Parse(Cmds[6])),
-                    new UnityEngine.Vector3(float.Parse(Cmds[7]),float.Parse(Cmds[8]),float.Parse(Cmds[9])),
-                    (RoleType)int.Parse(Cmds[10]),
-                    (ItemType)int.Parse(Cmds[11]),
-                    Cmd.Replace($"pet {Cmds[1]} {Cmds[2]} {Cmds[3]} {Cmds[4]} {Cmds[5]} {Cmds[6]} {Cmds[7]} {Cmds[8]} {Cmds[9]} {Cmds[10]} {Cmds[11]} {Cmds[12]}", ""),
-                    Cmds[12]);*/
 
                 case "whitelist":
                     // whitelist {message channel} {comment} {whitelist user}

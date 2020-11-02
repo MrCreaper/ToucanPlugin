@@ -4,6 +4,7 @@ using Exiled.API.Features;
 using Exiled.Events.EventArgs;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using ToucanPlugin.Commands;
@@ -421,7 +422,6 @@ namespace ToucanPlugin.Handlers
                 AmongUs.DeathCords.Add(ev.Target.Position);
             }
             else
-            {
                 if (ToucanPlugin.Instance.Config.ReflectTeamDMG && ev.Target.Side == ev.Attacker.Side && ev.Target != ev.Attacker && scp035.API.Scp035Data.GetScp035() != ev.Attacker && scp035.API.Scp035Data.GetScp035() != ev.Target && !ev.Attacker.Sender.CheckPermission(PlayerPermissions.FriendlyFireDetectorImmunity) && !Exiled.API.Features.Server.FriendlyFire && ReflectControl.Reflect)
                 {
                     if (ev.Target.Health < ev.Target.MaxHealth)
@@ -435,7 +435,17 @@ namespace ToucanPlugin.Handlers
                     }
                     ev.Attacker.Broadcast(1, $"Dmg reflected! (Reflector: {ev.Target.Nickname})");
                 }
-            }
+        }
+        public void OnShot(ShotEventArgs ev)
+        {
+            /*Inventory.SyncItemInfo Weapon = ev.Shooter.CurrentItem;
+            System.Random rnd = new System.Random();
+            if(Weapon.id == ItemType.GunE11SR && rnd.Next(0, 101) <= 20)
+            {
+                int BulletsLeftInWeapon = ev.Shooter.Ammo.
+                ev.Shooter.SetWeaponAmmo(Weapon, 0);
+                ev.Shooter.Ammo
+            }*/
         }
         public void OnChangingRole(ChangingRoleEventArgs ev)
         {
