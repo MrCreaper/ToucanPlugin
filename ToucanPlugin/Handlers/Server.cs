@@ -99,7 +99,8 @@ namespace ToucanPlugin.Handlers
             else
                 Map.Broadcast(5, $"Gamemode: <i><b>{AcGame.RoundGamemode}</b></i>");
             if (rnd.Next(0, 3) == 0 && Exiled.API.Features.Player.List.ToList().Find(x => x.Role == RoleType.Scp173) != null)
-                Map.Doors.ToList().Find(x => x.DoorName == "173").locked = true;
+                Map.Doors.ToList().Find(x => x.DoorName == "173").locked = true; // Lock 173 (1162)
+            if (AcGame.GamemodesPaused) return;
             int CountChances = 0;
             CountChances += ToucanPlugin.Instance.Config.GamemodeChances[0].AmongUs;
             CountChances += ToucanPlugin.Instance.Config.GamemodeChances[0].CandyRush;
@@ -198,13 +199,13 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
                     else
                     if (DefusersAlive > BommbersAlive)
                     {
-                        CandyRush.DefuserList.ForEach(id => Tcp.Send($"eventWin {id} CandyRush"));
+                        CandyRush.DefuserList.ForEach(id => Tcp.Send($"eventWin {id} 0 CandyRush"));
                         Map.Broadcast(6, $"<color=cyan>DEFUSERS WIN!</color>");
                     }
                     else
-                    if (DefusersAlive > BommbersAlive)
+                    if (DefusersAlive < BommbersAlive)
                     {
-                        CandyRush.BommerList.ForEach(id => Tcp.Send($"eventWin {id} CandyRush"));
+                        CandyRush.BommerList.ForEach(id => Tcp.Send($"eventWin {id} 1 CandyRush"));
                         Map.Broadcast(6, $"<color=red>BOMMERS WIN!</color>");
                     }
                     break;

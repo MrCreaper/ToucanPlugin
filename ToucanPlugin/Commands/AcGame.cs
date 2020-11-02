@@ -8,6 +8,7 @@ namespace ToucanPlugin.Commands
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     class AcGame : ICommand
     {
+        public static bool GamemodesPaused { get; set; } = false;
         public static GamemodeType NextGamemode { get; set; } = 0;
         public static GamemodeType RoundGamemode { get; set; } = 0;
         public string Command { get; } = "activateGamemode";
@@ -21,6 +22,23 @@ namespace ToucanPlugin.Commands
             if (Sender.CheckPermission(PlayerPermissions.Announcer))
             {
                 string[] args = arguments.Array;
+                if (args[1] == "pause")
+                {
+                    if (GamemodesPaused)
+                    {
+                        GamemodesPaused = false;
+                        response = $"Gamemodes are unpaused!";
+                        return true;
+                    }
+                    else
+                    {
+                        GamemodesPaused = true;
+                        response = $"Gamemodes are paused.";
+                        return true;
+                    }
+                }
+                else
+                {
                     var isNumeric = int.TryParse(args[1], out int gameNum);
                     if (isNumeric == true)
                     {
@@ -33,6 +51,7 @@ namespace ToucanPlugin.Commands
                         response = "Please get the number from gamemodeList";
                         return false;
                     }
+                }
             }
             else
             {

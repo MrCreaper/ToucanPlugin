@@ -33,7 +33,7 @@ namespace ToucanPlugin
         {
             string Cmd = RemoveThatShit(Cmd0);
             List<string> Cmds = new List<string>(Cmd.Split(' '));
-            if (Cmds[0].Length == Tcp.MaxMessageLenght)
+            if (Cmd0.Split(' ')[0].Length == Tcp.MaxMessageLenght)
                 Tcp.S.Close();
             else
                 Log.Debug($"Recived >{Cmd}<");
@@ -102,7 +102,7 @@ namespace ToucanPlugin
                         banreason = ToucanPlugin.Instance.Config.DefaultBanReason.Replace("{banner}", Cmds[3]);
                     Player.List.ToList().Find(x => x.UserId.Contains(Cmds[1])).Ban(int.Parse(Cmds[1]), banreason, Cmds[2]);
                     Tcp.Send(Cmd);
-                    Tcp.SendLog($"{Cmds[2]} was banned for {Cmds[1]} by {Cmds[3]} for the reason of; {Cmds[4]}");
+                    Tcp.SendLog($"'''{Cmds[2]} was banned for {Cmds[1]} by {Cmds[3]} for the reason of;\n{Cmds[4]}'''");
                     break;
 
                 case "restartRound":
@@ -113,12 +113,25 @@ namespace ToucanPlugin
                 case "store":
                     if (Store.StoreStock != null) return;
                     Store.StoreStock = Cmd.ToString().Remove(0, 6);
-                    Log.Info($"Store Retrived\n{Store.StoreStock}");
+                    List<string> StoreStockList = Store.StoreStock.Select(c => c.ToString()).ToList();
+                    if (StoreStockList[0] == "#" && StoreStockList[StoreStockList.Count] == "#")
+                        Log.Info($"Store Retrived{Store.StoreStock}");
+                    else
+                    {
+                        Log.Warn($"Failed to recive store, RETRYING...");
+                        Tcp.Send($"updateData");
+                    }
                     break;
 
                 case "bestbois":
                     BestBois = new List<string>(Cmd.Replace("bestbois ", "").Split(' '));
-                    Log.Info("Best bois recived!");
+                    if (BestBois.Count >= 1)
+                        Log.Info("Best bois recived!");
+                    else
+                    {
+                        Log.Warn($"Failed to recive best bois list, RETRYING...");
+                        Tcp.Send($"updateData");
+                    }
                     break;
 
                 case "pet":
@@ -130,8 +143,7 @@ namespace ToucanPlugin
                     new UnityEngine.Vector3(float.Parse(Cmds[7]), float.Parse(Cmds[8]), float.Parse(Cmds[9])),
                         (RoleType)int.Parse(Cmds[10]),
                         (ItemType)int.Parse(Cmds[11]),
-                        Cmd.Replace($"pet {Cmds[1]} {Cmds[2]} {Cmds[3]} {Cmds[4]} {Cmds[5]} {Cmds[6]} {Cmds[7]} {Cmds[8]} {Cmds[9]} {Cmds[10]} {Cmds[11]} {Cmds[12]}", ""),
-                        Cmds[12]);
+                        Cmd.Replace($"pet {Cmds[1]} {Cmds[2]} {Cmds[3]} {Cmds[4]} {Cmds[5]} {Cmds[6]} {Cmds[7]} {Cmds[8]} {Cmds[9]} {Cmds[10]} {Cmds[11]} {Cmds[12]}", ""), Cmds[12]);
                     pet.Follow(petOwner);
                     Handlers.Player.petConnections.Add(petOwner.UserId, pet.GetInstanceID());
                     petOwner.SendConsoleMessage($"Equiped {Cmd.Replace($"pet {Cmds[1]} {Cmds[2]} {Cmds[3]} {Cmds[4]} {Cmds[5]} {Cmds[6]} {Cmds[7]} {Cmds[8]} {Cmds[9]} {Cmds[10]} {Cmds[11]} {Cmds[12]} ", "")}", "#fffff");
@@ -139,28 +151,28 @@ namespace ToucanPlugin
                     break;
 
                 case "whitelist":
-                    // whitelist {message channel} {comment} {whitelist user}
-                    if (Cmds[3] == null)
+                    // whitelist {whitelist user} {comment}
+                    if (Cmds[1] == null) // Open/Close Server
                         if (Whitelist.Whitelisted)
                         {
                             Whitelist.Whitelisted = false;
-                            Tcp.Send($"msg {Cmd[1]} Server is now open!");
+                            Tcp.SendLog($"**{Server.Name} is now open!**");
                         }
                         else
                         {
                             Whitelist.Whitelisted = true;
-                            Tcp.Send($"msg {Cmd[1]} Server is now closed!");
+                            Tcp.SendLog($"**{Server.Name} is now closed!**");
                         }
                     else
-                        if (!Whitelist.WhitelistUsers.Contains(Cmds[3]))
+                        if (!Whitelist.WhitelistUsers.Contains(Cmds[1])) // Whitelist user
                     {
-                        wl.Add(Cmds[3], Cmds[2]);
-                        Tcp.Send($"msg {Cmd[1]} User ({Cmd[3]}) now whitelisted!");
+                        wl.Add(Cmds[1], Cmds[2]);
+                        Tcp.SendLog($"**User ({Cmd[1]}) now whitelisted!**");
                     }
                     else
                     {
-                        wl.Remove(Cmds[3]);
-                        Tcp.Send($"msg {Cmd[1]} User ({Cmd[3]}) taken off the whitelist.");
+                        wl.Remove(Cmds[1]);
+                        Tcp.SendLog($"**User ({Cmd[1]}) taken off the whitelist.**");
                     }
                     break;
 
