@@ -49,6 +49,21 @@ namespace ToucanPlugin
                     Tcp.Send($"stats {p.UserId} itemsbought 1");
                     break;
 
+                case "log":
+                    switch (Cmds[1])
+                    {
+                        case "info":
+                            Log.Info(Cmd.Replace($"log {Cmds[1]} ", ""));
+                            break;
+                        case "warn":
+                            Log.Warn(Cmd.Replace($"log {Cmds[1]} ", ""));
+                            break;
+                        case "error":
+                            Log.Error(Cmd.Replace($"log {Cmds[1]} ", ""));
+                            break;
+                    }
+                    break;
+
                 case "console":
                     Player.List.ToList().Find(x => x.UserId.Contains(Cmds[1])).SendConsoleMessage(Cmd.Replace($"console {Cmds[1]} ", ""), "#fffff");
                     break;
@@ -112,25 +127,29 @@ namespace ToucanPlugin
 
                 case "store":
                     if (Store.StoreStock != null) return;
-                    Store.StoreStock = Cmd.ToString().Remove(0, 6);
-                    List<string> StoreStockList = Store.StoreStock.Select(c => c.ToString()).ToList();
-                    if (StoreStockList[0] == "#" && StoreStockList[StoreStockList.Count] == "#")
+                    List<string> StoreStockList = Cmd.ToString().Remove(0, 6).Select(c => c.ToString()).ToList();
+                    Log.Error($">{StoreStockList[1] == "#" && StoreStockList[StoreStockList.Count - 1] == "#"}< >{StoreStockList[1]}< >{StoreStockList[StoreStockList.Count - 1]}<");
+                    if (StoreStockList[1] == "#" && StoreStockList[StoreStockList.Count - 1] == "#")
+                    {
+                        Store.StoreStock = Cmd.ToString().Remove(0, 6);
                         Log.Info($"Store Retrived{Store.StoreStock}");
+                    }
                     else
                     {
-                        Log.Warn($"Failed to recive store, RETRYING...");
-                        Tcp.Send($"updateData");
+                        Store.StoreStock = null;
+                        Tcp.Send($"updateDataReq 0");
+                        Log.Warn($"Store is fucked up... [This will fix itself soon]");
                     }
                     break;
 
                 case "bestbois":
                     BestBois = new List<string>(Cmd.Replace("bestbois ", "").Split(' '));
-                    if (BestBois.Count >= 1)
+                    if (BestBois.Count >= 2)
                         Log.Info("Best bois recived!");
                     else
                     {
-                        Log.Warn($"Failed to recive best bois list, RETRYING...");
-                        Tcp.Send($"updateData");
+                        Tcp.Send($"updateDataReq 1");
+                        Log.Warn($"Yeah soo, best bois list is a bit short whit only {BestBois.Count - 1} users... [This will fix itself soon]");
                     }
                     break;
 

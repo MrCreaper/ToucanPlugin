@@ -183,37 +183,66 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
                 Tcp.Send($"stats {DogPetReciver.UserId} DOGPET");
             switch (AcGame.RoundGamemode)
             {
-                case GamemodeType.CandyRush:
-                    int DefusersAlive = 0;
-                    int BommbersAlive = 0;
+                case GamemodeType.PeanutInfection:
+                    int SurvivorsAlive = 0;
+                    int PeanutsAlive = 0;
                     Exiled.API.Features.Player.List.ToList().ForEach(p =>
                     {
-                        if (CandyRush.DefuserList.Contains(p.UserId) && p.IsAlive)
-                            DefusersAlive++;
+                        if (RealPeanutInfection.DClass.Contains(p) && p.IsAlive)
+                            SurvivorsAlive++;
                         else
-                        if (CandyRush.BommerList.Contains(p.UserId) && p.IsAlive)
-                            BommbersAlive++;
+                        if (RealPeanutInfection.Nuts.Contains(p) && p.IsAlive)
+                            PeanutsAlive++;
                     });
-                    if (DefusersAlive == BommbersAlive)
+                    if (SurvivorsAlive == PeanutsAlive)
                         Map.Broadcast(6, $"ITS A TIE?!");
                     else
-                    if (DefusersAlive > BommbersAlive)
+                    if (SurvivorsAlive > PeanutsAlive)
                     {
-                        CandyRush.DefuserList.ForEach(id => Tcp.Send($"eventWin {id} 0 CandyRush"));
-                        Map.Broadcast(6, $"<color=cyan>DEFUSERS WIN!</color>");
+                        RealPeanutInfection.DClass.ForEach(p => Tcp.Send($"eventWin {p.UserId} 0 PeanutInfection"));
+                        Map.Broadcast(6, $"<color=orange>SURVIVORS WIN!</color>");
                     }
                     else
-                    if (DefusersAlive < BommbersAlive)
+                    if (SurvivorsAlive < PeanutsAlive)
                     {
-                        CandyRush.BommerList.ForEach(id => Tcp.Send($"eventWin {id} 1 CandyRush"));
-                        Map.Broadcast(6, $"<color=red>BOMMERS WIN!</color>");
+                        RealPeanutInfection.Nuts.ForEach(p => Tcp.Send($"eventWin {p.UserId} 1 PeanutInfection"));
+                        Map.Broadcast(6, $"<color=red>PEANUTS WIN!</color>");
                     }
                     break;
+
+                    /*case GamemodeType.CandyRush:
+                        int DefusersAlive = 0;
+                        int BommbersAlive = 0;
+                        Exiled.API.Features.Player.List.ToList().ForEach(p =>
+                        {
+                            if (CandyRush.DefuserList.Contains(p.UserId) && p.IsAlive)
+                                DefusersAlive++;
+                            else
+                            if (CandyRush.BommerList.Contains(p.UserId) && p.IsAlive)
+                                BommbersAlive++;
+                        });
+                        if (DefusersAlive == BommbersAlive)
+                            Map.Broadcast(6, $"ITS A TIE?!");
+                        else
+                        if (DefusersAlive > BommbersAlive)
+                        {
+                            CandyRush.DefuserList.ForEach(id => Tcp.Send($"eventWin {id} 0 CandyRush"));
+                            Map.Broadcast(6, $"<color=cyan>DEFUSERS WIN!</color>");
+                        }
+                        else
+                        if (DefusersAlive < BommbersAlive)
+                        {
+                            CandyRush.BommerList.ForEach(id => Tcp.Send($"eventWin {id} 1 CandyRush"));
+                            Map.Broadcast(6, $"<color=red>BOMMERS WIN!</color>");
+                        }
+                        break;*/
             }
             Player.Has008RandomSpawned = false;
             Player.SCPKills = 0;
             SpecMode.TUTSpecList = null;
             mr.ChaosHacker = null;
+            RealPeanutInfection.DClass.Clear();
+            RealPeanutInfection.Nuts.Clear();
         }
         public void OnRespawningTeam(RespawningTeamEventArgs ev)
         {
@@ -284,13 +313,9 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
             while (mr.ChaosHacker.Contains(p))
             {
                 if (p.AdrenalineHealth + 1 > p.MaxAdrenalineHealth)
-                {
                     p.AdrenalineHealth = p.MaxAdrenalineHealth;
-                }
                 else
-                {
                     p.AdrenalineHealth = +1;
-                }
                 Thread.Sleep(100);
             }
         }

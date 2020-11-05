@@ -10,15 +10,25 @@ namespace ToucanPlugin.Gamemodes
 {
     public class RealPeanutInfection
     {
+        public static List<Player> Nuts { get; set; } = new List<Player>();
+        public static List<Player> DClass { get; set; } = new List<Player>();
         public void RealPeanutInfectione()
         {
             Map.Broadcast(5, "REAL Peanut Infection Gamemode started!");
             int teamCount = Player.List.Count();
             for (int i = 0; i <= teamCount; i++)
             {
-                if(i == teamCount) Player.List.ToList().Find(x => x.Id == i).SetRole(RoleType.Scp173); 
+                Player fucker = Player.List.ToList().Find(x => x.Id == i);
+                if (i == teamCount)
+                {
+                    Nuts.Add(fucker);
+                    fucker.SetRole(RoleType.Scp173);
+                }
                 else
-                Player.List.ToList().Find(x => x.Id == i).SetRole(RoleType.ClassD);
+                {
+                    DClass.Add(fucker);
+                    fucker.SetRole(RoleType.ClassD);
+                }
             }
         }
     }

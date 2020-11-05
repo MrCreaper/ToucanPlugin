@@ -35,9 +35,9 @@ namespace ToucanPlugin
                     case GamemodeType.AmongUs:
                         new AmongUs().Amongus();
                         break;
-                    case GamemodeType.CandyRush:
+                    /*case GamemodeType.CandyRush:
                         new CandyRush().Candyrush();
-                        break;
+                        break;*/
                 }
         }
     }
@@ -48,8 +48,8 @@ namespace ToucanPlugin
             AcGame.RoundGamemode = 0;
             AmongUs.DeathCords.Clear();
             AmongUs.Imposters.Clear();
-            CandyRush.BommerList.Clear();
-            CandyRush.DefuserList.Clear();
+            /*CandyRush.BommerList.Clear();
+            CandyRush.DefuserList.Clear();*/
         }
         public string ConvertToNice(GamemodeType Type)
         {
