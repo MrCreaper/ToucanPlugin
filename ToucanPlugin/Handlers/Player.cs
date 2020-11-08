@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using ToucanPlugin.Commands;
 using ToucanPlugin.Gamemodes;
 using UnityEngine;
+using scp035;
+using SerpentsHand;
 
 namespace ToucanPlugin.Handlers
 {

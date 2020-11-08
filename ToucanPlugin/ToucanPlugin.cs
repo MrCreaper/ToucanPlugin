@@ -311,6 +311,7 @@ namespace ToucanPlugin
             Player.ThrowingGrenade -= player.OnThrowingGrenade;
             Player.EnteringFemurBreaker -= player.OnEnteringFemurBreaker;
             Player.Hurting -= player.OnHurting;
+            Player.Shot -= player.OnShot;
             Player.ChangingRole -= player.OnChangingRole;
             Player.TriggeringTesla -= player.OnTriggeringTesla;
         }
