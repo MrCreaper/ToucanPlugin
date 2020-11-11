@@ -17,14 +17,15 @@ namespace ToucanPlugin
         public string RemoveThatShit(string DisgustingSpaces)
         {
             List<string> DisgustingSpacesArray = DisgustingSpaces.Select(c => c.ToString()).ToList();
+            string CringeSpace = DisgustingSpacesArray[DisgustingSpacesArray.Count - 1];
             string NewString = "";
-            bool StoreFound = false;
+            bool ShitFound = false;
             for (int i = DisgustingSpacesArray.Count - 1; 0 < i; i--)
             {
-                if (DisgustingSpacesArray[i] != " " && DisgustingSpacesArray[i] != "#" && !StoreFound)
+                if (DisgustingSpacesArray[i] == CringeSpace && !ShitFound)
                     DisgustingSpacesArray[i] = "";
                 else
-                    StoreFound = true;
+                    ShitFound = true;
             }
             DisgustingSpacesArray.ForEach(c => NewString += c);
             return NewString;
@@ -128,7 +129,6 @@ namespace ToucanPlugin
                 case "store":
                     if (Store.StoreStock != null) return;
                     List<string> StoreStockList = Cmd.ToString().Remove(0, 6).Select(c => c.ToString()).ToList();
-                    Log.Error($">{StoreStockList[1] == "#" && StoreStockList[StoreStockList.Count - 1] == "#"}< >{StoreStockList[1]}< >{StoreStockList[StoreStockList.Count - 1]}<");
                     if (StoreStockList[1] == "#" && StoreStockList[StoreStockList.Count - 1] == "#")
                     {
                         Store.StoreStock = Cmd.ToString().Remove(0, 6);

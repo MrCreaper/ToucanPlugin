@@ -103,12 +103,13 @@ namespace ToucanPlugin.Handlers
             for (int i = 0; i <= Exiled.API.Features.Player.List.ToList().Count - 1; i++)
             {
                 Exiled.API.Features.Player p = Exiled.API.Features.Player.List.ToList()[i];
-                if (p == null) return;
-                if (ExcludedId == p.UserId) return;
-                string Coma = ",";
-                if (Exiled.API.Features.Player.List.ToList().Count - 1 == i)
-                    Coma = "";
-                playerList += $"{{\"id\":{p.Id},\"name\":\"{p.Nickname}\",\"userid\":\"{p.UserId}\"}}{Coma}";
+                if (ExcludedId != p.UserId)
+                {
+                    string Coma = ",";
+                    if (Exiled.API.Features.Player.List.ToList().Count - 1 == i || ExcludedId == Exiled.API.Features.Player.List.ToList()[i +1].UserId)
+                        Coma = "";
+                    playerList += $"{{\"id\":{p.Id},\"name\":\"{p.Nickname}\",\"userid\":\"{p.UserId}\"}}{Coma}";
+                }
             }
             playerList += "]";
             Tcp.Send($"list {playerList}");
@@ -124,11 +125,11 @@ namespace ToucanPlugin.Handlers
             else
                 Tcp.Send($"stats {ev.Player.UserId} sescapses 1");
             Map.Broadcast(4, $"{ev.Player.Nickname} escaped");
-            string escapeMsg = $"escape {classBool} {ev.Player.UserId} {Exiled.API.Features.Player.List.ToList().Count}";
+            string escapeMsg = $"escape {classBool} {ev.Player.UserId}";
             if (ev.Player.IsCuffed)
             {
                 Exiled.API.Features.Player cuffer = Exiled.API.Features.Player.List.ToList().Find(x => x.Id.ToString().Contains(ev.Player.CufferId.ToString()));
-                escapeMsg = $"{escapeMsg} { cuffer.UserId}";
+                escapeMsg = $"{escapeMsg} {cuffer.UserId}";
                 if (ev.Player.Role == RoleType.ClassD)
                     Tcp.Send($"stats {cuffer.UserId} escortedDclass 1");
                 else
@@ -437,17 +438,6 @@ namespace ToucanPlugin.Handlers
                     }
                     ev.Attacker.Broadcast(1, $"Dmg reflected! (Reflector: {ev.Target.Nickname})");
                 }
-        }
-        public void OnShot(ShotEventArgs ev)
-        {
-            /*Inventory.SyncItemInfo Weapon = ev.Shooter.CurrentItem;
-            System.Random rnd = new System.Random();
-            if(Weapon.id == ItemType.GunE11SR && rnd.Next(0, 101) <= 20)
-            {
-                int BulletsLeftInWeapon = ev.Shooter.Ammo.
-                ev.Shooter.SetWeaponAmmo(Weapon, 0);
-                ev.Shooter.Ammo
-            }*/
         }
         public void OnChangingRole(ChangingRoleEventArgs ev)
         {

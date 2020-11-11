@@ -281,7 +281,7 @@ namespace ToucanPlugin
             Player.ThrowingGrenade += player.OnThrowingGrenade;
             Player.EnteringFemurBreaker += player.OnEnteringFemurBreaker;
             Player.Hurting += player.OnHurting;
-            Player.Shot += player.OnShot;
+            //Player.Shot += player.OnShot;
             Player.ChangingRole += player.OnChangingRole;
             Player.TriggeringTesla += player.OnTriggeringTesla;
         }
@@ -291,12 +291,12 @@ namespace ToucanPlugin
             player = null;
             server = null;
 
-            Server.WaitingForPlayers += server.OnWaitingForPlayers;
-            Server.RoundStarted += server.OnRoundStarted;
-            Server.RestartingRound += server.OnRestartingRound;
-            Server.RoundEnded += server.OnRoundEnded;
-            Server.RespawningTeam += server.OnRespawningTeam;
-            Server.SendingRemoteAdminCommand += server.OnSendingRemoteAdminCommand;
+            Server.WaitingForPlayers -= server.OnWaitingForPlayers;
+            Server.RoundStarted -= server.OnRoundStarted;
+            Server.RestartingRound -= server.OnRestartingRound;
+            Server.RoundEnded -= server.OnRoundEnded;
+            Server.RespawningTeam -= server.OnRespawningTeam;
+            Server.SendingRemoteAdminCommand -= server.OnSendingRemoteAdminCommand;
 
             Player.PreAuthenticating -= player.OnPreAuthenticating;
             Player.Joined -= player.OnJoin;
@@ -311,7 +311,7 @@ namespace ToucanPlugin
             Player.ThrowingGrenade -= player.OnThrowingGrenade;
             Player.EnteringFemurBreaker -= player.OnEnteringFemurBreaker;
             Player.Hurting -= player.OnHurting;
-            Player.Shot -= player.OnShot;
+            //Player.Shot -= player.OnShot;
             Player.ChangingRole -= player.OnChangingRole;
             Player.TriggeringTesla -= player.OnTriggeringTesla;
         }
