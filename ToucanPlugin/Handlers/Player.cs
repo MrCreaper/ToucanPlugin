@@ -22,12 +22,16 @@ namespace ToucanPlugin.Handlers
         public static int SCPKills = 0;
         public static Dictionary<string, int> petConnections = new Dictionary<string, int>();
         readonly MessageResponder mr = new MessageResponder();
+        public static List<Exiled.API.Features.Player> PlayersCrouchingList = new List<Exiled.API.Features.Player>();
 
         public void OnPreAuthenticating(PreAuthenticatingEventArgs ev)
         {
             if (!Whitelist.WhitelistUsers.Contains(ev.UserId) && Whitelist.Whitelisted)
+            {
                 //ev.Disallow();// ev.Player.Kick("Sorry the server is right now whitelisted. Come back later!");
                 ev.RejectBanned("Sorry the server is right now whitelisted. Come back later!", 0, false);
+                return;
+            }
         }
         public void OnJoin(JoinedEventArgs ev)
         {
@@ -464,6 +468,23 @@ namespace ToucanPlugin.Handlers
                 ev.IsTriggerable = false;
             if (ev.Player.Role == RoleType.Scp0492 && ev.IsInHurtingRange)
                 ev.Player.Position = new Vector3(ev.Player.Position.x + 5, ev.Player.Position.y, ev.Player.Position.z);
+        }
+        public void StartDetectingCrouching()
+        {
+            if (!ToucanPlugin.Instance.Config.CrouchingEnabled) return;
+            while (true)
+                Exiled.API.Features.Player.List.ToList().ForEach(p => {
+                    if(p.MoveState == PlayerMovementState.Sneaking && !PlayersCrouchingList.Contains(p))
+                    {
+                        p.Scale = ToucanPlugin.Instance.Config.CrouchingSize;
+                        PlayersCrouchingList.Add(p);
+                    }
+                    else if (p.MoveState != PlayerMovementState.Sneaking && PlayersCrouchingList.Contains(p))
+                    {
+                        p.Scale = new Vector3(1,1,1);
+                        PlayersCrouchingList.Remove(p);
+                    }
+                });
         }
     }
 }

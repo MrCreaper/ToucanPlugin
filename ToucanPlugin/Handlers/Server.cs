@@ -86,6 +86,7 @@ namespace ToucanPlugin.Handlers
                 new GamemodeSelector();
             }
             Tcp.SendLog("Waiting for players...");
+            Player.PlayersCrouchingList.Clear();
         }
 
         public void OnRoundStarted()

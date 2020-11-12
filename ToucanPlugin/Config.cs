@@ -22,6 +22,10 @@ namespace ToucanPlugin
         public string RoundStartMessage { get; set; } = "";
         [Description("Reflect team damage")]
         public bool ReflectTeamDMG { get; set; } = false;
+        [Description("Crouching...")]
+        public bool CrouchingEnabled { get; set; } = false;
+        [Description("Reflect team damage")]
+        public Vector3 CrouchingSize { get; set; } = new Vector3(1, 0.4f, 1);
         [Description("Default Kick message, when the kicker didnt add a reason to why")]
         public string DefaultKickReason { get; set; } = "[Kicked by {kicker}] No Reason";
         [Description("Default Kick All message, when the kicker didnt add a reason to why")]

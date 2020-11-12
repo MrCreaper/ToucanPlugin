@@ -206,20 +206,23 @@ namespace ToucanPlugin
             Tcp.topicUpdateTimer = Stopwatch.StartNew();
             Tcp.topicUpdateTimer.Start();
             Task.Factory.StartNew(() => Tcp.Start());
+            player.StartDetectingCrouching();
 
-            try
-            {
-                if (SCP_575.Plugin.TimerOn != LastLights)
+            while (true) {
+                try
                 {
-                    Tcp.Send($"blackout {SCP_575.Plugin.TimerOn}");
-                    LastLights = SCP_575.Plugin.TimerOn;
+                    if (SCP_575.Plugin.TimerOn != LastLights)
+                    {
+                        Tcp.Send($"blackout {SCP_575.Plugin.TimerOn}");
+                        LastLights = SCP_575.Plugin.TimerOn;
+                    }
+                    else
+                        return;
                 }
-                else
+                catch
+                {
                     return;
-            }
-            catch
-            {
-                return;
+                }
             }
         }
         public override void OnDisabled()
