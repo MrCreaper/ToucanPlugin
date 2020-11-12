@@ -47,15 +47,6 @@ namespace ToucanPlugin.Handlers
 
             string message = ToucanPlugin.Instance.Config.JoinedMessage.Replace("{player}", ev.Player.Nickname);
             Map.Broadcast(2, message);
-            if (ToucanPlugin.Instance.Config.MentionRoles)
-            {
-                if (Exiled.API.Features.Player.List.Count() == 5)
-                    Tcp.SendLog($"5 PLAYERS <@&{ToucanPlugin.Instance.Config.FivePlayerRole}>");
-                if (Exiled.API.Features.Player.List.Count() == 10)
-                    Tcp.SendLog($"10 PLAYERS <@&{ToucanPlugin.Instance.Config.TenPlayerRole}>");
-                if (Exiled.API.Features.Player.List.Count() == 15)
-                    Tcp.SendLog($"15 PLAYERS <@&{ToucanPlugin.Instance.Config.FifteenPlayerRole}>");
-            }
             Tcp.SendLog($"**{ev.Player.Nickname} ({ev.Player.UserId}) Joined [{Exiled.API.Features.Player.List.Count()}/20]**");
 
             //Top ranker Role
