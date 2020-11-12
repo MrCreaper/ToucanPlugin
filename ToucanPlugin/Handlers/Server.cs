@@ -127,7 +127,7 @@ namespace ToucanPlugin.Handlers
                             AcGame.NextGamemode = GamemodeType.PeanutInfection;
                         else
                         {
-                            RandomCounter = +ToucanPlugin.Instance.Config.GamemodeChances[0].CandyRush;
+                            RandomCounter = +ToucanPlugin.Instance.Config.GamemodeChances[0].PeanutInfection;
                             if (GAMEMODE <= ToucanPlugin.Instance.Config.GamemodeChances[0].QuietPlace + RandomCounter)
                                 AcGame.NextGamemode = GamemodeType.QuitePlace;
                             else
@@ -142,7 +142,11 @@ namespace ToucanPlugin.Handlers
             Tcp.SendLog($"Round restarting...");
         public void OnRoundEnded(RoundEndedEventArgs ev)
         {
-            if (ToucanPlugin.Instance.Config.DetonateAtRoundEnded && Warhead.IsDetonated) Warhead.Detonate();
+            if (ToucanPlugin.Instance.Config.DetonateAtRoundEnded && Warhead.IsDetonated)
+            {
+                Warhead.Detonate();
+                Warhead.DetonationTimer = ev.TimeToRestart;
+            }
             Tcp.SendLog($"Round Ended\n```Winning Class: {ev.LeadingTeam}\nEscaped D-Class: {ev.ClassList.class_ds}\nRescued Scientists: {ev.ClassList.scientists}\nContained SCPs: {ev.ClassList.scps_except_zombies}\nWas warhead detonated: {Exiled.API.Features.Warhead.IsDetonated}\nKilled by warhead: {ev.ClassList.warhead_kills}```");
             Exiled.API.Features.Player.List.ToList().ForEach(u => Tcp.Send($"stats {u.UserId} gamesplayed 1"));
             Exiled.API.Features.Player.List.ToList().ForEach(u =>
@@ -293,7 +297,7 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
             else if (ev.NextKnownTeam == Respawning.SpawnableTeamType.ChaosInsurgency)
             { // Is chaos spawn.
                 if (Player.SCPKills <= 15 && playerList.Count >= 2 && ToucanPlugin.Instance.Config.CanChaosHackerSpawn)
-                {
+                { // Chaos Hacker
                     Exiled.API.Features.Player p = playerList[rnd.Next(0, playerList.Count)];
                     p.MaxHealth = 75;
                     p.MaxEnergy = 75;
