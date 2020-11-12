@@ -72,6 +72,7 @@ namespace ToucanPlugin.Handlers
             UpdatePlayerList(ev.Player.UserId);
             if (Exiled.API.Features.Player.List.Count() - 1 <= 0 && Round.IsStarted)
                 Round.Restart();
+            UpdateVoiceChannel(ev.Player);
         }
         private void LonelyRound()
         {
@@ -97,9 +98,9 @@ namespace ToucanPlugin.Handlers
                 if (ExcludedId != p.UserId)
                 {
                     string Coma = ",";
-                    if (Exiled.API.Features.Player.List.ToList().Count - 1 == i || ExcludedId == Exiled.API.Features.Player.List.ToList()[i +1].UserId)
+                    if (Exiled.API.Features.Player.List.ToList().Count - 1 == i || ExcludedId == Exiled.API.Features.Player.List.ToList()[i + 1].UserId)
                         Coma = "";
-                    playerList += $"{{\"id\":{p.Id},\"name\":\"{p.Nickname}\",\"userid\":\"{p.UserId}\"}}{Coma}";
+                    playerList += $"{{\"id\":{p.Id},\"name\":\"{p.Nickname.Replace("\"", "")}\",\"userid\":\"{p.UserId}\"}}{Coma}";
                 }
             }
             playerList += "]";
@@ -138,14 +139,24 @@ namespace ToucanPlugin.Handlers
             {
                 if (ev.Target.Role != RoleType.ClassD || ev.Target.Role != RoleType.Scientist || ev.Target.Role != RoleType.FacilityGuard) return;
                 System.Random rnd = new System.Random();
-                if (rnd.Next(1, 50) == 1)
+                if (rnd.Next(0, 50) == 1)
                 {
                     ev.Target.SetRole(RoleType.Scp0492);
                     Has008RandomSpawned = true;
-                    ev.Target.Broadcast(10, $"<color=red>you have been infected by scp 008 convert all humans</color>");
+                    ev.Target.Broadcast(10, $"<color=red>You have been infected by scp 008 convert all humans</color>");
                     Cassie.Message($"biological infection at {ev.Target.CurrentRoom.Zone}");
                 }
             }
+            UpdateVoiceChannel(ev.Target);
+            if (ev.Killer.UserId == ev.Target.UserId) return;
+            bool isff = false;
+            if (ev.Killer.Team == ev.Target.Team)
+                isff = true;
+            bool isTargetScp = false;
+            if (ev.Target.Team == Team.SCP || scp035.API.Scp035Data.GetScp035() == ev.Killer)
+                isTargetScp = true;
+            Tcp.Send($"died {isff} {ev.Target.UserId} {ev.Killer.UserId} {ev.HitInformations.Tool} {isTargetScp}");
+            Tcp.SendLog($"{ev.Target.Nickname} ({ev.Target.UserId}) killed by {ev.Killer.Nickname} ({ev.Killer.UserId}) whit {ev.HitInformations.Tool}");
             switch (ev.Killer.Team)
             {
                 case Team.SCP:
@@ -219,15 +230,6 @@ namespace ToucanPlugin.Handlers
                 Tcp.Send($"stats {ev.Killer.UserId} scpkilled 1");
                 Tcp.Send($"stats {ev.Target.UserId} scpdeaths 1");
             }
-            if (ev.Killer.UserId == ev.Target.UserId) return;
-            bool isff = false;
-            if (ev.Killer.Team == ev.Target.Team)
-                isff = true;
-            bool isTargetScp = false;
-            if (ev.Target.Team == Team.SCP || scp035.API.Scp035Data.GetScp035() == ev.Killer)
-                isTargetScp = true;
-            Tcp.Send($"died {isff} {ev.Target.UserId} {ev.Killer.UserId} {ev.HitInformations.Tool} {isTargetScp}");
-            Tcp.SendLog($"{ev.Target.Nickname} ({ev.Target.UserId}) killed by {ev.Killer.Nickname} ({ev.Killer.UserId}) whit {ev.HitInformations.Tool}");
 
             //Event bullshit
             switch (AcGame.RoundGamemode)
@@ -401,6 +403,7 @@ namespace ToucanPlugin.Handlers
         }
         public void OnEnteringFemurBreaker(EnteringFemurBreakerEventArgs ev)
         {
+            UpdateVoiceChannel(ev.Player);
             List<Exiled.API.Features.Player> playerList = new List<Exiled.API.Features.Player>((IEnumerable<Exiled.API.Features.Player>)Exiled.API.Features.Player.List.ToList());
             if (playerList.Find(x => x.Role == RoleType.Scp106) != null)
                 Tcp.Send($"stats {ev.Player.UserId} femur 1");
@@ -430,10 +433,12 @@ namespace ToucanPlugin.Handlers
                     ev.Attacker.Broadcast(1, $"Dmg reflected! (Reflector: {ev.Target.Nickname})");
                 }
         }
-        public void OnChangingRole(ChangingRoleEventArgs ev)
+        public void OnChangingRole(ChangingRoleEventArgs ev) =>
+            UpdateVoiceChannel(ev.Player, ev.NewRole);
+        public void UpdateVoiceChannel(Exiled.API.Features.Player p, RoleType NewRole = RoleType.Spectator)
         {
-            Team PlayerTeam = Team.RIP;
-            if (ev.NewRole.GetSide() == Side.Tutorial) PlayerTeam = Team.TUT;
+            /*Team PlayerTeam = Team.RIP;
+            if (ev.NewRole.GetSide() == Side.Tutorial)no u PlayerTeam = Team.TUT;
             if (ev.NewRole.GetSide() == Side.Scp) PlayerTeam = Team.SCP;
             if (ev.NewRole.GetTeam() == Team.RSC) PlayerTeam = Team.RSC;
             if (ev.NewRole.GetTeam() == Team.MTF) PlayerTeam = Team.MTF;
@@ -441,7 +446,17 @@ namespace ToucanPlugin.Handlers
             if (ev.NewRole.GetTeam() == Team.CHI) PlayerTeam = Team.CHI;
             if (SerpentsHand.API.SerpentsHand.GetSHPlayers().Contains(ev.Player)) PlayerTeam = Team.SCP;
             if (scp035.API.Scp035Data.GetScp035() == ev.Player) PlayerTeam = Team.SCP;
-            Tcp.Send($"vc {ev.Player.UserId} {PlayerTeam}");
+            Tcp.Send($"vc {ev.Player.UserId} {PlayerTeam}");*/
+            Team PlayerTeam = Team.RIP;
+            if (NewRole.GetSide() == Side.Tutorial) PlayerTeam = Team.TUT;
+            if (NewRole.GetSide() == Side.Scp) PlayerTeam = Team.SCP;
+            if (NewRole.GetTeam() == Team.RSC) PlayerTeam = Team.RSC;
+            if (NewRole.GetTeam() == Team.MTF) PlayerTeam = Team.MTF;
+            if (NewRole.GetTeam() == Team.CDP) PlayerTeam = Team.CDP;
+            if (NewRole.GetTeam() == Team.CHI) PlayerTeam = Team.CHI;
+            if (SerpentsHand.API.SerpentsHand.GetSHPlayers().Contains(p)) PlayerTeam = Team.SCP;
+            if (scp035.API.Scp035Data.GetScp035() == p) PlayerTeam = Team.SCP;
+            Tcp.Send($"vc {p.UserId} {PlayerTeam}");
         }
         public void OnTriggeringTesla(TriggeringTeslaEventArgs ev)
         {

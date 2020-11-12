@@ -36,7 +36,7 @@ namespace ToucanPlugin
                 int conPort = 173; //Get it?
 
                 // Get DNS host information.
-                if (ToucanPlugin.Instance.Config.ToucanServerIP == "") return;
+                if (ToucanPlugin.Instance.Config.ToucanServerIP == "") { Log.Warn($"No Toucan Server ip set!"); return; };
                 IPHostEntry hostInfo = Dns.GetHostEntry(ToucanPlugin.Instance.Config.ToucanServerIP);
                 // Get the DNS IP addresses associated with the host.
                 IPAddress[] IPaddresses = hostInfo.AddressList;

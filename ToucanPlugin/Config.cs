@@ -34,7 +34,7 @@ namespace ToucanPlugin
         public bool ReplaceAdvertismentNames { get; set; } = true;
         [Description("Thing to replace advertisment part of a name whit")]
         public string ReplaceAdvertismentNamesWhit { get; set; } = "[ADVERTISMENT DENIED]";
-        public List<string> ADThing { get; set; } = new List<string> { ".com", ".tf", "ttv/", "YT" };
+        public List<string> ADThing { get; set; } = new List<string> { ".com", ".tf", "ttv/", "YT", ".money", "csgo" };
         public bool MentionRoles { get; set; } = false;
         public string FivePlayerRole { get; set; } = "";
         public string TenPlayerRole { get; set; } = "";
@@ -153,10 +153,10 @@ namespace ToucanPlugin
         public List<GamemodeChances> GamemodeChances { get; set; } = new List<GamemodeChances>
         {
             new GamemodeChances() {
-                QuietPlace = 25,
-                PeanutInfection = 25,
-                AmongUs = 25,
-                CandyRush = 25,
+                QuietPlace = 33,
+                PeanutInfection = 33,
+                AmongUs = 34,
+                //CandyRush = 25,
             }
         };
     }

@@ -275,6 +275,7 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
         }
         public void OnRespawningTeam(RespawningTeamEventArgs ev)
         {
+            if (ev.Players.Count == 0) return;
             SpecMode.TUTSpecList.ForEach(id => ev.Players.Add(Exiled.API.Features.Player.List.ToList().Find(x => x.Id.ToString() == id)));
             SpecMode.TUTSpecList.Clear();
             List<Exiled.API.Features.Player> playerList = new List<Exiled.API.Features.Player>(ev.Players);
@@ -295,13 +296,12 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
                     else
                         p.Position = new Vector3(s.SpawnPos.X, s.SpawnPos.Y, s.SpawnPos.Z);
                 });
-                int leaderIndex = rnd.Next(0, playerList.Count);
                 if (s.CommanderItems.Count != 0)
                 {
-                    Exiled.API.Features.Player Commander = playerList[leaderIndex];
+                    Exiled.API.Features.Player Commander = playerList[rnd.Next(0, playerList.Count)];
                     Commander.ClearInventory();
                     s.CommanderItems.ForEach(item => Commander.Inventory.AddNewItem((ItemType)item));
-                    Commander.ShowHint($"<i>You are the Commander of {s.Name}, you have something special in your inventory</i>", 6);
+                    Commander.ShowHint($"<i>You are the <color=yellow>Commander</color> of <color=yellow>{s.Name}</color></i>", 6);
                 }
             });
             if (ev.NextKnownTeam == Respawning.SpawnableTeamType.NineTailedFox)

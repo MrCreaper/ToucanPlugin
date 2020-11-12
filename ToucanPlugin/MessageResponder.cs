@@ -78,7 +78,7 @@ namespace ToucanPlugin
                     break;
 
                 case "rcoins": //recived coins
-                    Player.List.ToList().Find(x => x.UserId.Contains(Cmds[1])).ShowHint($"<i>Recived <color=yellow>{Cmds[2]}Coins</color></i>", 5);
+                    Player.List.ToList().Find(x => x.UserId.Contains(Cmds[1])).ShowHint($"<i>Recived <color=yellow>{Cmds[2]} Coins</color></i>", 5);
                     break;
 
                 case "kill":
