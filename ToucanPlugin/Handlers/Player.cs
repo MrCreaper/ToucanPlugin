@@ -4,7 +4,6 @@ using Exiled.API.Features;
 using Exiled.Events.EventArgs;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using ToucanPlugin.Commands;
@@ -76,7 +75,7 @@ namespace ToucanPlugin.Handlers
             UpdatePlayerList(ev.Player.UserId);
             if (Exiled.API.Features.Player.List.Count() - 1 <= 0 && Round.IsStarted)
                 Round.Restart();
-            UpdateVoiceChannel(ev.Player);
+            UpdateVoiceChannel(ev.Player, RoleType.Spectator);
         }
         private void LonelyRound()
         {
@@ -102,7 +101,7 @@ namespace ToucanPlugin.Handlers
                 if (ExcludedId != p.UserId)
                 {
                     string Coma = ",";
-                    if (Exiled.API.Features.Player.List.ToList().Count - 1 == i || ExcludedId == Exiled.API.Features.Player.List.ToList()[i + 1].UserId)
+                    if (Exiled.API.Features.Player.List.ToList().Count - 1 == i || ExcludedId == Exiled.API.Features.Player.List.ToList()[i + 1].UserId && Exiled.API.Features.Player.List.ToList().Count - 1 != i && ExcludedId == Exiled.API.Features.Player.List.ToList()[i + 1].UserId)
                         Coma = "";
                     playerList += $"{{\"id\":{p.Id},\"name\":\"{p.Nickname.Replace("\"", "")}\",\"userid\":\"{p.UserId}\"}}{Coma}";
                 }
@@ -151,7 +150,7 @@ namespace ToucanPlugin.Handlers
                     Cassie.Message($"biological infection at {ev.Target.CurrentRoom.Zone}");
                 }
             }
-            UpdateVoiceChannel(ev.Target);
+            UpdateVoiceChannel(ev.Target, RoleType.Spectator);
             if (ev.Killer.UserId == ev.Target.UserId) return;
             bool isff = false;
             if (ev.Killer.Team == ev.Target.Team)
@@ -407,7 +406,7 @@ namespace ToucanPlugin.Handlers
         }
         public void OnEnteringFemurBreaker(EnteringFemurBreakerEventArgs ev)
         {
-            UpdateVoiceChannel(ev.Player);
+            UpdateVoiceChannel(ev.Player, RoleType.Spectator);
             List<Exiled.API.Features.Player> playerList = new List<Exiled.API.Features.Player>((IEnumerable<Exiled.API.Features.Player>)Exiled.API.Features.Player.List.ToList());
             if (playerList.Find(x => x.Role == RoleType.Scp106) != null)
                 Tcp.Send($"stats {ev.Player.UserId} femur 1");
@@ -424,43 +423,41 @@ namespace ToucanPlugin.Handlers
             }
             else
                 if (ToucanPlugin.Instance.Config.ReflectTeamDMG && ev.Target.Side == ev.Attacker.Side && ev.Target != ev.Attacker && scp035.API.Scp035Data.GetScp035() != ev.Attacker && scp035.API.Scp035Data.GetScp035() != ev.Target && !ev.Attacker.Sender.CheckPermission(PlayerPermissions.FriendlyFireDetectorImmunity) && !Exiled.API.Features.Server.FriendlyFire && ReflectControl.Reflect)
+            {
+                if (ev.Target.Health < ev.Target.MaxHealth)
+                    ev.Target.Health = ev.Target.Health + ev.Amount;
+                else
+                    ev.Target.Health = ev.Target.MaxHealth;
+                if (!ev.Attacker.IsGodModeEnabled)
                 {
-                    if (ev.Target.Health < ev.Target.MaxHealth)
-                        ev.Target.Health = ev.Target.Health + ev.Amount;
-                    else
-                        ev.Target.Health = ev.Target.MaxHealth;
-                    if (!ev.Attacker.IsGodModeEnabled)
-                    {
-                        ev.Attacker.Health = ev.Attacker.Health - ev.Amount;
-                        if (ev.Attacker.Health <= 0) ev.Attacker.Kill();
-                    }
-                    ev.Attacker.Broadcast(1, $"Dmg reflected! (Reflector: {ev.Target.Nickname})");
+                    ev.Attacker.Health = ev.Attacker.Health - ev.Amount;
+                    if (ev.Attacker.Health <= 0) ev.Attacker.Kill();
                 }
+                ev.Attacker.Broadcast(1, $"Dmg reflected! (Reflector: {ev.Target.Nickname})");
+            }
         }
         public void OnChangingRole(ChangingRoleEventArgs ev) =>
             UpdateVoiceChannel(ev.Player, ev.NewRole);
-        public void UpdateVoiceChannel(Exiled.API.Features.Player p, RoleType NewRole = RoleType.Spectator)
+        public Team GetTeam(Exiled.API.Features.Player p, RoleType Role = RoleType.None)
         {
-            /*Team PlayerTeam = Team.RIP;
-            if (ev.NewRole.GetSide() == Side.Tutorial)no u PlayerTeam = Team.TUT;
-            if (ev.NewRole.GetSide() == Side.Scp) PlayerTeam = Team.SCP;
-            if (ev.NewRole.GetTeam() == Team.RSC) PlayerTeam = Team.RSC;
-            if (ev.NewRole.GetTeam() == Team.MTF) PlayerTeam = Team.MTF;
-            if (ev.NewRole.GetTeam() == Team.CDP) PlayerTeam = Team.CDP;
-            if (ev.NewRole.GetTeam() == Team.CHI) PlayerTeam = Team.CHI;
-            if (SerpentsHand.API.SerpentsHand.GetSHPlayers().Contains(ev.Player)) PlayerTeam = Team.SCP;
-            if (scp035.API.Scp035Data.GetScp035() == ev.Player) PlayerTeam = Team.SCP;
-            Tcp.Send($"vc {ev.Player.UserId} {PlayerTeam}");*/
+            if (Role == RoleType.None) Role = p.Role;
             Team PlayerTeam = Team.RIP;
-            if (NewRole.GetSide() == Side.Tutorial) PlayerTeam = Team.TUT;
-            if (NewRole.GetSide() == Side.Scp) PlayerTeam = Team.SCP;
-            if (NewRole.GetTeam() == Team.RSC) PlayerTeam = Team.RSC;
-            if (NewRole.GetTeam() == Team.MTF) PlayerTeam = Team.MTF;
-            if (NewRole.GetTeam() == Team.CDP) PlayerTeam = Team.CDP;
-            if (NewRole.GetTeam() == Team.CHI) PlayerTeam = Team.CHI;
+            if (Role.GetSide() == Side.Tutorial) PlayerTeam = Team.TUT;
+            if (Role.GetSide() == Side.Scp) PlayerTeam = Team.SCP;
+            if (Role.GetTeam() == Team.RSC) PlayerTeam = Team.RSC;
+            if (Role.GetTeam() == Team.MTF) PlayerTeam = Team.MTF;
+            if (Role.GetTeam() == Team.CDP) PlayerTeam = Team.CDP;
+            if (Role.GetTeam() == Team.CHI) PlayerTeam = Team.CHI;
             if (SerpentsHand.API.SerpentsHand.GetSHPlayers().Contains(p)) PlayerTeam = Team.SCP;
             if (scp035.API.Scp035Data.GetScp035() == p) PlayerTeam = Team.SCP;
-            Tcp.Send($"vc {p.UserId} {PlayerTeam}");
+            return PlayerTeam;
+        }
+        public void UpdateVoiceChannel(Exiled.API.Features.Player p, RoleType NewRole = RoleType.Spectator) =>
+        Tcp.Send($"vc {p.UserId} {GetTeam(p, NewRole)}");
+        public void UpdateVoiceChannels()
+        {
+            Exiled.API.Features.Player.List.ToList().ForEach(p =>
+            Tcp.Send($"vc {p.UserId} {GetTeam(p)}"));
         }
         public void OnTriggeringTesla(TriggeringTeslaEventArgs ev)
         {
@@ -473,15 +470,16 @@ namespace ToucanPlugin.Handlers
         {
             if (!ToucanPlugin.Instance.Config.CrouchingEnabled) return;
             while (true)
-                Exiled.API.Features.Player.List.ToList().ForEach(p => {
-                    if(p.MoveState == PlayerMovementState.Sneaking && !PlayersCrouchingList.Contains(p))
+                Exiled.API.Features.Player.List.ToList().ForEach(p =>
+                {
+                    if (p.MoveState == PlayerMovementState.Sneaking && !PlayersCrouchingList.Contains(p))
                     {
                         p.Scale = ToucanPlugin.Instance.Config.CrouchingSize;
                         PlayersCrouchingList.Add(p);
                     }
                     else if (p.MoveState != PlayerMovementState.Sneaking && PlayersCrouchingList.Contains(p))
                     {
-                        p.Scale = new Vector3(1,1,1);
+                        p.Scale = new Vector3(1, 1, 1);
                         PlayersCrouchingList.Remove(p);
                     }
                 });
