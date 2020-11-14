@@ -37,7 +37,7 @@ namespace ToucanPlugin.Handlers
             if (ToucanPlugin.Instance.Config.ReplaceAdvertismentNames)
             {
                 List<string> PlayerNameSplit = new List<string>(ev.Player.Nickname.Split(' '));
-                List<string> illigalNameParts = new List<string>(ToucanPlugin.Instance.Config.ADThing);
+                List<string> illigalNameParts = new List<string>(ToucanPlugin.Instance.Config.ADBlacklist);
                 PlayerNameSplit.ForEach(part =>
                 {
                     illigalNameParts.ForEach(NO =>
@@ -75,7 +75,7 @@ namespace ToucanPlugin.Handlers
             UpdatePlayerList(ev.Player.UserId);
             if (Exiled.API.Features.Player.List.Count() - 1 <= 0 && Round.IsStarted)
                 Round.Restart();
-            UpdateVoiceChannel(ev.Player, RoleType.Spectator);
+            UpdateVoiceChannel(ev.Player, RoleType.None);
         }
         private void LonelyRound()
         {
@@ -452,8 +452,12 @@ namespace ToucanPlugin.Handlers
             if (scp035.API.Scp035Data.GetScp035() == p) PlayerTeam = Team.SCP;
             return PlayerTeam;
         }
-        public void UpdateVoiceChannel(Exiled.API.Features.Player p, RoleType NewRole = RoleType.Spectator) =>
-        Tcp.Send($"vc {p.UserId} {GetTeam(p, NewRole)}");
+        public void UpdateVoiceChannel(Exiled.API.Features.Player p, RoleType NewRole = RoleType.Spectator)
+        {
+            if (NewRole != RoleType.None)
+                Tcp.Send($"vc {p.UserId} {GetTeam(p, NewRole)}");
+            else Tcp.Send($"vc {p.UserId} WAITING");
+        }
         public void UpdateVoiceChannels()
         {
             Exiled.API.Features.Player.List.ToList().ForEach(p =>

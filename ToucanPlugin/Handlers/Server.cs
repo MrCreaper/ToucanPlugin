@@ -76,7 +76,8 @@ namespace ToucanPlugin.Handlers
         readonly System.Random rnd = new System.Random();
         readonly Tcp Tcp = new Tcp();
         readonly MessageResponder mr = new MessageResponder();
-        public static List<bool> RoleMentionsLastRound = new List<bool>();
+        public Dictionary<int, bool> LastPlayerCountMentions { get; set; } = new Dictionary<int, bool>();
+        public Dictionary<string, bool> LastPlayerRoleMentions { get; set; } = new Dictionary<string, bool>();
         public void OnWaitingForPlayers()
         {
             if (AcGame.NextGamemode != 0)
@@ -138,31 +139,17 @@ namespace ToucanPlugin.Handlers
                     }
                 }
             }
-            if (ToucanPlugin.Instance.Config.MentionRoles)
+            ToucanPlugin.Instance.Config.PlayerCountMentions.ToList().ForEach(r =>
             {
-                if (Exiled.API.Features.Player.List.Count() > 5 && !RoleMentionsLastRound[0])
+                if (Exiled.API.Features.Player.List.Count() > r.Key && !LastPlayerCountMentions[r.Key])
                 {
-                    Tcp.SendLog($"5 PLAYERS <@&{ToucanPlugin.Instance.Config.FivePlayerRole}>");
-                    RoleMentionsLastRound[0] = true;
+                    Tcp.SendLog($"{r.Key} PLAYERS <@&{r.Value}>");
+                    LastPlayerCountMentions[r.Key] = true;
                 }
                 else
-                    RoleMentionsLastRound[0] = false;
-                if (Exiled.API.Features.Player.List.Count() > 10 && !RoleMentionsLastRound[1])
-                {
-                    Tcp.SendLog($"10 PLAYERS <@&{ToucanPlugin.Instance.Config.TenPlayerRole}>");
-                    RoleMentionsLastRound[1] = true;
-                }
-                else
-                    RoleMentionsLastRound[1] = false;
-                if (Exiled.API.Features.Player.List.Count() > 15 && !RoleMentionsLastRound[2])
-                {
-                    Tcp.SendLog($"15 PLAYERS <@&{ToucanPlugin.Instance.Config.FifteenPlayerRole}>");
-                    RoleMentionsLastRound[2] = true;
-                }
-                else
-                    RoleMentionsLastRound[2] = false;
+                    LastPlayerCountMentions[r.Key] = false;
+            });
             }
-        }
 
         public void OnRestartingRound() =>
             Tcp.SendLog($"Round restarting...");

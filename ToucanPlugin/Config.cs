@@ -38,11 +38,9 @@ namespace ToucanPlugin
         public bool ReplaceAdvertismentNames { get; set; } = true;
         [Description("Thing to replace advertisment part of a name whit")]
         public string ReplaceAdvertismentNamesWhit { get; set; } = "[ADVERTISMENT DENIED]";
-        public List<string> ADThing { get; set; } = new List<string> { ".com", ".tf", "ttv/", "YT", ".money", "csgo" };
-        public bool MentionRoles { get; set; } = false;
-        public string FivePlayerRole { get; set; } = "";
-        public string TenPlayerRole { get; set; } = "";
-        public string FifteenPlayerRole { get; set; } = "";
+        public List<string> ADBlacklist { get; set; } = new List<string> { ".com", ".tf", "ttv/", "YT", ".money", "csgo" };
+        public Dictionary<int, string> PlayerCountMentions { get; set; } = new Dictionary<int, string>();
+        public Dictionary<string, string> PlayerRoleMentions { get; set; } = new Dictionary<string, string>();
         [Description("Detonate the alpha warhead at the end of the round.")]
         public bool DetonateAtRoundEnded { get; set; } = false;
         [Description("Read the github wiki to know more")]

@@ -160,7 +160,7 @@ namespace ToucanPlugin
 
         public void Start()
         {
-            while (true)
+            
             {
                 try
                 {
@@ -213,6 +213,7 @@ namespace ToucanPlugin
                 {
                     if (SCP_575.Plugin.TimerOn != LastLights)
                     {
+                        Log.Warn($"LIGHTS ERROR {SCP_575.Plugin.TimerOn}");
                         Tcp.Send($"blackout {SCP_575.Plugin.TimerOn}");
                         LastLights = SCP_575.Plugin.TimerOn;
                     }
