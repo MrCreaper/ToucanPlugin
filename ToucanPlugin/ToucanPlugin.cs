@@ -94,9 +94,7 @@ namespace ToucanPlugin
         public static bool IsConnected()
         {
             if (S == null)
-            {
                 return false;
-            }
 
             try
             {
@@ -107,7 +105,7 @@ namespace ToucanPlugin
                 return false;
             }
         }
-        private bool SendShit(String data)
+        private bool SendShit(string data)
         {
             if (data == null) return false;
             try
@@ -132,7 +130,7 @@ namespace ToucanPlugin
                 return false;
             }
         }
-        public void Send(String data) =>
+        public void Send(string data) =>
             messageQueue.Add(data);
         public void SendLog(string log) =>
     Send($"log [{DateTime.Now}] {log}");
@@ -160,7 +158,7 @@ namespace ToucanPlugin
 
         public void Start()
         {
-            
+            while (true)
             {
                 try
                 {
@@ -206,9 +204,11 @@ namespace ToucanPlugin
             Tcp.topicUpdateTimer = Stopwatch.StartNew();
             Tcp.topicUpdateTimer.Start();
             Task.Factory.StartNew(() => Tcp.Start());
-            player.StartDetectingCrouching();
+            ToucanPlugin.Instance.Config.PlayerCountMentions.ForEach(r => server.LastPlayerCountMentions.Add(r.PlayerCount, false));
+            /*player.StartDetectingCrouching();
 
-            while (true) {
+            while (true)
+            {
                 try
                 {
                     if (SCP_575.Plugin.TimerOn != LastLights)
@@ -224,7 +224,7 @@ namespace ToucanPlugin
                 {
                     return;
                 }
-            }
+            }*/
         }
         public override void OnDisabled()
         {

@@ -478,7 +478,7 @@ namespace ToucanPlugin.Handlers
                 {
                     if (p.MoveState == PlayerMovementState.Sneaking && !PlayersCrouchingList.Contains(p))
                     {
-                        p.Scale = ToucanPlugin.Instance.Config.CrouchingSize;
+                        p.Scale = new Vector3(ToucanPlugin.Instance.Config.CrouchingSize.X, ToucanPlugin.Instance.Config.CrouchingSize.Y, ToucanPlugin.Instance.Config.CrouchingSize.Z);
                         PlayersCrouchingList.Add(p);
                     }
                     else if (p.MoveState != PlayerMovementState.Sneaking && PlayersCrouchingList.Contains(p))

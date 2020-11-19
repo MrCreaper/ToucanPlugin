@@ -24,6 +24,17 @@ namespace ToucanPlugin.Handlers
             return (this.X.Equals(other.X));
         }
     }
+    public class PlayerCountMentionsClass
+    {
+        public int PlayerCount { get; set; }
+        public string RoleID { get; set; }
+
+        public bool Equals(PlayerCountMentionsClass other) // Why is this here?!
+        {
+            if (other == null) return false;
+            return (this.PlayerCount.Equals(other.PlayerCount));
+        }
+    }
     public class CustomSquadSpawns : IEquatable<CustomSquadSpawns>
     {
         public string Name { get; set; } // Just for the user
@@ -113,43 +124,46 @@ namespace ToucanPlugin.Handlers
                 Log.Warn($"Gamemode chances do NOT add up to 100.");
             else
             {
-                if (rnd.Next(0, 101) > ToucanPlugin.Instance.Config.RandomGamemodeChance) return;
-                int GAMEMODE = rnd.Next(0, 101);
-                int RandomCounter = 0;
-                if (GAMEMODE <= ToucanPlugin.Instance.Config.GamemodeChances[0].AmongUs)
-                    AcGame.NextGamemode = GamemodeType.AmongUs;
-                else
+                if (rnd.Next(0, 101) <= ToucanPlugin.Instance.Config.RandomGamemodeChance)
                 {
-                    RandomCounter = +ToucanPlugin.Instance.Config.GamemodeChances[0].AmongUs;
-                    if (GAMEMODE <= ToucanPlugin.Instance.Config.GamemodeChances[0].CandyRush + RandomCounter)
-                        AcGame.NextGamemode = GamemodeType.CandyRush;
+                    int GAMEMODE = rnd.Next(0, 101);
+                    int RandomCounter = 0;
+                    if (GAMEMODE <= ToucanPlugin.Instance.Config.GamemodeChances[0].AmongUs)
+                        AcGame.NextGamemode = GamemodeType.AmongUs;
                     else
                     {
-                        RandomCounter = +ToucanPlugin.Instance.Config.GamemodeChances[0].CandyRush;
-                        if (GAMEMODE <= ToucanPlugin.Instance.Config.GamemodeChances[0].PeanutInfection + RandomCounter)
-                            AcGame.NextGamemode = GamemodeType.PeanutInfection;
+                        RandomCounter = +ToucanPlugin.Instance.Config.GamemodeChances[0].AmongUs;
+                        if (GAMEMODE <= ToucanPlugin.Instance.Config.GamemodeChances[0].CandyRush + RandomCounter)
+                            AcGame.NextGamemode = GamemodeType.CandyRush;
                         else
                         {
-                            RandomCounter = +ToucanPlugin.Instance.Config.GamemodeChances[0].PeanutInfection;
-                            if (GAMEMODE <= ToucanPlugin.Instance.Config.GamemodeChances[0].QuietPlace + RandomCounter)
-                                AcGame.NextGamemode = GamemodeType.QuitePlace;
+                            RandomCounter = +ToucanPlugin.Instance.Config.GamemodeChances[0].CandyRush;
+                            if (GAMEMODE <= ToucanPlugin.Instance.Config.GamemodeChances[0].PeanutInfection + RandomCounter)
+                                AcGame.NextGamemode = GamemodeType.PeanutInfection;
                             else
-                                AcGame.NextGamemode = GamemodeType.None;
+                            {
+                                RandomCounter = +ToucanPlugin.Instance.Config.GamemodeChances[0].PeanutInfection;
+                                if (GAMEMODE <= ToucanPlugin.Instance.Config.GamemodeChances[0].QuietPlace + RandomCounter)
+                                    AcGame.NextGamemode = GamemodeType.QuitePlace;
+                                else
+                                    AcGame.NextGamemode = GamemodeType.None;
+                            }
                         }
                     }
                 }
             }
             ToucanPlugin.Instance.Config.PlayerCountMentions.ToList().ForEach(r =>
             {
-                if (Exiled.API.Features.Player.List.Count() > r.Key && !LastPlayerCountMentions[r.Key])
+                if (!LastPlayerCountMentions[r.PlayerCount] && Exiled.API.Features.Player.List.ToList().Count == r.PlayerCount)
                 {
-                    Tcp.SendLog($"{r.Key} PLAYERS <@&{r.Value}>");
-                    LastPlayerCountMentions[r.Key] = true;
+                    Log.Warn($"TRYING TO SEND: {r.PlayerCount} PLAYERS <@&{r.RoleID}>");
+                    Tcp.SendLog($"{r.PlayerCount} PLAYERS <@&{r.RoleID}>");
+                    LastPlayerCountMentions[r.PlayerCount] = true;
                 }
-                else
-                    LastPlayerCountMentions[r.Key] = false;
+                if (LastPlayerCountMentions[r.PlayerCount] && Exiled.API.Features.Player.List.ToList().Count < r.PlayerCount)
+                    LastPlayerCountMentions[r.PlayerCount] = false;
             });
-            }
+        }
 
         public void OnRestartingRound() =>
             Tcp.SendLog($"Round restarting...");

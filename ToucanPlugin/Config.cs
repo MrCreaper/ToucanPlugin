@@ -25,7 +25,7 @@ namespace ToucanPlugin
         [Description("Crouching...")]
         public bool CrouchingEnabled { get; set; } = false;
         [Description("Reflect team damage")]
-        public Vector3 CrouchingSize { get; set; } = new Vector3(1, 0.4f, 1);
+        public Handlers.XYZ CrouchingSize { get; set; } = new Handlers.XYZ() { X = 1, Y = 0.4f, Z = 1 };
         [Description("Default Kick message, when the kicker didnt add a reason to why")]
         public string DefaultKickReason { get; set; } = "[Kicked by {kicker}] No Reason";
         [Description("Default Kick All message, when the kicker didnt add a reason to why")]
@@ -39,7 +39,13 @@ namespace ToucanPlugin
         [Description("Thing to replace advertisment part of a name whit")]
         public string ReplaceAdvertismentNamesWhit { get; set; } = "[ADVERTISMENT DENIED]";
         public List<string> ADBlacklist { get; set; } = new List<string> { ".com", ".tf", "ttv/", "YT", ".money", "csgo" };
-        public Dictionary<int, string> PlayerCountMentions { get; set; } = new Dictionary<int, string>();
+        public List<Handlers.PlayerCountMentionsClass> PlayerCountMentions { get; set; } = new List<Handlers.PlayerCountMentionsClass>()
+        {
+            new Handlers.PlayerCountMentionsClass() {
+                PlayerCount=-1,
+                RoleID="Example Role id, idk",
+            },
+        };
         public Dictionary<string, string> PlayerRoleMentions { get; set; } = new Dictionary<string, string>();
         [Description("Detonate the alpha warhead at the end of the round.")]
         public bool DetonateAtRoundEnded { get; set; } = false;
