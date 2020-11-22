@@ -14,12 +14,12 @@ namespace ToucanPlugin
         public static List<string> WhitelistUsers { get; set; } = new List<string> { };
         public void Read()
         {
+            WhitelistUsers.Clear();
             string[] whitelistRaw = File.ReadAllLines(WhitelistLocation);
             foreach (string line in whitelistRaw)
             {
                 WhitelistUsersRaw.Add(line);
                 if (!line.StartsWith("#")) WhitelistUsers.Add(line);
-                Log.Info(line);
             }
         }
         public void Add(string User, string Comment = null)

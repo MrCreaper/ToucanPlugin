@@ -194,7 +194,6 @@ namespace ToucanPlugin
         private ToucanPlugin()
         {
         }
-        static bool LastLights = false;
         public override void OnEnabled()
         {
             base.OnEnabled();
@@ -205,26 +204,8 @@ namespace ToucanPlugin
             Tcp.topicUpdateTimer.Start();
             Task.Factory.StartNew(() => Tcp.Start());
             ToucanPlugin.Instance.Config.PlayerCountMentions.ForEach(r => server.LastPlayerCountMentions.Add(r.PlayerCount, false));
-            /*player.StartDetectingCrouching();
-
-            while (true)
-            {
-                try
-                {
-                    if (SCP_575.Plugin.TimerOn != LastLights)
-                    {
-                        Log.Warn($"LIGHTS ERROR {SCP_575.Plugin.TimerOn}");
-                        Tcp.Send($"blackout {SCP_575.Plugin.TimerOn}");
-                        LastLights = SCP_575.Plugin.TimerOn;
-                    }
-                    else
-                        return;
-                }
-                catch
-                {
-                    return;
-                }
-            }*/
+            player.StartDetectingCrouching();
+            server.StartDetectBlackout();
         }
         public override void OnDisabled()
         {

@@ -10,6 +10,7 @@ namespace ToucanPlugin.Commands
     class WhitelistCmd : ICommand
     {
         readonly Whitelist wl = new Whitelist();
+        readonly Tcp tcp = new Tcp();
 
         public string Command { get; } = "whitelist";
 
@@ -24,6 +25,7 @@ namespace ToucanPlugin.Commands
                 if (Whitelist.Whitelisted)
                 {
                     Whitelist.Whitelisted = false;
+                    tcp.SendLog($"The Server Is **OPEN**!");
                     response = $"Server is now open!";
                     return true;
                 }
@@ -32,6 +34,7 @@ namespace ToucanPlugin.Commands
                     Whitelist.Whitelisted = true;
                     wl.Read();
                     wl.KickAllNoneWhite();
+                    tcp.SendLog($"The Server Is **CLOSED**!");
                     response = $"Server is now closed!";
                     return true;
                 }

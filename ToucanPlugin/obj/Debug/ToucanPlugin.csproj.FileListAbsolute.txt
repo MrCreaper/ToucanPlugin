@@ -35,3 +35,4 @@ C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Debug\0
 C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Debug\SCP_575.dll
 C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Debug\scp035.dll
 C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Debug\SerpentsHand.dll
+C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Debug\System.Numerics.Vectors.dll

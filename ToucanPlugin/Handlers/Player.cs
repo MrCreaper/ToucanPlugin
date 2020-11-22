@@ -101,7 +101,7 @@ namespace ToucanPlugin.Handlers
                 if (ExcludedId != p.UserId)
                 {
                     string Coma = ",";
-                    if (Exiled.API.Features.Player.List.ToList().Count - 1 == i || ExcludedId == Exiled.API.Features.Player.List.ToList()[i + 1].UserId && Exiled.API.Features.Player.List.ToList().Count - 1 != i && ExcludedId == Exiled.API.Features.Player.List.ToList()[i + 1].UserId)
+                    if (Exiled.API.Features.Player.List.ToList().Count - 1 == i || Exiled.API.Features.Player.List.ToList().Count - 1 == i && Exiled.API.Features.Player.List.ToList()[i + 1].UserId == ExcludedId)
                         Coma = "";
                     playerList += $"{{\"id\":{p.Id},\"name\":\"{p.Nickname.Replace("\"", "")}\",\"userid\":\"{p.UserId}\"}}{Coma}";
                 }
@@ -472,21 +472,24 @@ namespace ToucanPlugin.Handlers
         }
         public void StartDetectingCrouching()
         {
-            if (!ToucanPlugin.Instance.Config.CrouchingEnabled) return;
-            while (true)
-                Exiled.API.Features.Player.List.ToList().ForEach(p =>
-                {
-                    if (p.MoveState == PlayerMovementState.Sneaking && !PlayersCrouchingList.Contains(p))
+            Task.Factory.StartNew(() =>
+            {
+                if (!ToucanPlugin.Instance.Config.CrouchingEnabled) return;
+                while (true)
+                    Exiled.API.Features.Player.List.ToList().ForEach(p =>
                     {
-                        p.Scale = new Vector3(ToucanPlugin.Instance.Config.CrouchingSize.X, ToucanPlugin.Instance.Config.CrouchingSize.Y, ToucanPlugin.Instance.Config.CrouchingSize.Z);
-                        PlayersCrouchingList.Add(p);
-                    }
-                    else if (p.MoveState != PlayerMovementState.Sneaking && PlayersCrouchingList.Contains(p))
-                    {
-                        p.Scale = new Vector3(1, 1, 1);
-                        PlayersCrouchingList.Remove(p);
-                    }
-                });
+                        if (p.MoveState == PlayerMovementState.Sneaking && !PlayersCrouchingList.Contains(p))
+                        {
+                            p.Scale = new Vector3(ToucanPlugin.Instance.Config.CrouchingSize.X, ToucanPlugin.Instance.Config.CrouchingSize.Y, ToucanPlugin.Instance.Config.CrouchingSize.Z);
+                            PlayersCrouchingList.Add(p);
+                        }
+                        else if (p.MoveState != PlayerMovementState.Sneaking && PlayersCrouchingList.Contains(p))
+                        {
+                            p.Scale = new Vector3(1, 1, 1);
+                            PlayersCrouchingList.Remove(p);
+                        }
+                    });
+            });
         }
     }
 }

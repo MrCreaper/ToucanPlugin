@@ -154,9 +154,9 @@ namespace ToucanPlugin.Handlers
             }
             ToucanPlugin.Instance.Config.PlayerCountMentions.ToList().ForEach(r =>
             {
+                if (Whitelist.Whitelisted) return;
                 if (!LastPlayerCountMentions[r.PlayerCount] && Exiled.API.Features.Player.List.ToList().Count == r.PlayerCount)
                 {
-                    Log.Warn($"TRYING TO SEND: {r.PlayerCount} PLAYERS <@&{r.RoleID}>");
                     Tcp.SendLog($"{r.PlayerCount} PLAYERS <@&{r.RoleID}>");
                     LastPlayerCountMentions[r.PlayerCount] = true;
                 }
@@ -355,6 +355,30 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
             string cmd = ev.Name;
             ev.Arguments.ForEach(arg => cmd += $" {arg}");
             if (!ev.Sender.IsHost) Tcp.Send($"slog [{DateTime.Now}] **{ev.Sender.Nickname}** Sent:\n```{cmd}```");
+        }
+        public static bool LastLights = false;
+        public void StartDetectBlackout()
+        {
+            Task.Factory.StartNew(() =>
+            {
+                while (true)
+                {
+                    try
+                    {
+                        if (SCP_575.Plugin.TimerOn != LastLights)
+                        {
+                            Log.Warn($"LIGHTS {SCP_575.Plugin.TimerOn}");
+                            Tcp.Send($"blackout {SCP_575.Plugin.TimerOn}");
+                            LastLights = SCP_575.Plugin.TimerOn;
+                        }
+                    }
+                    catch ( Exception e)
+                    {
+                        Log.Error($"ERROR WHILE DETECTING BLACKOUT: {e}");
+                        return;
+                    }
+                }
+            });
         }
     }
 }
