@@ -13,7 +13,7 @@ namespace ToucanPlugin.Gamemodes
     {
         public static List<Player> Imposters { get; } = new List<Player>();
         public static List<Vector2> DeathCords { get; } = new List<Vector2>();
-        public void Amongus()
+        public void AmongUs_()
         {
             int imposterCount = 1; // default
             List<Player> playerList = Player.List.ToList();
@@ -46,7 +46,7 @@ namespace ToucanPlugin.Gamemodes
         static public void ReportBody(string reporterId)
         {
             Map.ClearBroadcasts();
-            Map.Broadcast(6, $"!!!EMERGANY MEATING!!!\n({Player.List.ToList().Find(x => x.UserId == reporterId).Nickname})");
+            Map.Broadcast(6, $"!!!EMERGANY MEATING!!!\n(Called by: {Player.List.ToList().Find(x => x.UserId == reporterId).Nickname})");
             Player.List.ToList().ForEach(p => 
                 p.Position = new Vector3(1f, 1f, 1f));
         }

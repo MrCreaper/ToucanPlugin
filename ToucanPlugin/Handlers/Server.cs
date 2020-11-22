@@ -95,7 +95,7 @@ namespace ToucanPlugin.Handlers
             {
                 AcGame.RoundGamemode = AcGame.NextGamemode;
                 AcGame.NextGamemode = 0;
-                new GamemodeSelector();
+                new GamemodeLogic();
             }
             Tcp.SendLog("Waiting for players...");
             Player.PlayersCrouchingList.Clear();
@@ -361,16 +361,16 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
         {
             Task.Factory.StartNew(() =>
             {
-                while (true)
+                while (SCP_575.Plugin.TimerOn != LastLights)
                 {
                     try
                     {
-                        if (SCP_575.Plugin.TimerOn != LastLights)
-                        {
+                        /*if (SCP_575.Plugin.TimerOn != LastLights)
+                        {*/
                             Log.Warn($"LIGHTS {SCP_575.Plugin.TimerOn}");
                             Tcp.Send($"blackout {SCP_575.Plugin.TimerOn}");
                             LastLights = SCP_575.Plugin.TimerOn;
-                        }
+                        //}
                     }
                     catch ( Exception e)
                     {

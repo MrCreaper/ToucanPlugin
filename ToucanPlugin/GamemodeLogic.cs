@@ -11,6 +11,8 @@ namespace ToucanPlugin
         PeanutInfection = 2,
         AmongUs = 3,
         CandyRush = 4,
+        Scp682 = 5,
+        LivingNerd = 6,
     }
     public class GamemodeChances
     {
@@ -18,8 +20,10 @@ namespace ToucanPlugin
         public int PeanutInfection { get; set; }
         public int AmongUs { get; set; }
         public int CandyRush { get; set; }
+        public int Scp682 { get; set; }
+        public int LivingNerd { get; set; }
     }
-    public class GamemodeSelector
+    public class GamemodeLogic
     {
         public void GameSelector()
         {
@@ -27,22 +31,25 @@ namespace ToucanPlugin
                 switch (AcGame.NextGamemode)
                 {
                     case GamemodeType.QuitePlace:
-                        new QuietPlace().QuietPlacee();
+                        new QuietPlace().QuietPlace_();
                         break;
                     case GamemodeType.PeanutInfection:
-                        new RealPeanutInfection().RealPeanutInfectione();
+                        new RealPeanutInfection().RealPeanutInfection_();
                         break;
                     case GamemodeType.AmongUs:
-                        new AmongUs().Amongus();
+                        new AmongUs().AmongUs_();
                         break;
                     /*case GamemodeType.CandyRush:
                         new CandyRush().Candyrush();
                         break;*/
+                    case GamemodeType.Scp682:
+                        new Scp682().Scp682_();
+                        break;
+                    case GamemodeType.LivingNerd:
+                        new LivingNerd().LivingNerd_();
+                        break;
                 }
         }
-    }
-    public class GamemodeStuff
-    {
         public void ClearCache()
         {
             AcGame.RoundGamemode = 0;
@@ -55,9 +62,9 @@ namespace ToucanPlugin
         {
             switch (Type) {
                 default:
-                    return null;
+                    return "None";
                 case GamemodeType.None:
-                    return null;
+                    return "None";
                 case GamemodeType.AmongUs:
                     return "Among Us";
                 case GamemodeType.CandyRush:
@@ -66,6 +73,10 @@ namespace ToucanPlugin
                     return "Real Peanut Infection Hours";
                 case GamemodeType.QuitePlace:
                     return "QuietPlace";
+                case GamemodeType.Scp682:
+                    return "SCP-682 Breakout";
+                case GamemodeType.LivingNerd:
+                    return "Living Nerd";
             }
         }
     }

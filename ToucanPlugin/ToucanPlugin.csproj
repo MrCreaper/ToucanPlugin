@@ -245,6 +245,7 @@
     <Compile Include="Commands\HackIcom.cs" />
     <Compile Include="Commands\HackRadio.cs" />
     <Compile Include="Commands\HackLights.cs" />
+    <Compile Include="Commands\Scp087.cs" />
     <Compile Include="Commands\Kick.cs" />
     <Compile Include="Commands\PetEquip.cs" />
     <Compile Include="Commands\Pets.cs" />
@@ -271,9 +272,11 @@
     <Compile Include="Commands\WhitelistCmd.cs" />
     <Compile Include="Commands\WhitelistUser.cs" />
     <Compile Include="Config.cs" />
-    <Compile Include="GamemodeSelector.cs" />
+    <Compile Include="GamemodeLogic.cs" />
     <Compile Include="Gamemodes\AmongUs.cs" />
     <Compile Include="Gamemodes\CandyRush.cs" />
+    <Compile Include="Gamemodes\LivingNerd.cs" />
+    <Compile Include="Gamemodes\Scp682.cs" />
     <Compile Include="Gamemodes\QuietPlace.cs" />
     <Compile Include="Gamemodes\RealPeanutInfection.cs" />
     <Compile Include="Handlers\Player.cs" />

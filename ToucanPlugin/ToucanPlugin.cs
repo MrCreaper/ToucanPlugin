@@ -12,6 +12,7 @@ using Server = Exiled.Events.Handlers.Server;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using ToucanPlugin.Commands;
 
 namespace ToucanPlugin
 {
@@ -158,21 +159,24 @@ namespace ToucanPlugin
 
         public void Start()
         {
-            while (true)
+            Task.Factory.StartNew(() =>
             {
-                try
+                while (true)
                 {
-                    if (IsConnected())
-                        SendQueue();
-                    else
-                        Task.Factory.StartNew(() => Main());
-                    Thread.Sleep(1000);
+                    try
+                    {
+                        if (IsConnected())
+                            SendQueue();
+                        else
+                            Task.Factory.StartNew(() => Main());
+                        Thread.Sleep(1000);
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Error($"Could not connect: {e}");
+                    }
                 }
-                catch (Exception e)
-                {
-                    Log.Error($"Could not connect: {e}");
-                }
-            }
+            });
         }
     }
 
@@ -202,16 +206,18 @@ namespace ToucanPlugin
             Patch();
             Tcp.topicUpdateTimer = Stopwatch.StartNew();
             Tcp.topicUpdateTimer.Start();
-            Task.Factory.StartNew(() => Tcp.Start());
+            Tcp.Start();
             ToucanPlugin.Instance.Config.PlayerCountMentions.ForEach(r => server.LastPlayerCountMentions.Add(r.PlayerCount, false));
             player.StartDetectingCrouching();
             server.StartDetectBlackout();
+            Scp087.StartChecking087Room();
         }
         public override void OnDisabled()
         {
             base.OnDisabled();
             UnRegisterEvents();
             Unpatch();
+            Tcp.S.Disconnect(false);
         }
 
         private void Patch()
