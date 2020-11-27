@@ -98,11 +98,14 @@ namespace ToucanPlugin.Commands
         {
             Task.Factory.StartNew(() =>
             {
-                while (InEffect && Round.IsStarted)
+                while (true)
                 {
-                    Room Scp173Room = Map.Rooms.ToList().Find(x => x.Type == Exiled.API.Enums.RoomType.Lcz173);
-                    if (!Scp173Room.LightsOff)
-                        Scp173Room.TurnOffLights(5);
+                    if (InEffect && Round.IsStarted)
+                    {
+                        Room Scp173Room = Map.Rooms.ToList().Find(x => x.Type == Exiled.API.Enums.RoomType.Lcz173);
+                        if (!Scp173Room.LightsOff)
+                            Scp173Room.TurnOffLights(5);
+                    }
                 }
             });
         }

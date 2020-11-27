@@ -28,7 +28,8 @@ namespace ToucanPlugin.Handlers
             if (!Whitelist.WhitelistUsers.Contains(ev.UserId) && Whitelist.Whitelisted)
             {
                 //ev.Disallow();// ev.Player.Kick("Sorry the server is right now whitelisted. Come back later!");
-                ev.RejectBanned("Sorry the server is right now whitelisted. Come back later!", 0, false);
+                ev.RejectBanned("Sorry the server is right now closed. Come back later!", 0, false);
+                Log.Info($"Denied Entry to the server to {ev.UserId}");
                 return;
             }
         }
@@ -101,8 +102,8 @@ namespace ToucanPlugin.Handlers
                 if (ExcludedId != p.UserId)
                 {
                     string Coma = ",";
-                    if (Exiled.API.Features.Player.List.ToList().Count - 1 == i || Exiled.API.Features.Player.List.ToList().Count - 1 == i && Exiled.API.Features.Player.List.ToList()[i + 1].UserId == ExcludedId)
-                        Coma = "";
+                    if (Exiled.API.Features.Player.List.ToList().Count - 1 == i || Exiled.API.Features.Player.List.ToList().Count - 1 >= i + 1 && Exiled.API.Features.Player.List.ToList()[i + 1].UserId == ExcludedId)
+                    Coma = "";
                     playerList += $"{{\"id\":{p.Id},\"name\":\"{p.Nickname.Replace("\"", "")}\",\"userid\":\"{p.UserId}\"}}{Coma}";
                 }
             }
@@ -134,7 +135,7 @@ namespace ToucanPlugin.Handlers
             Tcp.Send(escapeMsg);
             Tcp.SendLog($"**{ev.Player.Nickname} ({ev.Player.UserId}) Escaped**");
         }
-        public void OnDead(DiedEventArgs ev)
+        public void OnDied(DiedEventArgs ev)
         {
             if (ev.Killer.Team == Team.SCP) SCPKills++;
             //if (mr.ChaosHacker.Contains(ev.Target)) mr.ChaosHacker.Remove(ev.Target); // Remove the chaos hacker things
@@ -159,7 +160,7 @@ namespace ToucanPlugin.Handlers
             if (ev.Target.Team == Team.SCP || scp035.API.Scp035Data.GetScp035() == ev.Killer)
                 isTargetScp = true;
             Tcp.Send($"died {isff} {ev.Target.UserId} {ev.Killer.UserId} {ev.HitInformations.Tool} {isTargetScp}");
-            Tcp.SendLog($"{ev.Target.Nickname} ({ev.Target.UserId}) killed by {ev.Killer.Nickname} ({ev.Killer.UserId}) whit {ev.HitInformations.Tool}");
+            Tcp.SendLog($"{ev.Target.Nickname} ({ev.Target.UserId}) killed by {ev.Killer.Nickname} ({ev.Killer.UserId}) whit {ev.HitInformations.GetDamageName()}");
             switch (ev.Killer.Team)
             {
                 case Team.SCP:

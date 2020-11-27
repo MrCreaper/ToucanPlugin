@@ -73,6 +73,9 @@
     <Reference Include="Exiled.Updater">
       <HintPath>..\..\..\..\Desktop\exiled\EXILED\Plugins\Exiled.Updater.dll</HintPath>
     </Reference>
+    <Reference Include="Images">
+      <HintPath>..\..\..\..\AppData\Roaming\EXILED\Plugins\Images.dll</HintPath>
+    </Reference>
     <Reference Include="libvideo, Version=3.0.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\VideoLibrary.3.0.6\lib\netstandard1.1\libvideo.dll</HintPath>
     </Reference>

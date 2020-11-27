@@ -70,7 +70,7 @@ namespace ToucanPlugin
                 case GamemodeType.CandyRush:
                     return "Candy Rush";
                 case GamemodeType.PeanutInfection:
-                    return "Real Peanut Infection Hours";
+                    return "Real Peanut Infection";
                 case GamemodeType.QuitePlace:
                     return "QuietPlace";
                 case GamemodeType.Scp682:

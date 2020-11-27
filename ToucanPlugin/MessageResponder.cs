@@ -195,6 +195,12 @@ namespace ToucanPlugin
                     }
                     break;
 
+                case "icomimg":
+                    Action<Images.FrameData> Handler = FrameDataToIcom;
+                    Intercom.host.UpdateIntercomText($"Waiting on image...");
+                    Images.API.LocationToText(Cmds[1], Handler, true);
+                    break;
+
                 case "play":
                     var youtube = YouTube.Default;
                     var vid = youtube.GetVideo(Cmds[1]);
@@ -210,5 +216,6 @@ namespace ToucanPlugin
                     break;
             }
         }
+        private void FrameDataToIcom(Images.FrameData fd) { Log.Info($">{fd.Data}<"); Intercom.host.UpdateIntercomText(fd.Data); }
     }
 }

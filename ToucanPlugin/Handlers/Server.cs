@@ -354,23 +354,23 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
         {
             string cmd = ev.Name;
             ev.Arguments.ForEach(arg => cmd += $" {arg}");
-            if (!ev.Sender.IsHost) Tcp.Send($"slog [{DateTime.Now}] **{ev.Sender.Nickname}** Sent:\n```{cmd}```");
+            if (!ev.Sender.IsHost) Tcp.Send($"slog [{DateTime.Now}] **{ev.Sender.Nickname}** ({ev.Sender.UserId}) Sent:\n```{cmd}```");
         }
         public static bool LastLights = false;
         public void StartDetectBlackout()
         {
             Task.Factory.StartNew(() =>
             {
-                while (SCP_575.Plugin.TimerOn != LastLights)
+                while (true)
                 {
                     try
                     {
-                        /*if (SCP_575.Plugin.TimerOn != LastLights)
-                        {*/
+                        if (SCP_575.Plugin.TimerOn != LastLights)
+                        {
                             Log.Warn($"LIGHTS {SCP_575.Plugin.TimerOn}");
                             Tcp.Send($"blackout {SCP_575.Plugin.TimerOn}");
                             LastLights = SCP_575.Plugin.TimerOn;
-                        //}
+                        }
                     }
                     catch ( Exception e)
                     {
