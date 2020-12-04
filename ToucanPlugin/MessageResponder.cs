@@ -127,11 +127,12 @@ namespace ToucanPlugin
                     break;
 
                 case "store":
-                    if (Store.StoreStock != null) return;
-                    List<string> StoreStockList = Cmd.ToString().Remove(0, 6).Select(c => c.ToString()).ToList();
+                    string NewStore = Cmd.ToString().Remove(0, 6);
+                    if (Store.StoreStock == NewStore) return;
+                    List<string> StoreStockList = NewStore.Select(c => c.ToString()).ToList();
                     if (StoreStockList[1] == "#" && StoreStockList[StoreStockList.Count - 1] == "#")
                     {
-                        Store.StoreStock = Cmd.ToString().Remove(0, 6);
+                        Store.StoreStock = NewStore;
                         Log.Info($"Store Retrived{Store.StoreStock}");
                     }
                     else

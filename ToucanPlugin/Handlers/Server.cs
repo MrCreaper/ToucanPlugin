@@ -91,10 +91,10 @@ namespace ToucanPlugin.Handlers
         public Dictionary<string, bool> LastPlayerRoleMentions { get; set; } = new Dictionary<string, bool>();
         public void OnWaitingForPlayers()
         {
-            if (AcGame.NextGamemode != 0)
+            if (GamemodeLogic.NextGamemode != 0)
             {
-                AcGame.RoundGamemode = AcGame.NextGamemode;
-                AcGame.NextGamemode = 0;
+                GamemodeLogic.RoundGamemode = GamemodeLogic.NextGamemode;
+                GamemodeLogic.NextGamemode = 0;
                 new GamemodeLogic();
             }
             Tcp.SendLog("Waiting for players...");
@@ -104,49 +104,51 @@ namespace ToucanPlugin.Handlers
         public void OnRoundStarted()
         {
             Tcp.SendLog("Round started");
-            if (AcGame.NextGamemode == GamemodeType.None)
-                Map.Broadcast(5, ToucanPlugin.Instance.Config.RoundStartMessage);
-            else
-                Map.Broadcast(5, $"Next Round Gamemode: <i><b>{AcGame.RoundGamemode}</b></i>");
-            if (AcGame.RoundGamemode == GamemodeType.None)
-                Map.Broadcast(5, ToucanPlugin.Instance.Config.RoundStartMessage);
-            else
-                Map.Broadcast(5, $"Gamemode: <i><b>{AcGame.RoundGamemode}</b></i>");
             if (rnd.Next(0, 3) == 0 && Exiled.API.Features.Player.List.ToList().Find(x => x.Role == RoleType.Scp173) != null)
                 Map.Doors.ToList().Find(x => x.DoorName == "173").locked = true; // Lock 173 (1162)
-            if (AcGame.GamemodesPaused) return;
-            int CountChances = 0;
-            CountChances += ToucanPlugin.Instance.Config.GamemodeChances[0].AmongUs;
-            CountChances += ToucanPlugin.Instance.Config.GamemodeChances[0].CandyRush;
-            CountChances += ToucanPlugin.Instance.Config.GamemodeChances[0].PeanutInfection;
-            CountChances += ToucanPlugin.Instance.Config.GamemodeChances[0].QuietPlace;
-            if (CountChances != 100)
-                Log.Warn($"Gamemode chances do NOT add up to 100.");
-            else
+            if (!GamemodeLogic.GamemodesPaused)
             {
-                if (rnd.Next(0, 101) <= ToucanPlugin.Instance.Config.RandomGamemodeChance)
+                if (GamemodeLogic.RoundGamemode == GamemodeType.None)
+                    Map.Broadcast(5, ToucanPlugin.Instance.Config.RoundStartMessage);
+                else
+                    Map.Broadcast(5, $"Gamemode: <i><b>{GamemodeLogic.RoundGamemode}</b></i>");
+                if (GamemodeLogic.NextGamemode == GamemodeType.None)
+                    Map.Broadcast(5, ToucanPlugin.Instance.Config.RoundStartMessage);
+                else
+                    Map.Broadcast(5, $"Next Round Gamemode: <i><b>{GamemodeLogic.RoundGamemode}</b></i>");
+                int CountChances = 0;
+                CountChances += ToucanPlugin.Instance.Config.GamemodeChances[0].AmongUs;
+                CountChances += ToucanPlugin.Instance.Config.GamemodeChances[0].CandyRush;
+                CountChances += ToucanPlugin.Instance.Config.GamemodeChances[0].PeanutInfection;
+                CountChances += ToucanPlugin.Instance.Config.GamemodeChances[0].QuietPlace;
+                if (CountChances != 100)
+                    Log.Warn($"Gamemode chances do NOT add up to 100.");
+                else
                 {
-                    int GAMEMODE = rnd.Next(0, 101);
-                    int RandomCounter = 0;
-                    if (GAMEMODE <= ToucanPlugin.Instance.Config.GamemodeChances[0].AmongUs)
-                        AcGame.NextGamemode = GamemodeType.AmongUs;
-                    else
+                    if (rnd.Next(0, 101) <= ToucanPlugin.Instance.Config.RandomGamemodeChance)
                     {
-                        RandomCounter = +ToucanPlugin.Instance.Config.GamemodeChances[0].AmongUs;
-                        if (GAMEMODE <= ToucanPlugin.Instance.Config.GamemodeChances[0].CandyRush + RandomCounter)
-                            AcGame.NextGamemode = GamemodeType.CandyRush;
+                        int GAMEMODE = rnd.Next(0, 101);
+                        int RandomCounter = 0;
+                        if (GAMEMODE <= ToucanPlugin.Instance.Config.GamemodeChances[0].AmongUs)
+                            GamemodeLogic.NextGamemode = GamemodeType.AmongUs;
                         else
                         {
-                            RandomCounter = +ToucanPlugin.Instance.Config.GamemodeChances[0].CandyRush;
-                            if (GAMEMODE <= ToucanPlugin.Instance.Config.GamemodeChances[0].PeanutInfection + RandomCounter)
-                                AcGame.NextGamemode = GamemodeType.PeanutInfection;
+                            RandomCounter = +ToucanPlugin.Instance.Config.GamemodeChances[0].AmongUs;
+                            if (GAMEMODE <= ToucanPlugin.Instance.Config.GamemodeChances[0].CandyRush + RandomCounter)
+                                GamemodeLogic.NextGamemode = GamemodeType.CandyRush;
                             else
                             {
-                                RandomCounter = +ToucanPlugin.Instance.Config.GamemodeChances[0].PeanutInfection;
-                                if (GAMEMODE <= ToucanPlugin.Instance.Config.GamemodeChances[0].QuietPlace + RandomCounter)
-                                    AcGame.NextGamemode = GamemodeType.QuitePlace;
+                                RandomCounter = +ToucanPlugin.Instance.Config.GamemodeChances[0].CandyRush;
+                                if (GAMEMODE <= ToucanPlugin.Instance.Config.GamemodeChances[0].PeanutInfection + RandomCounter)
+                                    GamemodeLogic.NextGamemode = GamemodeType.PeanutInfection;
                                 else
-                                    AcGame.NextGamemode = GamemodeType.None;
+                                {
+                                    RandomCounter = +ToucanPlugin.Instance.Config.GamemodeChances[0].PeanutInfection;
+                                    if (GAMEMODE <= ToucanPlugin.Instance.Config.GamemodeChances[0].QuietPlace + RandomCounter)
+                                        GamemodeLogic.NextGamemode = GamemodeType.QuitePlace;
+                                    else
+                                        GamemodeLogic.NextGamemode = GamemodeType.None;
+                                }
                             }
                         }
                     }
@@ -212,7 +214,7 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
                 Tcp.Send($"stats {DocPetReciver.UserId} ZOMBPET");
             if (CountChaos > 3 && Count939 == 1 && DogPetReciver != null)
                 Tcp.Send($"stats {DogPetReciver.UserId} DOGPET");
-            switch (AcGame.RoundGamemode)
+            switch (GamemodeLogic.RoundGamemode)
             {
                 case GamemodeType.PeanutInfection:
                     int SurvivorsAlive = 0;

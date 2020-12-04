@@ -13,6 +13,7 @@ namespace ToucanPlugin
         CandyRush = 4,
         Scp682 = 5,
         LivingNerd = 6,
+        SpoopyGhosts = 7,
     }
     public class GamemodeChances
     {
@@ -22,13 +23,17 @@ namespace ToucanPlugin
         public int CandyRush { get; set; }
         public int Scp682 { get; set; }
         public int LivingNerd { get; set; }
+        public int SpoopyGhosts { get; set; }
     }
     public class GamemodeLogic
     {
+        public static bool GamemodesPaused { get; set; } = false;
+        public static GamemodeType NextGamemode { get; set; } = 0;
+        public static GamemodeType RoundGamemode { get; set; } = 0;
         public void GameSelector()
         {
-            if (AcGame.NextGamemode != 0)
-                switch (AcGame.NextGamemode)
+            if (GamemodeLogic.NextGamemode != 0)
+                switch (GamemodeLogic.NextGamemode)
                 {
                     case GamemodeType.QuitePlace:
                         new QuietPlace().QuietPlace_();
@@ -48,15 +53,19 @@ namespace ToucanPlugin
                     case GamemodeType.LivingNerd:
                         new LivingNerd().LivingNerd_();
                         break;
+                    case GamemodeType.SpoopyGhosts:
+                        new SpoopyGhosts().SpoopyGhosts_();
+                        break;
                 }
         }
         public void ClearCache()
         {
-            AcGame.RoundGamemode = 0;
+            GamemodeLogic.RoundGamemode = 0;
             AmongUs.DeathCords.Clear();
             AmongUs.Imposters.Clear();
             /*CandyRush.BommerList.Clear();
             CandyRush.DefuserList.Clear();*/
+            SpoopyGhosts.InvisScpList.Clear();
         }
         public string ConvertToNice(GamemodeType Type)
         {
@@ -77,6 +86,8 @@ namespace ToucanPlugin
                     return "SCP-682 Breakout";
                 case GamemodeType.LivingNerd:
                     return "Living Nerd";
+                case GamemodeType.SpoopyGhosts:
+                    return "Spoopy Ghosts";
             }
         }
     }

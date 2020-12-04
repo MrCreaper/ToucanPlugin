@@ -137,6 +137,7 @@ namespace ToucanPlugin.Handlers
         }
         public void OnDied(DiedEventArgs ev)
         {
+            SpoopyGhosts.InvisScpDead(ev.Target);
             if (ev.Killer.Team == Team.SCP) SCPKills++;
             //if (mr.ChaosHacker.Contains(ev.Target)) mr.ChaosHacker.Remove(ev.Target); // Remove the chaos hacker things
             if (!Has008RandomSpawned && ToucanPlugin.Instance.Config.Random008Spawn)
@@ -236,7 +237,7 @@ namespace ToucanPlugin.Handlers
             }
 
             //Event bullshit
-            switch (AcGame.RoundGamemode)
+            switch (GamemodeLogic.RoundGamemode)
             {
                 case GamemodeType.PeanutInfection:
                     ev.Target.SetRole(RoleType.Scp173);
@@ -417,7 +418,7 @@ namespace ToucanPlugin.Handlers
         public void OnHurting(HurtingEventArgs ev)
         {
             // Among us game
-            if (AmongUs.Imposters.Contains(ev.Attacker) && AcGame.RoundGamemode == GamemodeType.AmongUs)
+            if (AmongUs.Imposters.Contains(ev.Attacker) && GamemodeLogic.RoundGamemode == GamemodeType.AmongUs)
             {
                 ev.Target.Kill();
                 AmongUs.DeathCords.Add(ev.Target.Position);
