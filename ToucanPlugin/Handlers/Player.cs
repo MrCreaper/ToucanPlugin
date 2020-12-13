@@ -9,8 +9,6 @@ using System.Threading.Tasks;
 using ToucanPlugin.Commands;
 using ToucanPlugin.Gamemodes;
 using UnityEngine;
-using scp035;
-using SerpentsHand;
 
 namespace ToucanPlugin.Handlers
 {
@@ -29,7 +27,7 @@ namespace ToucanPlugin.Handlers
             {
                 //ev.Disallow();// ev.Player.Kick("Sorry the server is right now whitelisted. Come back later!");
                 ev.RejectBanned("Sorry the server is right now closed. Come back later!", 0, false);
-                Log.Info($"Denied Entry to the server to {ev.UserId}");
+                Log.Info($"Denied Entry to the server for {ev.UserId}");
                 return;
             }
         }

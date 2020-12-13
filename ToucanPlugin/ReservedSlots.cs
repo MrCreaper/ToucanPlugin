@@ -7,9 +7,9 @@ namespace ToucanPlugin
 {
     public class ReservedSlots
     {
-        readonly private string ReservedSlotsLocation = $"./config/{Server.Port}/UserIDReservedSlots.txt";
-        private List<String> ReservedSlotsRaw { get; set; } = new List<string> { };
-        public static List<String> ReservedSlotsUsers { get; set; } = new List<string> { };
+        readonly private string ReservedSlotsLocation = $"{Paths.AppData}\\SCP Secret Laboratory\\config\\{Server.Port}\\UserIDReservedSlots.txt";
+        private List<string> ReservedSlotsRaw { get; set; } = new List<string> { };
+        public static List<string> ReservedSlotsUsers { get; set; } = new List<string> { };
         public void Read()
         {
             string[] whitelistRaw = File.ReadAllLines(ReservedSlotsLocation);

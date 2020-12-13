@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Exiled.API.Features;
@@ -9,7 +8,7 @@ namespace ToucanPlugin
     public class Whitelist
     {
         public static bool Whitelisted { get; set; } = false;
-        readonly private string WhitelistLocation = $"C:/Users/Kelvin Kersna/AppData/Roaming/SCP Secret Laboratory/config/{Server.Port}/UserIDWhitelist.txt";
+        readonly private string WhitelistLocation = $"{Paths.AppData}\\SCP Secret Laboratory\\config\\{Exiled.API.Features.Server.Port}\\UserIDWhitelist.txt";
         private List<string> WhitelistUsersRaw { get; set; } = new List<string> { };
         public static List<string> WhitelistUsers { get; set; } = new List<string> { };
         public void Read()

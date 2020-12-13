@@ -65,7 +65,7 @@ namespace ToucanPlugin.Commands
                 }
                 else
                 {
-                    response = $"Speed";
+                    response = $"speed [speed] [w/r [walk/run] [opt]] [id [opt]]";
                     return false;
                 }
             }

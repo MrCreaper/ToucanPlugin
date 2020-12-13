@@ -39,6 +39,11 @@ namespace ToucanPlugin
             ToucanPlugin.Instance.Config.PlayerCountMentions.ForEach(r => server.LastPlayerCountMentions.Add(r.PlayerCount, false));
             player.StartDetectingCrouching();
             server.StartDetectBlackout();
+            foreach (GamemodeType Type in (GamemodeType[])Enum.GetValues(typeof(GamemodeType)))
+            {
+                if (!ToucanPlugin.Instance.Config.GamemodeChances.ContainsKey(Type))
+                    ToucanPlugin.Instance.Config.GamemodeChances.Add(Type, 0);
+            }
         }
         public override void OnDisabled()
         {
