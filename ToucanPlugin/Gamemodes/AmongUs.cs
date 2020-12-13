@@ -47,8 +47,16 @@ namespace ToucanPlugin.Gamemodes
         {
             Map.ClearBroadcasts();
             Map.Broadcast(6, $"!!!EMERGANY MEATING!!!\n(Called by: {Player.List.ToList().Find(x => x.UserId == reporterId).Nickname})");
-            Player.List.ToList().ForEach(p => 
+            Player.List.ToList().ForEach(p =>
                 p.Position = new Vector3(1f, 1f, 1f));
+        }
+        public void OnHurting(Exiled.Events.EventArgs.HurtingEventArgs ev)
+        {
+            if (AmongUs.Imposters.Contains(ev.Attacker) && GamemodeLogic.RoundGamemode == GamemodeType.AmongUs)
+            {
+                ev.Target.Kill();
+                AmongUs.DeathCords.Add(ev.Target.Position);
+            }
         }
     }
 }

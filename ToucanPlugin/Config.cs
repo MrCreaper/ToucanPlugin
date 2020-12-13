@@ -109,50 +109,85 @@ namespace ToucanPlugin
         public List<Handlers.CustomPersonelSpawns> CustomPersonel { get; set; } = new List<Handlers.CustomPersonelSpawns>
         {
             new Handlers.CustomPersonelSpawns() {
+                Enabled=true,
                 Name="Janitor",
                 Role=RoleType.ClassD,
-                PlayerCountNeeded=4,
+                PlayerCount=4,
                 ReplaceChance=10,
                 MaxHealth=110,
                 MaxEnergy=120,
                 MaxAdrenalin=100,
                 Items=new List<int> { 0, 34, 35 },
-                PreSetSpawnPos=RoleType.None,
-                PreSetSpawnPosRoom=RoomType.LczToilets,
+                PreSetSpawnPosRole=RoleType.None,
+                PreSetSpawnPosRoom=RoomType.Unknown,
                 SpawnPos=new Handlers.XYZ() {X=0,Y=0,Z=0},
                 Hint=$"<i>You are a <color=yellow>Janior</color>... LIFi SUCZ</i>",
             },
             new Handlers.CustomPersonelSpawns() {
+                Enabled=true,
                 Name="Mayor Scientist",
                 Role=RoleType.Scientist,
-                PlayerCountNeeded=5,
+                PlayerCount=5,
                 ReplaceChance=10,
                 MaxHealth=90,
                 MaxEnergy=90,
                 MaxAdrenalin=120,
                 Items=new List<int> { },
-                PreSetSpawnPos=RoleType.None,
+                PreSetSpawnPosRole=RoleType.None,
                 PreSetSpawnPosRoom=RoomType.LczToilets,
                 SpawnPos=new Handlers.XYZ() {X=0,Y=0,Z=0},
                 Hint=$"<i>You are a <color=yellow>Mayor Scientist</color>.</i>",
             },
             new Handlers.CustomPersonelSpawns() {
+                Enabled=false,
                 Name="Containment Engineer",
                 Role=RoleType.ClassD,
-                PlayerCountNeeded=6,
+                PlayerCount=6,
                 ReplaceChance=10,
                 MaxHealth=110,
                 MaxEnergy=120,
                 MaxAdrenalin=100,
                 Items=new List<int> { 0, 34, 35 },
-                PreSetSpawnPos=RoleType.None,
-                PreSetSpawnPosRoom=RoomType.LczToilets,
+                PreSetSpawnPosRole=RoleType.None,
+                PreSetSpawnPosRoom=RoomType.Unknown,
                 SpawnPos=new Handlers.XYZ() {X=0,Y=0,Z=0},
                 Hint=$"<i>You are a <color=yellow>Containment Engineer</color>. You had <color=yellow>one</color> job.</i>",
+            },            
+            new Handlers.CustomPersonelSpawns() {
+                Enabled=false,
+                Name="MTF Medic",
+                Role=RoleType.NtfLieutenant,
+                PlayerCount=6,
+                MaxSCPKills=999,
+                MinSCPKills=10,
+                ReplaceChance=10,
+                MaxHealth=80,
+                MaxEnergy=100,
+                MaxAdrenalin=175,
+                Items=new List<int> { 17, 33, 33, 33, 34, 12, 13 },
+                PreSetSpawnPosRole=RoleType.None,
+                PreSetSpawnPosRoom=RoomType.Unknown,
+                SpawnPos=new Handlers.XYZ() {X=0,Y=0,Z=0},
+                Hint=$"<i>You are a <color=yellow>MTF Medic</green>. Your grenades heal people, dont forget to spread the medkits.</i>",
+            },
+                new Handlers.CustomPersonelSpawns() {
+                Enabled=false,
+                Name="Chaos Hacker",
+                Role=RoleType.ChaosInsurgency,
+                PlayerCount=6,
+                MaxSCPKills=20,
+                MinSCPKills=5,
+                ReplaceChance=10,
+                MaxHealth=110,
+                MaxEnergy=120,
+                MaxAdrenalin=100,
+                Items=new List<int> { 0, 34, 35 },
+                PreSetSpawnPosRole=RoleType.None,
+                PreSetSpawnPosRoom=RoomType.Unknown,
+                SpawnPos=new Handlers.XYZ() {X=0,Y=0,Z=0},
+                Hint=$"<i>You are a <color=yellow>Chaos Hacker</green>. You can hack doors, your sprint is you AP.</i>",
             },
         };
-        public bool CanMedicMTFSpawn { get; set; } = false;
-        public List<int> MTFMedicItems { get; set; } = new List<int> { 17, 33, 33, 33, 34, 12, 13 };
         public bool CanChaosHackerSpawn { get; set; } = false;
         public List<int> ChaosHackerItems { get; set; } = new List<int> { 23, 14, 15, 12 };
         public bool Random008Spawn { get; set; } = false;
@@ -160,7 +195,7 @@ namespace ToucanPlugin
         public bool LonelyRound { get; set; } = false;
         public bool RandomGamemodes { get; set; } = false;
         public int RandomGamemodeChance { get; set; } = 10;
-        public GamemodeChances GamemodeChances { get; set; } = new GamemodeChances();
+        public Dictionary<GamemodeType, int> GamemodeChances { get; set; } = new Dictionary<GamemodeType, int>();
         public List<RoleType> AltSpeakScps { get; private set; } = new List<RoleType>() { RoleType.Scp049, RoleType.Scp0492, RoleType.Scp079, RoleType.Scp096, RoleType.Scp106, RoleType.Scp173, RoleType.Scp93953, RoleType.Scp93989 };
     }
 }

@@ -3,16 +3,9 @@ using Exiled.API.Features;
 using Exiled.Loader;
 using HarmonyLib;
 using System;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 using Player = Exiled.Events.Handlers.Player;
 using Server = Exiled.Events.Handlers.Server;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Threading;
-using ToucanPlugin.Commands;
 
 namespace ToucanPlugin
 {
@@ -110,8 +103,10 @@ namespace ToucanPlugin
             //Player.Shot += player.OnShot;
             Player.ChangingRole += player.OnChangingRole;
             Player.TriggeringTesla += player.OnTriggeringTesla;
-        }
 
+            Player.Hurting += new Gamemodes.AmongUs().OnHurting;
+            Player.ChangingRole += new Gamemodes.ZombieInfection().OnChangingRole;
+        }
         public void UnRegisterEvents()
         {
             player = null;
@@ -141,6 +136,9 @@ namespace ToucanPlugin
             //Player.Shot -= player.OnShot;
             Player.ChangingRole -= player.OnChangingRole;
             Player.TriggeringTesla -= player.OnTriggeringTesla;
+
+            Player.Hurting -= new Gamemodes.AmongUs().OnHurting;
+            Player.ChangingRole -= new Gamemodes.ZombieInfection().OnChangingRole;
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using ToucanPlugin.Gamemodes;
+﻿using System;
+using System.Collections.Generic;
+using ToucanPlugin.Gamemodes;
 
 namespace ToucanPlugin
 {
@@ -14,17 +16,6 @@ namespace ToucanPlugin
         SpoopyGhosts = 7,
         ZombieInfection = 8,
     }
-    public class GamemodeChances
-    {
-        public int QuietPlace { get; set; }
-        public int PeanutInfection { get; set; }
-        public int AmongUs { get; set; }
-        public int CandyRush { get; set; }
-        public int Scp682 { get; set; }
-        public int LivingNerd { get; set; }
-        public int SpoopyGhosts { get; set; }
-        public int ZombieInfection { get; set; }
-    }
     public class GamemodeLogic
     {
         public static bool GamemodesPaused { get; set; } = false;
@@ -32,8 +23,8 @@ namespace ToucanPlugin
         public static GamemodeType RoundGamemode { get; set; } = GamemodeType.None;
         public void GamemodeStarter()
         {
-            if (NextGamemode != 0)
-                switch (NextGamemode)
+            if (RoundGamemode != GamemodeType.None)
+                switch (RoundGamemode)
                 {
                     case GamemodeType.QuitePlace:
                         new QuietPlace().Setup();
@@ -56,11 +47,14 @@ namespace ToucanPlugin
                     case GamemodeType.SpoopyGhosts:
                         new SpoopyGhosts().Setup();
                         break;
+                    case GamemodeType.ZombieInfection:
+                        new ZombieInfection().Setup();
+                        break;
                 }
         }
         public void ClearCache()
         {
-            RoundGamemode = 0;
+            RoundGamemode = GamemodeType.None;
             AmongUs.DeathCords.Clear();
             AmongUs.Imposters.Clear();
             /*CandyRush.BommerList.Clear();

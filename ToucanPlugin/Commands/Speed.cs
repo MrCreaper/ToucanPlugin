@@ -45,19 +45,16 @@ namespace ToucanPlugin.Commands
                                 p.ReferenceHub.characterClassManager.Classes.ToList().ForEach(x => x.walkSpeed = speed);
                                 response = $"Set run speed to {speed}";
                                 return true;
-                                break;
                             case "walk":
                             case "w":
                                 p.ReferenceHub.characterClassManager.Classes.ToList().ForEach(x => x.walkSpeed = speed);
                                 response = $"Set walk speed to {speed} for {p.Nickname}";
                                 return true;
-                                break;
                             case "run":
                             case "r":
                                 p.ReferenceHub.characterClassManager.Classes.ToList().ForEach(x => x.runSpeed = speed);
                                 response = $"Set run speed to {speed} for {p.Nickname}";
                                 return true;
-                                break;
                         }
                     }
                     else

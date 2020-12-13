@@ -9,7 +9,7 @@ namespace ToucanPlugin.Commands
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     class ReflectControl : ICommand
     {
-        public static bool Reflect { get; set; } = !Server.FriendlyFire;
+        public static bool Reflect { get; set; } = !Server.FriendlyFire && ToucanPlugin.Instance.Config.ReflectTeamDMG;
         public string Command { get; } = "reflectcontrol";
 
         public string[] Aliases { get; } = { "reflect", "rc" };

@@ -103,7 +103,7 @@ namespace ToucanPlugin.Handlers
                 {
                     string Coma = ",";
                     if (Exiled.API.Features.Player.List.ToList().Count - 1 == i || Exiled.API.Features.Player.List.ToList().Count - 1 >= i + 1 && Exiled.API.Features.Player.List.ToList()[i + 1].UserId == ExcludedId)
-                    Coma = "";
+                        Coma = "";
                     playerList += $"{{\"id\":{p.Id},\"name\":\"{p.Nickname.Replace("\"", "")}\",\"userid\":\"{p.UserId}\"}}{Coma}";
                 }
             }
@@ -253,14 +253,19 @@ namespace ToucanPlugin.Handlers
             List<Exiled.API.Features.Player> playerList = new List<Exiled.API.Features.Player>((IEnumerable<Exiled.API.Features.Player>)Exiled.API.Features.Player.List.ToList());
             ToucanPlugin.Instance.Config.CustomPersonel.ForEach(per =>
             {
-                if (per.Role == ev.RoleType && rnd.Next(per.ReplaceChance, 100) <= per.ReplaceChance) return;
-                p.SetRole(per.Role);
+                if (!per.Enabled || per.PlayerCount < Exiled.API.Features.Player.List.Count()) return;
+                if (per.Role.GetTeam() == Team.MTF || per.Role.GetTeam() == Team.CHI && SCPKills >= per.MaxSCPKills || SCPKills < per.MinSCPKills) return;
+                if (per.Role == ev.RoleType && rnd.Next(per.ReplaceChance, 100) <= per.ReplaceChance)
+                    p.SetRole(per.Role);
+                else return;
                 if (per.MaxHealth != -1) p.MaxHealth = per.MaxHealth;
                 if (per.MaxAdrenalin != -1) p.MaxAdrenalineHealth = per.MaxAdrenalin;
                 if (per.MaxEnergy != -1) p.MaxEnergy = per.MaxEnergy;
                 per.Items.ForEach(item => p.Inventory.AddNewItem((ItemType)item));
-                if (per.PreSetSpawnPos != RoleType.None)
-                    p.Position = per.PreSetSpawnPos.GetRandomSpawnPoint();
+                if (per.PreSetSpawnPosRole != RoleType.None)
+                    p.Position = per.PreSetSpawnPosRole.GetRandomSpawnPoint();
+                else if (per.PreSetSpawnPosRoom != RoomType.Unknown)
+                    p.Position = Map.Rooms.ToList().Find(x => x.Type == per.PreSetSpawnPosRoom).Position;
                 else
                     p.Position = new Vector3(per.SpawnPos.X, per.SpawnPos.Y, per.SpawnPos.Z);
                 p.ShowHint(per.Hint, 6);
@@ -417,19 +422,12 @@ namespace ToucanPlugin.Handlers
         }
         public void OnHurting(HurtingEventArgs ev)
         {
-            if(ev.Target.Role == RoleType.Scp106 && ToucanPlugin.Instance.Config.Force106Femur && !Warhead.IsDetonated && ev.Attacker.CurrentItem.id == ItemType.MicroHID)
+            if (ev.Target.Role == RoleType.Scp106 && ToucanPlugin.Instance.Config.Force106Femur && !Warhead.IsDetonated && ev.Attacker.CurrentItem.id == ItemType.MicroHID)
                 if (ev.Target.Health < ev.Target.MaxHealth)
                     ev.Target.Health = ev.Target.Health + ev.Amount;
                 else
                     ev.Target.Health = ev.Target.MaxHealth;
-            // Among us game
-            if (AmongUs.Imposters.Contains(ev.Attacker) && GamemodeLogic.RoundGamemode == GamemodeType.AmongUs)
-            {
-                ev.Target.Kill();
-                AmongUs.DeathCords.Add(ev.Target.Position);
-            }
-            else
-                if (ToucanPlugin.Instance.Config.ReflectTeamDMG && ev.Target.Side == ev.Attacker.Side && ev.Target != ev.Attacker && scp035.API.Scp035Data.GetScp035() != ev.Attacker && scp035.API.Scp035Data.GetScp035() != ev.Target && !ev.Attacker.Sender.CheckPermission(PlayerPermissions.FriendlyFireDetectorImmunity) && !Exiled.API.Features.Server.FriendlyFire && ReflectControl.Reflect)
+            if (ev.Target.Side == ev.Attacker.Side && ev.Target != ev.Attacker && scp035.API.Scp035Data.GetScp035() != ev.Attacker && scp035.API.Scp035Data.GetScp035() != ev.Target && !ev.Attacker.Sender.CheckPermission(PlayerPermissions.FriendlyFireDetectorImmunity) && !Exiled.API.Features.Server.FriendlyFire && ReflectControl.Reflect)
             {
                 if (ev.Target.Health < ev.Target.MaxHealth)
                     ev.Target.Health = ev.Target.Health + ev.Amount;

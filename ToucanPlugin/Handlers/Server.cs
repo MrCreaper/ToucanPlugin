@@ -12,31 +12,31 @@ using UnityEngine;
 
 namespace ToucanPlugin.Handlers
 {
-    public class XYZ : IEquatable<XYZ>
+    public class XYZ
     {
         public float X { get; set; }
         public float Y { get; set; }
         public float Z { get; set; }
 
-        public bool Equals(XYZ other) // Why is this here?!
+        public Vector3 ToVector3(XYZ xyz)
         {
-            if (other == null) return false;
-            return (this.X.Equals(other.X));
+            return new Vector3(xyz.X, xyz.Y, xyz.Z);
         }
     }
     public class PlayerCountMentionsClass
     {
         public int PlayerCount { get; set; }
         public string RoleID { get; set; }
-
-        public bool Equals(PlayerCountMentionsClass other) // Why is this here?!
-        {
-            if (other == null) return false;
-            return (this.PlayerCount.Equals(other.PlayerCount));
-        }
     }
-    public class CustomSquadSpawns : IEquatable<CustomSquadSpawns>
+    public enum AbilityType
     {
+        None = 0,
+        HealingGrenade = 1,
+        DoorHacking = 2,
+    }
+    public class CustomSquadSpawns
+    {
+        public bool Enabled { get; set; }
         public string Name { get; set; } // Just for the user
         public Respawning.SpawnableTeamType Team { get; set; }
         public int ReplaceChance { get; set; } // Chance 1-100 for [name] to spawn insteed of [team] (0 for scpKill)
@@ -52,35 +52,30 @@ namespace ToucanPlugin.Handlers
         public int MaxSCPKills { get; set; }
         public int MinSCPKills { get; set; }
         public string CassieAnnc { get; set; }
-
-        public bool Equals(CustomSquadSpawns other)
-        {
-            if (other == null) return false;
-            return (this.Name.Equals(other.Name));
-        }
-        // Should also override == and != operators.
     }
-    public class CustomPersonelSpawns : IEquatable<CustomPersonelSpawns>
+    public class CustomPersonelSpawns
     {
+        public bool Enabled { get; set; }
         public string Name { get; set; } // Just for the user
         public RoleType Role { get; set; }
-        public int PlayerCountNeeded { get; set; }
+        public int PlayerCount { get; set; }
+        public int MaxSCPKills { get; set; }
+        public int MinSCPKills { get; set; }
         public int ReplaceChance { get; set; } // Chance 1-100 for [name] to spawn insteed of [team] (0 for scpKill)
         public int MaxHealth { get; set; }
         public int MaxEnergy { get; set; }
         public int MaxAdrenalin { get; set; }
         public List<int> Items { get; set; }
-        public RoleType PreSetSpawnPos { get; set; }
+        public RoleType PreSetSpawnPosRole { get; set; }
         public RoomType PreSetSpawnPosRoom { get; set; }
         public XYZ SpawnPos { get; set; }
         public string Hint { get; set; }
-
-        public bool Equals(CustomPersonelSpawns other)
-        {
-            if (other == null) return false;
-            return (this.Name.Equals(other.Name));
-        }
-        // Should also override == and != operators.
+        public List<AbilityType> Abilities { get; set; }
+    }
+    class GamemodeChanceArrayThing
+    {
+        public GamemodeType Gamemode { get; set; }
+        public int Num { get; set; }
     }
     class Server
     {
@@ -116,8 +111,18 @@ namespace ToucanPlugin.Handlers
                     Map.Broadcast(5, ToucanPlugin.Instance.Config.RoundStartMessage);
                 else
                     Map.Broadcast(5, $"Next Round Gamemode: <i><b>{gl.ConvertToNice(GamemodeLogic.RoundGamemode)}</b></i>");
-                /*CountChances += ToucanPlugin.Instance.Config.GamemodeChances[0].AmongUs;
-                                        GamemodeLogic.NextGamemode = GamemodeType.None;*/
+
+                int TotalGamemodeChances = 0;
+                ToucanPlugin.Instance.Config.GamemodeChances.ToList().ForEach(g => TotalGamemodeChances += g.Value);
+                int RandomGamemodeNumber = rnd.Next(0, TotalGamemodeChances);
+                int i = 0;
+                ToucanPlugin.Instance.Config.GamemodeChances.ToList().ForEach(g =>
+                {
+                    if (i >= RandomGamemodeNumber)
+                        GamemodeLogic.NextGamemode = g.Key;
+                    else
+                        i += g.Value;
+                });
                 ToucanPlugin.Instance.Config.PlayerCountMentions.ToList().ForEach(r =>
                 {
                     if (Whitelist.Whitelisted) return;
@@ -148,10 +153,10 @@ namespace ToucanPlugin.Handlers
                 if (ev.LeadingTeam == LeadingTeam.ChaosInsurgency && u.Team == Team.CDP || u.Team == Team.CHI)
                     Tcp.Send($"stats {u.UserId} gameswonCD 1");
                 else
-if (ev.LeadingTeam == LeadingTeam.Anomalies && u.Team == Team.SCP || SerpentsHand.API.SerpentsHand.GetSHPlayers().Contains(u) || scp035.API.Scp035Data.GetScp035() == u)
+        if (ev.LeadingTeam == LeadingTeam.Anomalies && u.Team == Team.SCP || SerpentsHand.API.SerpentsHand.GetSHPlayers().Contains(u) || scp035.API.Scp035Data.GetScp035() == u)
                     Tcp.Send($"stats {u.UserId} gameswonSCP 1");
                 else
-if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team == Team.RSC)
+        if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team == Team.RSC)
                     Tcp.Send($"stats {u.UserId} gameswonMTF 1");
             });
 
@@ -275,7 +280,7 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
             });
             if (ev.NextKnownTeam == Respawning.SpawnableTeamType.NineTailedFox)
             {
-                if (Player.SCPKills <= 15 && playerList.Count >= 2 && ToucanPlugin.Instance.Config.CanMedicMTFSpawn)
+                /*if (Player.SCPKills <= 15 && playerList.Count >= 2 && ToucanPlugin.Instance.Config.CanMedicMTFSpawn)
                 { // MTF Medic
                     Exiled.API.Features.Player p = playerList[rnd.Next(0, playerList.Count)];
                     p.SetRole(RoleType.NtfLieutenant);
@@ -286,7 +291,7 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
                     ToucanPlugin.Instance.Config.MTFMedicItems.ForEach(item => p.Inventory.AddNewItem((ItemType)item));
                     p.Position = MTFSpawnLocaltion;
                     p.Broadcast(5, $"< size = 60 > You are < color = #185ede><b>A MTF Medic</b></color></size>\n\n < i > Help the < color = \"cyan\" > MTF </ color > by healing them and giving them aid! </ i > ");
-                }
+                }*/
             }
             else if (ev.NextKnownTeam == Respawning.SpawnableTeamType.ChaosInsurgency)
             { // Is chaos spawn.
