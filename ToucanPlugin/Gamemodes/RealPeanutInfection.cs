@@ -12,9 +12,8 @@ namespace ToucanPlugin.Gamemodes
     {
         public static List<Player> Nuts { get; set; } = new List<Player>();
         public static List<Player> DClass { get; set; } = new List<Player>();
-        public void RealPeanutInfection_()
+        public void Setup()
         {
-            Map.Broadcast(5, "REAL Peanut Infection Gamemode started!");
             int teamCount = Player.List.Count();
             for (int i = 0; i <= teamCount; i++)
             {

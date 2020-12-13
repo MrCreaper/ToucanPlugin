@@ -1,6 +1,4 @@
-﻿using System;
-using ToucanPlugin.Commands;
-using ToucanPlugin.Gamemodes;
+﻿using ToucanPlugin.Gamemodes;
 
 namespace ToucanPlugin
 {
@@ -14,6 +12,7 @@ namespace ToucanPlugin
         Scp682 = 5,
         LivingNerd = 6,
         SpoopyGhosts = 7,
+        ZombieInfection = 8,
     }
     public class GamemodeChances
     {
@@ -24,43 +23,44 @@ namespace ToucanPlugin
         public int Scp682 { get; set; }
         public int LivingNerd { get; set; }
         public int SpoopyGhosts { get; set; }
+        public int ZombieInfection { get; set; }
     }
     public class GamemodeLogic
     {
         public static bool GamemodesPaused { get; set; } = false;
-        public static GamemodeType NextGamemode { get; set; } = 0;
-        public static GamemodeType RoundGamemode { get; set; } = 0;
-        public void GameSelector()
+        public static GamemodeType NextGamemode { get; set; } = GamemodeType.None;
+        public static GamemodeType RoundGamemode { get; set; } = GamemodeType.None;
+        public void GamemodeStarter()
         {
-            if (GamemodeLogic.NextGamemode != 0)
-                switch (GamemodeLogic.NextGamemode)
+            if (NextGamemode != 0)
+                switch (NextGamemode)
                 {
                     case GamemodeType.QuitePlace:
-                        new QuietPlace().QuietPlace_();
+                        new QuietPlace().Setup();
                         break;
                     case GamemodeType.PeanutInfection:
-                        new RealPeanutInfection().RealPeanutInfection_();
+                        new RealPeanutInfection().Setup();
                         break;
                     case GamemodeType.AmongUs:
-                        new AmongUs().AmongUs_();
+                        new AmongUs().Setup();
                         break;
                     /*case GamemodeType.CandyRush:
-                        new CandyRush().Candyrush();
+                        new CandyRush().Setup();
                         break;*/
                     case GamemodeType.Scp682:
-                        new Scp682().Scp682_();
+                        new Scp682().Setup();
                         break;
                     case GamemodeType.LivingNerd:
-                        new LivingNerd().LivingNerd_();
+                        new LivingNerd().Setup();
                         break;
                     case GamemodeType.SpoopyGhosts:
-                        new SpoopyGhosts().SpoopyGhosts_();
+                        new SpoopyGhosts().Setup();
                         break;
                 }
         }
         public void ClearCache()
         {
-            GamemodeLogic.RoundGamemode = 0;
+            RoundGamemode = 0;
             AmongUs.DeathCords.Clear();
             AmongUs.Imposters.Clear();
             /*CandyRush.BommerList.Clear();
@@ -69,7 +69,8 @@ namespace ToucanPlugin
         }
         public string ConvertToNice(GamemodeType Type)
         {
-            switch (Type) {
+            switch (Type)
+            {
                 default:
                     return "None";
                 case GamemodeType.None:
@@ -79,15 +80,17 @@ namespace ToucanPlugin
                 case GamemodeType.CandyRush:
                     return "Candy Rush";
                 case GamemodeType.PeanutInfection:
-                    return "Real Peanut Infection";
+                    return "Peanut Infection";
                 case GamemodeType.QuitePlace:
-                    return "QuietPlace";
+                    return "Quiet Place";
                 case GamemodeType.Scp682:
                     return "SCP-682 Breakout";
                 case GamemodeType.LivingNerd:
                     return "Living Nerd";
                 case GamemodeType.SpoopyGhosts:
                     return "Spoopy Ghosts";
+                case GamemodeType.ZombieInfection:
+                    return "Zombie Infection";
             }
         }
     }

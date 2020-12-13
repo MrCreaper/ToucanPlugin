@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ToucanPlugin.Commands
 {
-    [CommandHandler(typeof(ClientCommandHandler))]
+    [CommandHandler(typeof(RemoteAdminCommandHandler))]
     public class Scp087 : ICommand
     {
         public static Player Subject = null;
@@ -27,12 +27,24 @@ namespace ToucanPlugin.Commands
             {
                 if (args[1] != null)
                 {
+                    Room Scp173Room = Map.Rooms.ToList().Find(x => x.Type == Exiled.API.Enums.RoomType.Lcz173);
+                    //UnityEngine.Vector3 Scp173Room000 = new UnityEngine.Vector3(Scp173Room.Position.x - 6, Scp173Room.Position.y, Scp173Room.Position.z + 2);
+                    UnityEngine.Vector3 Scp173Room000 = Scp173Room.Position;
+                    float Scp087Top = Scp173Room000.y + 15;
+                    float Scp087Bottom = Scp173Room000.y;
                     if (args[1] == "relase" || args[1] == "r")
                     {
                         if (Subject != null && InEffect == true)
                         {
                             InEffect = false;
                             Subject = null;
+                            Scp173Room.Doors.ToList().ForEach(d =>
+                            {
+                                d.isOpen = true;
+                                d.locked = false;
+                                d.GrenadesResistant = false;
+                                //d.Buttons.ToList().ForEach(b => b.button.name = "SCP-087");
+                            });
                             response = "Subject Relased.";
                             return true;
                         }
@@ -49,7 +61,6 @@ namespace ToucanPlugin.Commands
                         {
                             if (Player.List.ToList().Find(x => x.Id == SubjectId) != null)
                             {
-                                Room Scp173Room = Map.Rooms.ToList().Find(x => x.Type == Exiled.API.Enums.RoomType.Lcz173);
                                 Subject = Player.List.ToList().Find(x => x.Id == SubjectId);
                                 Scp173Room.TurnOffLights(5);
                                 Scp173Room.Doors.ToList().ForEach(d =>
@@ -57,15 +68,31 @@ namespace ToucanPlugin.Commands
                                     d.isOpen = false;
                                     d.locked = true;
                                     d.GrenadesResistant = true;
-                                    d.Buttons.ToList().ForEach(b => b.button.name = "SCP-087");
+                                    //d.Buttons.ToList().ForEach(b => b.button.name = "SCP-087");
                                 });
                                 InEffect = true;
-                                Subject.Position = Scp173Room.Position;
+                                Subject.Position = Scp173Room000;
                                 Subject.MaxEnergy = 0;
                                 Subject.Energy = 0;
                                 Subject.DisableAllEffects();
                                 Subject.ClearInventory();
                                 Subject.Inventory.AddNewItem(ItemType.Flashlight);
+                                Task.Factory.StartNew(() =>
+                                {
+                                    while (true)
+                                    {
+                                        if (!InEffect) return;
+                                        if (InEffect && Round.IsStarted)
+                                        {
+                                            if (!Scp173Room.LightsOff)
+                                                Scp173Room.TurnOffLights(5);
+                                        }
+                                        if (Subject.Position.y > Scp087Bottom)
+                                            Subject.Position = new UnityEngine.Vector3(Subject.Position.x, Subject.Position.y + 5, Subject.Position.z);
+                                        if (Subject.Position.y < Scp087Bottom)
+                                            Subject.Position = new UnityEngine.Vector3(Subject.Position.x, Subject.Position.y - 5, Subject.Position.z);
+                                    }
+                                });
                                 response = $"Subject {Subject.Nickname} Sent into Scp-087";
                                 return true;
                             }
@@ -93,21 +120,6 @@ namespace ToucanPlugin.Commands
                 response = "Facility Managment is required to access SCP-087";
                 return false;
             }
-        }
-        public static void StartChecking087Room()
-        {
-            Task.Factory.StartNew(() =>
-            {
-                while (true)
-                {
-                    if (InEffect && Round.IsStarted)
-                    {
-                        Room Scp173Room = Map.Rooms.ToList().Find(x => x.Type == Exiled.API.Enums.RoomType.Lcz173);
-                        if (!Scp173Room.LightsOff)
-                            Scp173Room.TurnOffLights(5);
-                    }
-                }
-            });
         }
     }
 }

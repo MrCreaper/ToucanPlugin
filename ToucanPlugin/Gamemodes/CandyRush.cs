@@ -14,7 +14,7 @@ namespace ToucanPlugin.Gamemodes
     {
         public static List<string> DefuserList { get; set; } = new List<string>();
         public static List<string> BommerList { get; set; } = new List<string>();
-        public void CandyRush_()
+        public void Setup()
         {
             int Defusers = (int)Math.Floor(Player.List.Count() / 5d);
             int DefusersSpawned = 0;

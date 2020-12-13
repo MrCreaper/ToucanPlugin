@@ -26,6 +26,8 @@ namespace ToucanPlugin
         public bool CrouchingEnabled { get; set; } = false;
         [Description("Reflect team damage")]
         public Handlers.XYZ CrouchingSize { get; set; } = new Handlers.XYZ() { X = 1, Y = 0.4f, Z = 1 };
+        [Description("Force 106 be contained by the femur breaker")]
+        public bool Force106Femur { get; set; } = false;
         [Description("Default Kick message, when the kicker didnt add a reason to why")]
         public string DefaultKickReason { get; set; } = "[Kicked by {kicker}] No Reason";
         [Description("Default Kick All message, when the kicker didnt add a reason to why")]
@@ -158,14 +160,7 @@ namespace ToucanPlugin
         public bool LonelyRound { get; set; } = false;
         public bool RandomGamemodes { get; set; } = false;
         public int RandomGamemodeChance { get; set; } = 10;
-        public List<GamemodeChances> GamemodeChances { get; set; } = new List<GamemodeChances>
-        {
-            new GamemodeChances() {
-                QuietPlace = 33,
-                PeanutInfection = 33,
-                AmongUs = 34,
-                //CandyRush = 25,
-            }
-        };
+        public GamemodeChances GamemodeChances { get; set; } = new GamemodeChances();
+        public List<RoleType> AltSpeakScps { get; private set; } = new List<RoleType>() { RoleType.Scp049, RoleType.Scp0492, RoleType.Scp079, RoleType.Scp096, RoleType.Scp106, RoleType.Scp173, RoleType.Scp93953, RoleType.Scp93989 };
     }
 }

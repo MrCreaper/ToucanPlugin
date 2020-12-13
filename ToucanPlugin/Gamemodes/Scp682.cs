@@ -6,7 +6,7 @@ namespace ToucanPlugin.Gamemodes
 {
     public class Scp682
     {
-        public void Scp682_()
+        public void Setup()
         {
             Random rnd = new Random();
             Player Scp682 = Exiled.API.Features.Player.List.ToList().Find(x => x.Id == rnd.Next(0, Player.List.Count()));

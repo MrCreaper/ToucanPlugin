@@ -91,11 +91,10 @@ namespace ToucanPlugin.Handlers
         public Dictionary<string, bool> LastPlayerRoleMentions { get; set; } = new Dictionary<string, bool>();
         public void OnWaitingForPlayers()
         {
-            if (GamemodeLogic.NextGamemode != 0)
+            if (GamemodeLogic.NextGamemode != GamemodeType.None)
             {
                 GamemodeLogic.RoundGamemode = GamemodeLogic.NextGamemode;
                 GamemodeLogic.NextGamemode = 0;
-                new GamemodeLogic();
             }
             Tcp.SendLog("Waiting for players...");
             Player.PlayersCrouchingList.Clear();
@@ -103,68 +102,34 @@ namespace ToucanPlugin.Handlers
 
         public void OnRoundStarted()
         {
+            GamemodeLogic gl = new GamemodeLogic();
             Tcp.SendLog("Round started");
             if (rnd.Next(0, 3) == 0 && Exiled.API.Features.Player.List.ToList().Find(x => x.Role == RoleType.Scp173) != null)
-                Map.Doors.ToList().Find(x => x.DoorName == "173").locked = true; // Lock 173 (1162)
+                Map.Rooms.ToList().Find(x => x.Type == RoomType.Lcz173).Doors.ToList()[0].locked = true; // Lock 173 (1162)
             if (!GamemodeLogic.GamemodesPaused)
             {
                 if (GamemodeLogic.RoundGamemode == GamemodeType.None)
                     Map.Broadcast(5, ToucanPlugin.Instance.Config.RoundStartMessage);
                 else
-                    Map.Broadcast(5, $"Gamemode: <i><b>{GamemodeLogic.RoundGamemode}</b></i>");
+                    Map.Broadcast(5, $"Gamemode: <i><b>{gl.ConvertToNice(GamemodeLogic.RoundGamemode)}</b></i>");
                 if (GamemodeLogic.NextGamemode == GamemodeType.None)
                     Map.Broadcast(5, ToucanPlugin.Instance.Config.RoundStartMessage);
                 else
-                    Map.Broadcast(5, $"Next Round Gamemode: <i><b>{GamemodeLogic.RoundGamemode}</b></i>");
-                int CountChances = 0;
-                CountChances += ToucanPlugin.Instance.Config.GamemodeChances[0].AmongUs;
-                CountChances += ToucanPlugin.Instance.Config.GamemodeChances[0].CandyRush;
-                CountChances += ToucanPlugin.Instance.Config.GamemodeChances[0].PeanutInfection;
-                CountChances += ToucanPlugin.Instance.Config.GamemodeChances[0].QuietPlace;
-                if (CountChances != 100)
-                    Log.Warn($"Gamemode chances do NOT add up to 100.");
-                else
+                    Map.Broadcast(5, $"Next Round Gamemode: <i><b>{gl.ConvertToNice(GamemodeLogic.RoundGamemode)}</b></i>");
+                /*CountChances += ToucanPlugin.Instance.Config.GamemodeChances[0].AmongUs;
+                                        GamemodeLogic.NextGamemode = GamemodeType.None;*/
+                ToucanPlugin.Instance.Config.PlayerCountMentions.ToList().ForEach(r =>
                 {
-                    if (rnd.Next(0, 101) <= ToucanPlugin.Instance.Config.RandomGamemodeChance)
+                    if (Whitelist.Whitelisted) return;
+                    if (!LastPlayerCountMentions[r.PlayerCount] && Exiled.API.Features.Player.List.ToList().Count == r.PlayerCount)
                     {
-                        int GAMEMODE = rnd.Next(0, 101);
-                        int RandomCounter = 0;
-                        if (GAMEMODE <= ToucanPlugin.Instance.Config.GamemodeChances[0].AmongUs)
-                            GamemodeLogic.NextGamemode = GamemodeType.AmongUs;
-                        else
-                        {
-                            RandomCounter = +ToucanPlugin.Instance.Config.GamemodeChances[0].AmongUs;
-                            if (GAMEMODE <= ToucanPlugin.Instance.Config.GamemodeChances[0].CandyRush + RandomCounter)
-                                GamemodeLogic.NextGamemode = GamemodeType.CandyRush;
-                            else
-                            {
-                                RandomCounter = +ToucanPlugin.Instance.Config.GamemodeChances[0].CandyRush;
-                                if (GAMEMODE <= ToucanPlugin.Instance.Config.GamemodeChances[0].PeanutInfection + RandomCounter)
-                                    GamemodeLogic.NextGamemode = GamemodeType.PeanutInfection;
-                                else
-                                {
-                                    RandomCounter = +ToucanPlugin.Instance.Config.GamemodeChances[0].PeanutInfection;
-                                    if (GAMEMODE <= ToucanPlugin.Instance.Config.GamemodeChances[0].QuietPlace + RandomCounter)
-                                        GamemodeLogic.NextGamemode = GamemodeType.QuitePlace;
-                                    else
-                                        GamemodeLogic.NextGamemode = GamemodeType.None;
-                                }
-                            }
-                        }
+                        Tcp.SendLog($"{r.PlayerCount} PLAYERS <@&{r.RoleID}>");
+                        LastPlayerCountMentions[r.PlayerCount] = true;
                     }
-                }
+                    if (LastPlayerCountMentions[r.PlayerCount] && Exiled.API.Features.Player.List.ToList().Count < r.PlayerCount)
+                        LastPlayerCountMentions[r.PlayerCount] = false;
+                });
             }
-            ToucanPlugin.Instance.Config.PlayerCountMentions.ToList().ForEach(r =>
-            {
-                if (Whitelist.Whitelisted) return;
-                if (!LastPlayerCountMentions[r.PlayerCount] && Exiled.API.Features.Player.List.ToList().Count == r.PlayerCount)
-                {
-                    Tcp.SendLog($"{r.PlayerCount} PLAYERS <@&{r.RoleID}>");
-                    LastPlayerCountMentions[r.PlayerCount] = true;
-                }
-                if (LastPlayerCountMentions[r.PlayerCount] && Exiled.API.Features.Player.List.ToList().Count < r.PlayerCount)
-                    LastPlayerCountMentions[r.PlayerCount] = false;
-            });
         }
 
         public void OnRestartingRound() =>
@@ -374,7 +339,7 @@ if (ev.LeadingTeam == LeadingTeam.FacilityForces && u.Team == Team.MTF || u.Team
                             LastLights = SCP_575.Plugin.TimerOn;
                         }
                     }
-                    catch ( Exception e)
+                    catch (Exception e)
                     {
                         Log.Error($"ERROR WHILE DETECTING BLACKOUT: {e}");
                         return;

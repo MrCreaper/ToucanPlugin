@@ -248,6 +248,7 @@
     <Compile Include="Commands\HackIcom.cs" />
     <Compile Include="Commands\HackRadio.cs" />
     <Compile Include="Commands\HackLights.cs" />
+    <Compile Include="Commands\Speed.cs" />
     <Compile Include="Commands\Scp087.cs" />
     <Compile Include="Commands\Kick.cs" />
     <Compile Include="Commands\PetEquip.cs" />
@@ -278,6 +279,7 @@
     <Compile Include="GamemodeLogic.cs" />
     <Compile Include="Gamemodes\AmongUs.cs" />
     <Compile Include="Gamemodes\CandyRush.cs" />
+    <Compile Include="Gamemodes\ZombieInfection.cs" />
     <Compile Include="Gamemodes\LivingNerd.cs" />
     <Compile Include="Gamemodes\Scp682.cs" />
     <Compile Include="Gamemodes\QuietPlace.cs" />
@@ -289,6 +291,7 @@
     <Compile Include="Patches\IntercomMusicPatch.cs" />
     <Compile Include="Patches\RadioHackPatch.cs" />
     <Compile Include="Patches\RadioPatch.cs" />
+    <Compile Include="Patches\ScpSpeak.cs" />
     <Compile Include="Tcp.cs" />
     <Compile Include="ToucanPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

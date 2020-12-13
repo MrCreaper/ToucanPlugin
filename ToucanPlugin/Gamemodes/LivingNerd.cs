@@ -6,11 +6,11 @@ namespace ToucanPlugin.Gamemodes
 {
     public class LivingNerd
     {
-        public void LivingNerd_()
+        public void Setup()
         {
             Random rnd = new Random();
-            Player Nerd = Exiled.API.Features.Player.List.ToList().Find(x => x.Id == rnd.Next(0, Player.List.Count()));
-            Exiled.API.Features.Player.List.ToList().ForEach(p =>
+            Player Nerd = Player.List.ToList().Find(x => x.Id == rnd.Next(0, Player.List.Count()));
+            Player.List.ToList().ForEach(p =>
             {
                 if (Nerd != p)
                     p.SetRole(RoleType.ClassD);

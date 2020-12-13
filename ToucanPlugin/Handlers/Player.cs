@@ -417,6 +417,11 @@ namespace ToucanPlugin.Handlers
         }
         public void OnHurting(HurtingEventArgs ev)
         {
+            if(ev.Target.Role == RoleType.Scp106 && ToucanPlugin.Instance.Config.Force106Femur && !Warhead.IsDetonated && ev.Attacker.CurrentItem.id == ItemType.MicroHID)
+                if (ev.Target.Health < ev.Target.MaxHealth)
+                    ev.Target.Health = ev.Target.Health + ev.Amount;
+                else
+                    ev.Target.Health = ev.Target.MaxHealth;
             // Among us game
             if (AmongUs.Imposters.Contains(ev.Attacker) && GamemodeLogic.RoundGamemode == GamemodeType.AmongUs)
             {

@@ -46,7 +46,6 @@ namespace ToucanPlugin
             ToucanPlugin.Instance.Config.PlayerCountMentions.ForEach(r => server.LastPlayerCountMentions.Add(r.PlayerCount, false));
             player.StartDetectingCrouching();
             server.StartDetectBlackout();
-            Scp087.StartChecking087Room();
         }
         public override void OnDisabled()
         {

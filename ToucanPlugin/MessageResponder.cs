@@ -132,7 +132,7 @@ namespace ToucanPlugin
                     List<string> StoreStockList = NewStore.Select(c => c.ToString()).ToList();
                     if (StoreStockList[1] == "#" && StoreStockList[StoreStockList.Count - 1] == "#")
                     {
-                        Store.StoreStock = NewStore;
+                        Store.StoreStock =NewStore;
                         Log.Info($"Store Retrived{Store.StoreStock}");
                     }
                     else

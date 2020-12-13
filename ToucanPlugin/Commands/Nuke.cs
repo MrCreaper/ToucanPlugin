@@ -11,7 +11,7 @@ namespace ToucanPlugin.Commands
 
         public string[] Aliases { get; } = { "nuke" };
 
-        public string Description { get; } = "Manage the Nuke: lock, unlock, on, off, open, close, timer, shake, start, stop, detonate";
+        public string Description { get; } = "Manage the Nuke: lock, unlock, on, off, open, close, timer, shake, start, stop, detonate, blast";
 
         public bool Execute(ArraySegment<string> arguments, ICommandSender Sender, out string response)
         {
@@ -98,6 +98,13 @@ namespace ToucanPlugin.Commands
                 {
                     Warhead.Detonate();
                     response = "! DETONATING ALPHA WARHEAD !";
+                    return true;
+                }
+                else
+                if (arguments.Array[1] == "blast")
+                {
+                    Warhead.Controller._blastDoors[0].isClosed = true;
+                    response = "Closing blast DOOR?";
                     return true;
                 }
                 else

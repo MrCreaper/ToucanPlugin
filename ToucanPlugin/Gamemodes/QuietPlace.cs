@@ -6,7 +6,7 @@ namespace ToucanPlugin.Gamemodes
 {
     public class QuietPlace
     {
-        public void QuietPlace_()
+        public void Setup()
         {
             int teamCount = Player.List.ToList().Count;
             for (int i = 0; i < teamCount; i++)

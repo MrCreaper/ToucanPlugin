@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Exiled.API.Features;
-using Exiled.API.Extensions;
-using UnityEngine;
-using ToucanPlugin.Commands;
 
 namespace ToucanPlugin.Gamemodes
 {
     class SpoopyGhosts
     {
         public static List<Player> InvisScpList = new List<Player>();
-        public void SpoopyGhosts_()
+        public void Setup()
         {
             Player.List.ToList().ForEach(p =>
             {

@@ -13,7 +13,7 @@ namespace ToucanPlugin.Gamemodes
     {
         public static List<Player> Imposters { get; } = new List<Player>();
         public static List<Vector2> DeathCords { get; } = new List<Vector2>();
-        public void AmongUs_()
+        public void Setup()
         {
             int imposterCount = 1; // default
             List<Player> playerList = Player.List.ToList();
