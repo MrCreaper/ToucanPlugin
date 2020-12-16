@@ -271,6 +271,7 @@
     <Compile Include="Commands\SpawnEffect.cs" />
     <Compile Include="Commands\SpecMode.cs" />
     <Compile Include="Commands\StartDec.cs" />
+    <Compile Include="Commands\SpectatorAbilityList.cs" />
     <Compile Include="Commands\Store.cs" />
     <Compile Include="Commands\TempPet.cs" />
     <Compile Include="Commands\WhitelistCmd.cs" />

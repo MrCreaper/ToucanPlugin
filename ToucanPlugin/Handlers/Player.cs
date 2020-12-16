@@ -86,12 +86,12 @@ namespace ToucanPlugin.Handlers
                     if (i == 30) Map.ShowHint("Automatic round Starting in...", 5);
                     if (i >= 35) Map.ShowHint($"{60 - i}", 1);
                     if (i == 59) Map.ShowHint($"Starting a really lonely round..!", 5);
-                    Thread.Sleep(1200);
+                    Thread.Sleep(1250);
                 }
                 else return;
             }
         }
-        public void UpdatePlayerList(string ExcludedId = "")
+        public string UpdatePlayerList(string ExcludedId = "")
         {
             string playerList = "[";
             for (int i = 0; i <= Exiled.API.Features.Player.List.ToList().Count - 1; i++)
@@ -100,13 +100,14 @@ namespace ToucanPlugin.Handlers
                 if (ExcludedId != p.UserId)
                 {
                     string Coma = ",";
-                    if (Exiled.API.Features.Player.List.ToList().Count - 1 == i || Exiled.API.Features.Player.List.ToList().Count - 1 >= i + 1 && Exiled.API.Features.Player.List.ToList()[i + 1].UserId == ExcludedId)
+                    if (Exiled.API.Features.Player.List.ToList().Count - 1 == i || Exiled.API.Features.Player.List.ToList().Count != i)
                         Coma = "";
                     playerList += $"{{\"id\":{p.Id},\"name\":\"{p.Nickname.Replace("\"", "")}\",\"userid\":\"{p.UserId}\"}}{Coma}";
                 }
             }
             playerList += "]";
             Tcp.Send($"list {playerList}");
+            return playerList;
         }
         public void OnEscape(EscapingEventArgs ev)
         {
@@ -420,7 +421,7 @@ namespace ToucanPlugin.Handlers
         }
         public void OnHurting(HurtingEventArgs ev)
         {
-            if (ev.Target.Role == RoleType.Scp106 && ToucanPlugin.Instance.Config.Force106Femur && !Warhead.IsDetonated && ev.Attacker.CurrentItem.id == ItemType.MicroHID)
+            if (ev.Target.Role == RoleType.Scp106 && ToucanPlugin.Instance.Config.Force106Femur && !Warhead.IsDetonated && ev.Attacker.CurrentItem.id != ItemType.MicroHID)
                 if (ev.Target.Health < ev.Target.MaxHealth)
                     ev.Target.Health = ev.Target.Health + ev.Amount;
                 else

@@ -1,7 +1,6 @@
 ﻿using CommandSystem;
-using GameCore;
-using RemoteAdmin;
 using System;
+using System.Linq;
 
 namespace ToucanPlugin.Commands
 {
@@ -21,15 +20,20 @@ namespace ToucanPlugin.Commands
             {
                 if (Tcp.IsConnected())
                 {
-                    String Message = "msg ";
-                    String msg = "";
-                    for (int i = 0; i <= arguments.Array.Length; i++)
+                    string msg = "";
+                    string FullMsg = "";
+                    string FullMsgD = "";
+                    for (int i = 1; i <= arguments.Array.Length - 1; i++)
                     {
-                        msg += $" {arguments.Array[i]}";
+                        if (i == 1)
+                            msg += $"{arguments.Array[i]}";
+                        else
+                            msg += $" {arguments.Array[i]}";
                     }
-                    Message += player.Nickname;
-                    Message += $" ({player.SenderId}): {msg}";
-                    Tcp.Send(Message);
+                    FullMsg = $"{player.Nickname}: {msg}";
+                    FullMsgD = $"**{player.Nickname}** (*{player.SenderId}*): `{msg}`";
+                    SendMsgInGame(FullMsg);
+                    Tcp.Send($"msg {FullMsgD}");
                     response = "Message Sent!";
                     return true;
                 }
@@ -44,6 +48,13 @@ namespace ToucanPlugin.Commands
                 response = "Sorry, cant do that.";
                 return true;
             }
+        }
+        public void SendMsgInGame(string M)
+        {
+            Exiled.API.Features.Player.List.ToList().ForEach(p => { 
+                p.SendConsoleMessage(M, "#ff8c00");
+                p.ShowHint($"<color=yellow>New Message!</color>\n<size=10>{M}</size>\n(<color=yellow><size=1>Open console whit ~ key and check .help!</size></color>)");
+            });
         }
     }
 }

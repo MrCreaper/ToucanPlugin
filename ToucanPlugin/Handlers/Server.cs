@@ -112,11 +112,16 @@ namespace ToucanPlugin.Handlers
                 else
                     Map.Broadcast(5, $"Next Round Gamemode: <i><b>{gl.ConvertToNice(GamemodeLogic.RoundGamemode)}</b></i>");
 
-                int TotalGamemodeChances = 0;
-                ToucanPlugin.Instance.Config.GamemodeChances.ToList().ForEach(g => TotalGamemodeChances += g.Value);
-                int RandomGamemodeNumber = rnd.Next(0, TotalGamemodeChances);
+                int TotalGamemodeChance = 0;
+                int NoGamemodeChance = 0;
+                ToucanPlugin.Instance.Config.GamemodeChances.ToList().ForEach(g => {
+                    TotalGamemodeChance += g.Value;
+                    NoGamemodeChance += 100 - g.Value;
+                    });
+                int RandomGamemodeNumber = rnd.Next(0, TotalGamemodeChance + NoGamemodeChance);
                 int i = 0;
-                ToucanPlugin.Instance.Config.GamemodeChances.ToList().ForEach(g =>
+                if (RandomGamemodeNumber > TotalGamemodeChance)
+                    ToucanPlugin.Instance.Config.GamemodeChances.ToList().ForEach(g =>
                 {
                     if (i >= RandomGamemodeNumber)
                         GamemodeLogic.NextGamemode = g.Key;

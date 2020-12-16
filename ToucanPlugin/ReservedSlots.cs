@@ -24,7 +24,8 @@ namespace ToucanPlugin
             using (StreamWriter file =
 new StreamWriter(ReservedSlotsLocation, true))
             {
-                if (Comment != null) file.WriteLine($"#{Comment}\n{User}");
+                if (Comment != null)
+                    file.WriteLine($"\n{User} #{Comment}");
                 else
                     file.WriteLine($"{User}");
             }

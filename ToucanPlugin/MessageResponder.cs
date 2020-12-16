@@ -14,6 +14,19 @@ namespace ToucanPlugin
         readonly Whitelist wl = new Whitelist();
         public List<Player> ChaosHacker { get; set; } = new List<Player>();
         public List<string> BestBois;
+        public enum SpectatorAbilityType
+        {
+            None = 0,
+            Coke1 = 1,
+            Coke2 = 2,
+            Coke3 = 3,
+            Coke4 = 4,
+            CokeInf = 5,
+            ForceStalk = 6,
+            Spawn079 = 7,
+            Bonk = 8,
+            Spawn035 = 9,
+        }
         public string RemoveThatShit(string DisgustingSpaces)
         {
             List<string> DisgustingSpacesArray = DisgustingSpaces.Select(c => c.ToString()).ToList();
@@ -54,15 +67,18 @@ namespace ToucanPlugin
                     switch (Cmds[1])
                     {
                         case "info":
-                            Log.Info(Cmd.Replace($"log {Cmds[1]} ", ""));
+                            Log.Info(Cmd.Replace($"log [Toucan Server Message] {Cmds[1]} ", ""));
                             break;
                         case "warn":
-                            Log.Warn(Cmd.Replace($"log {Cmds[1]} ", ""));
+                            Log.Warn(Cmd.Replace($"log [Toucan Server Message] {Cmds[1]} ", ""));
                             break;
                         case "error":
-                            Log.Error(Cmd.Replace($"log {Cmds[1]} ", ""));
+                            Log.Error(Cmd.Replace($"log [Toucan Server Message] {Cmds[1]} ", ""));
                             break;
                     }
+                    break;
+
+                case "cmd":
                     break;
 
                 case "console":
@@ -79,6 +95,10 @@ namespace ToucanPlugin
 
                 case "rcoins": //recived coins
                     Player.List.ToList().Find(x => x.UserId.Contains(Cmds[1])).ShowHint($"<i>Recived <color=yellow>{Cmds[2]} Coins</color></i>", 5);
+                    break;
+
+                case "msg":
+                    new Chat().SendMsgInGame(Cmd.Replace($"{Cmds[0]} ", ""));
                     break;
 
                 case "kill":
@@ -127,12 +147,12 @@ namespace ToucanPlugin
                     break;
 
                 case "store":
-                    string NewStore = Cmd.ToString().Remove(0, 6);
+                    string NewStore = Cmd.ToString().Replace($"{Cmds[0]} ", "");
                     if (Store.StoreStock == NewStore) return;
                     List<string> StoreStockList = NewStore.Select(c => c.ToString()).ToList();
                     if (StoreStockList[1] == "#" && StoreStockList[StoreStockList.Count - 1] == "#")
                     {
-                        Store.StoreStock =NewStore;
+                        Store.StoreStock = NewStore;
                         Log.Info($"Store Retrived{Store.StoreStock}");
                     }
                     else
@@ -151,6 +171,39 @@ namespace ToucanPlugin
                     {
                         Tcp.Send($"updateDataReq 1");
                         Log.Warn($"Yeah soo, best bois list is a bit short whit only {BestBois.Count - 1} users... [This will fix itself soon]");
+                    }
+                    break;
+
+                case "specAbilList":
+                    string NewSpectatorAbilityList = Cmd.ToString().Replace($"{Cmds[0]} ", "");
+                    if (SpectatorAbilityList.SpectatorAbilityStock == NewSpectatorAbilityList) return;
+                    List<string> NewSpectatorAbilityListList = NewSpectatorAbilityList.Select(c => c.ToString()).ToList();
+                    if (NewSpectatorAbilityListList[1] == "#" && NewSpectatorAbilityListList[NewSpectatorAbilityListList.Count - 1] == "#")
+                    {
+                        SpectatorAbilityList.SpectatorAbilityStock = NewSpectatorAbilityList;
+                        Log.Info($"Spectator Ability List Retrived{SpectatorAbilityList.SpectatorAbilityStock}");
+                    }
+                    else
+                    {
+                        SpectatorAbilityList.SpectatorAbilityStock = null;
+                        Tcp.Send($"updateDataReq 2");
+                        Log.Warn($"Spectator Ability List is fucked up...");
+                    }
+                    break;
+
+                case "specAbility":
+                    Player Spactator = Player.List.ToList().Find(x => x.UserId == Cmds[1]);
+                    Player Spactatee = Player.List.ToList().Find(x => x.UserId == Cmds[2]);
+                    if (Spactator == null || Spactatee == null) return;
+                    switch ((SpectatorAbilityType)int.Parse(Cmds[3]))
+                    {
+                        case SpectatorAbilityType.Coke1:
+                            Spactatee.Broadcast(4, $"Spectator Ability!");
+                            Spactatee.EnableEffect<CustomPlayerEffects.Scp207>();
+                            break;
+                        case SpectatorAbilityType.Coke2:
+                            Spactatee.EnableEffect<CustomPlayerEffects.Scp207>(2);
+                            break;
                     }
                     break;
 
@@ -186,7 +239,7 @@ namespace ToucanPlugin
                     else
                         if (!Whitelist.WhitelistUsers.Contains(Cmds[1])) // Whitelist user
                     {
-                        wl.Add(Cmds[1], Cmds[2]);
+                        wl.Add(Cmds[1], Cmd.Replace($"{Cmds[0]} {Cmds[1]} ", ""));
                         Tcp.SendLog($"**User ({Cmd[1]}) now whitelisted!**");
                     }
                     else
