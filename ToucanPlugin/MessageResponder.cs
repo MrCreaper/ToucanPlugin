@@ -27,6 +27,31 @@ namespace ToucanPlugin
             Bonk = 8,
             Spawn035 = 9,
         }
+        public string SpectatorAbilityToNice(SpectatorAbilityType Ab)
+        {
+            switch (Ab)
+            {
+                default:
+                case SpectatorAbilityType.None:
+                    return $"[NULL {Ab}]";
+                case SpectatorAbilityType.Coke1:
+                    return $"Coke x1";
+                case SpectatorAbilityType.Coke2:
+                    return $"Coke x2";
+                case SpectatorAbilityType.Coke3:
+                    return $"Coke x3";
+                case SpectatorAbilityType.Coke4:
+                    return $"Coke x4";
+                case SpectatorAbilityType.CokeInf:
+                    return $"Coke x∞";
+                case SpectatorAbilityType.ForceStalk:
+                    return $"Force Stalk";
+                case SpectatorAbilityType.Bonk:
+                    return $"BONK";
+                case SpectatorAbilityType.Spawn035:
+                    return $"You are 035!";
+            }
+        }
         public string RemoveThatShit(string DisgustingSpaces)
         {
             List<string> DisgustingSpacesArray = DisgustingSpaces.Select(c => c.ToString()).ToList();
@@ -195,16 +220,48 @@ namespace ToucanPlugin
                     Player Spactator = Player.List.ToList().Find(x => x.UserId == Cmds[1]);
                     Player Spactatee = Player.List.ToList().Find(x => x.UserId == Cmds[2]);
                     if (Spactator == null || Spactatee == null) return;
-                    switch ((SpectatorAbilityType)int.Parse(Cmds[3]))
+                    SpectatorAbilityType SpecAbil = (SpectatorAbilityType)int.Parse(Cmds[3]);
+                    switch (SpecAbil)
                     {
                         case SpectatorAbilityType.Coke1:
-                            Spactatee.Broadcast(4, $"Spectator Ability!");
-                            Spactatee.EnableEffect<CustomPlayerEffects.Scp207>();
+                            //Spactatee.EnableEffect<CustomPlayerEffects.Scp207>();
+                            Spactatee.ChangeEffectIntensity<CustomPlayerEffects.Scp207>(1);
                             break;
                         case SpectatorAbilityType.Coke2:
-                            Spactatee.EnableEffect<CustomPlayerEffects.Scp207>(2);
+                            Spactatee.ChangeEffectIntensity<CustomPlayerEffects.Scp207>(2);
+                            break;
+                        case SpectatorAbilityType.Coke3:
+                            Spactatee.ChangeEffectIntensity<CustomPlayerEffects.Scp207>(3);
+                            break;
+                        case SpectatorAbilityType.Coke4:
+                            Spactatee.ChangeEffectIntensity<CustomPlayerEffects.Scp207>(4);
+                            break;
+                        case SpectatorAbilityType.CokeInf:
+                            Spactatee.ChangeEffectIntensity<CustomPlayerEffects.Scp207>(100);
+                            break;
+                        case SpectatorAbilityType.ForceStalk:
+                            if (Player.List.ToList().Find(x => x.Role == RoleType.Scp106) == null)
+                                Log.Debug($"No scp 106 found");
+                            else
+                            {
+                                Player Scp106 = Player.List.ToList().Find(x => x.Role == RoleType.Scp106);
+                                //float _ = new Stalky106.StalkyMethods().PortalProcedure(Spactatee.ReferenceHub.characterClassManager.Scp106, Spactatee.Position);
+                                Scp106.ReferenceHub.characterClassManager.Scp106.portalPosition = Spactatee.Position;
+                                Scp106.ReferenceHub.characterClassManager.Scp106.CmdUsePortal();
+                            }
+                            break;
+                        case SpectatorAbilityType.Bonk:
+                            Spactatee.Scale = new UnityEngine.Vector3(1,0.4f,1);
+                            break;
+                        case SpectatorAbilityType.Spawn035:
+                            if(scp035.API.Scp035Data.GetScp035() == null)
+                            scp035.API.Scp035Data.Spawn035(Spactatee);
                             break;
                     }
+                    if(Spactator.DisplayNickname == null)
+                    Spactatee.Broadcast(4, $"<i>Spectator Ability!\nAbility: <color=yellow>{SpectatorAbilityToNice(SpecAbil)}</color>\n<size=10>Spectator: {Spactator.Nickname}</size></i>");
+                    else
+                        Spactatee.Broadcast(4, $"Spectator Ability!\nAbility: {SpectatorAbilityToNice(SpecAbil)}\nSpectator: {Spactator.DisplayNickname}");
                     break;
 
                 case "pet":

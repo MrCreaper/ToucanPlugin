@@ -21,8 +21,6 @@ namespace ToucanPlugin.Commands
                 if (Tcp.IsConnected())
                 {
                     string msg = "";
-                    string FullMsg = "";
-                    string FullMsgD = "";
                     for (int i = 1; i <= arguments.Array.Length - 1; i++)
                     {
                         if (i == 1)
@@ -30,6 +28,8 @@ namespace ToucanPlugin.Commands
                         else
                             msg += $" {arguments.Array[i]}";
                     }
+                    string FullMsg;
+                    string FullMsgD;
                     FullMsg = $"{player.Nickname}: {msg}";
                     FullMsgD = $"**{player.Nickname}** (*{player.SenderId}*): `{msg}`";
                     SendMsgInGame(FullMsg);

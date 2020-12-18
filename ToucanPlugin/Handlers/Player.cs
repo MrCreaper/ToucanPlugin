@@ -350,6 +350,7 @@ namespace ToucanPlugin.Handlers
                     ev.Door.isOpen = true;
             }
         }
+
         public void OnBanned(BannedEventArgs ev) =>
             Tcp.SendLog($"```{ev.Details.Issuer} ({ev.Details.OriginalName}) banned player {ev.Player.Nickname} ({ev.Player.UserId}). Ban duration: {ev.Details.Expires}. Reason: {ev.Details.Reason}.```");
         public void OnKicked(KickedEventArgs ev) =>
