@@ -33,6 +33,9 @@ namespace ToucanPlugin.Handlers
         None = 0,
         HealingGrenade = 1,
         DoorHacking = 2,
+        IcomDisabling = 3,
+        Blackout = 4,
+        RadioDisabling = 4,
     }
     public class CustomSquadSpawns
     {
@@ -81,7 +84,6 @@ namespace ToucanPlugin.Handlers
     {
         readonly System.Random rnd = new System.Random();
         readonly Tcp Tcp = new Tcp();
-        readonly MessageResponder mr = new MessageResponder();
         public Dictionary<int, bool> LastPlayerCountMentions { get; set; } = new Dictionary<int, bool>();
         public Dictionary<string, bool> LastPlayerRoleMentions { get; set; } = new Dictionary<string, bool>();
         public void OnWaitingForPlayers()
@@ -248,7 +250,7 @@ namespace ToucanPlugin.Handlers
             Player.Has008RandomSpawned = false;
             Player.SCPKills = 0;
             SpecMode.TUTSpecList = null;
-            mr.ChaosHacker = null;
+            Handlers.Player.perConnections.Clear();
             RealPeanutInfection.DClass.Clear();
             RealPeanutInfection.Nuts.Clear();
         }
@@ -283,49 +285,6 @@ namespace ToucanPlugin.Handlers
                     Commander.ShowHint($"<i>You are the <color=yellow>Commander</color> of <color=yellow>{s.Name}</color></i>", 6);
                 }
             });
-            if (ev.NextKnownTeam == Respawning.SpawnableTeamType.NineTailedFox)
-            {
-                /*if (Player.SCPKills <= 15 && playerList.Count >= 2 && ToucanPlugin.Instance.Config.CanMedicMTFSpawn)
-                { // MTF Medic
-                    Exiled.API.Features.Player p = playerList[rnd.Next(0, playerList.Count)];
-                    p.SetRole(RoleType.NtfLieutenant);
-                    p.MaxHealth = 75;
-                    p.MaxEnergy = 75;
-                    p.MaxAdrenalineHealth = 300;
-                    p.ClearInventory();
-                    ToucanPlugin.Instance.Config.MTFMedicItems.ForEach(item => p.Inventory.AddNewItem((ItemType)item));
-                    p.Position = MTFSpawnLocaltion;
-                    p.Broadcast(5, $"< size = 60 > You are < color = #185ede><b>A MTF Medic</b></color></size>\n\n < i > Help the < color = \"cyan\" > MTF </ color > by healing them and giving them aid! </ i > ");
-                }*/
-            }
-            else if (ev.NextKnownTeam == Respawning.SpawnableTeamType.ChaosInsurgency)
-            { // Is chaos spawn.
-                if (Player.SCPKills <= 15 && playerList.Count >= 2 && ToucanPlugin.Instance.Config.CanChaosHackerSpawn)
-                { // Chaos Hacker
-                    Exiled.API.Features.Player p = playerList[rnd.Next(0, playerList.Count)];
-                    p.MaxHealth = 75;
-                    p.MaxEnergy = 75;
-                    p.MaxAdrenalineHealth = 50; //AP
-                    p.AdrenalineHealth = p.MaxAdrenalineHealth;
-                    p.ClearInventory();
-                    ToucanPlugin.Instance.Config.ChaosHackerItems.ForEach(item => p.Inventory.AddNewItem((ItemType)item));
-                    p.Position = Map.GetRandomSpawnPoint(RoleType.ChaosInsurgency);
-                    p.Broadcast(5, $"< size = 60 > You are < color = #2a6e02><b>A Chaos Hacker</b></color></size>\n\n < i > Help the < color = \"green\" > Chaos </ color > by hacking doors, your ahp is you ap! </ i > ");
-                    mr.ChaosHacker.Add(p);
-                    Task.Factory.StartNew(() => ChaosHackerCharge(p));
-                }
-            }
-        }
-        public void ChaosHackerCharge(Exiled.API.Features.Player p)
-        {
-            while (mr.ChaosHacker.Contains(p))
-            {
-                if (p.AdrenalineHealth + 1 > p.MaxAdrenalineHealth)
-                    p.AdrenalineHealth = p.MaxAdrenalineHealth;
-                else
-                    p.AdrenalineHealth = +1;
-                Thread.Sleep(100);
-            }
         }
         public void OnSendingRemoteAdminCommand(SendingRemoteAdminCommandEventArgs ev)
         {

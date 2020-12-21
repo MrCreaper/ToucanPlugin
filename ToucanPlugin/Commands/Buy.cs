@@ -34,7 +34,7 @@ namespace ToucanPlugin.Commands
                                     if (Player.List.ToList().Find(x => x.UserId.Contains(player.SenderId)).Team != Team.SCP)
                                     {
                                         string[] args = arguments.Array;
-                                        if (args[1] != null)
+                                        if (args.Count() >= 1)
                                         {
                                             var isNumeric = int.TryParse(args[1], out int itemNum);
                                             if (isNumeric == true)

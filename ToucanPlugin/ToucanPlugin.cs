@@ -97,7 +97,7 @@ namespace ToucanPlugin
             Player.Left += player.OnLeft;
             Player.Escaping += player.OnEscape;
             Player.Died += player.OnDied;
-            //Player.Spawning += player.OnSpawned;
+            Player.Spawning += player.OnSpawned;
             Player.InteractingDoor += player.OnInteractingDoor;
             Player.Banned += player.OnBanned;
             Player.Kicked += player.OnKicked;
@@ -129,7 +129,7 @@ namespace ToucanPlugin
             Player.Left -= player.OnLeft;
             Player.Escaping -= player.OnEscape;
             Player.Died -= player.OnDied;
-            //Player.Spawning -= player.OnSpawned;
+            Player.Spawning -= player.OnSpawned;
             Player.Spawning -= player.OnSpawned;
             Player.InteractingDoor -= player.OnInteractingDoor;
             Player.Banned -= player.OnBanned;

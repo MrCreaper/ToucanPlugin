@@ -18,6 +18,7 @@ namespace ToucanPlugin.Handlers
         public static bool Has008RandomSpawned { get; set; } = false;
         public static int SCPKills = 0;
         public static Dictionary<string, int> petConnections = new Dictionary<string, int>();
+        public static Dictionary<Exiled.API.Features.Player, CustomPersonelSpawns> perConnections = new Dictionary<Exiled.API.Features.Player, CustomPersonelSpawns>();
         readonly MessageResponder mr = new MessageResponder();
         public static List<Exiled.API.Features.Player> PlayersCrouchingList = new List<Exiled.API.Features.Player>();
 
@@ -33,6 +34,7 @@ namespace ToucanPlugin.Handlers
         }
         public void OnJoin(JoinedEventArgs ev)
         {
+            CmdBinding.KeyBind(KeyCode.Alpha1, ".79 blackout");
             if (ToucanPlugin.Instance.Config.ReplaceAdvertismentNames)
             {
                 List<string> PlayerNameSplit = new List<string>(ev.Player.Nickname.Split(' '));
@@ -100,7 +102,7 @@ namespace ToucanPlugin.Handlers
                 if (ExcludedId != p.UserId)
                 {
                     string Coma = ",";
-                    if (Exiled.API.Features.Player.List.ToList().Count - 1 == i || Exiled.API.Features.Player.List.ToList().Count != i)
+                    if (Exiled.API.Features.Player.List.ToList().Count - 1 == i || Exiled.API.Features.Player.List.ToList().Count == i)
                         Coma = "";
                     playerList += $"{{\"id\":{p.Id},\"name\":\"{p.Nickname.Replace("\"", "")}\",\"userid\":\"{p.UserId}\"}}{Coma}";
                 }
@@ -160,7 +162,7 @@ namespace ToucanPlugin.Handlers
             if (ev.Target.Team == Team.SCP || scp035.API.Scp035Data.GetScp035() == ev.Killer)
                 isTargetScp = true;
             Tcp.Send($"died {isff} {ev.Target.UserId} {ev.Killer.UserId} {ev.HitInformations.Tool} {isTargetScp}");
-            Tcp.SendLog($"{ev.Target.Nickname} ({ev.Target.UserId}) killed by {ev.Killer.Nickname} ({ev.Killer.UserId}) whit {ev.HitInformations.GetDamageName()}");
+            Tcp.SendLog($"{ev.Target.Nickname} ({ev.Target.UserId}) killed by {ev.Killer.Nickname} ({ev.Killer.UserId}) with {ev.HitInformations.GetDamageName()}");
             switch (ev.Killer.Team)
             {
                 case Team.SCP:
@@ -267,16 +269,29 @@ namespace ToucanPlugin.Handlers
                     p.Position = Map.Rooms.ToList().Find(x => x.Type == per.PreSetSpawnPosRoom).Position;
                 else
                     p.Position = new Vector3(per.SpawnPos.X, per.SpawnPos.Y, per.SpawnPos.Z);
+                perConnections.Add(p, per);
                 p.ShowHint(per.Hint, 6);
+            });
+        }
+        public void ChaosHackerCharge(Exiled.API.Features.Player p)
+        {
+            Task.Factory.StartNew(() =>
+            {
+                while (perConnections[p].Abilities.Contains(AbilityType.DoorHacking) || perConnections[p].Abilities.Contains(AbilityType.IcomDisabling) || perConnections[p].Abilities.Contains(AbilityType.Blackout))
+                {
+                    if (p.AdrenalineHealth + 1 > p.MaxAdrenalineHealth)
+                        p.AdrenalineHealth = p.MaxAdrenalineHealth;
+                    else
+                        p.AdrenalineHealth = +1;
+                    Thread.Sleep(100);
+                }
             });
         }
         public void OnInteractingDoor(InteractingDoorEventArgs ev)
         {
-            if (!mr.ChaosHacker.Contains(ev.Player)) return;
-            if (ev.IsAllowed) return;
+            if (!perConnections[ev.Player].Abilities.Contains(AbilityType.DoorHacking) || !ev.IsAllowed || ev.Door.destroyed) return;
             float ap = ev.Player.AdrenalineHealth;
             float apCost = 0;
-            if (ev.Door.destroyed) return;
             switch (ev.Door.Type())
             {
                 case DoorType.NukeSurface:

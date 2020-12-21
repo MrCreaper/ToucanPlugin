@@ -12,7 +12,6 @@ namespace ToucanPlugin
     {
         readonly Tcp Tcp = new Tcp();
         readonly Whitelist wl = new Whitelist();
-        public List<Player> ChaosHacker { get; set; } = new List<Player>();
         public List<string> BestBois;
         public enum SpectatorAbilityType
         {
@@ -223,7 +222,7 @@ namespace ToucanPlugin
                     SpectatorAbilityType SpecAbil = (SpectatorAbilityType)int.Parse(Cmds[3]);
                     switch (SpecAbil)
                     {
-                        case SpectatorAbilityType.Coke1:
+                        /*case SpectatorAbilityType.Coke1:
                             //Spactatee.EnableEffect<CustomPlayerEffects.Scp207>();
                             Spactatee.ChangeEffectIntensity<CustomPlayerEffects.Scp207>(1);
                             break;
@@ -238,7 +237,7 @@ namespace ToucanPlugin
                             break;
                         case SpectatorAbilityType.CokeInf:
                             Spactatee.ChangeEffectIntensity<CustomPlayerEffects.Scp207>(100);
-                            break;
+                            break;*/
                         case SpectatorAbilityType.ForceStalk:
                             if (Player.List.ToList().Find(x => x.Role == RoleType.Scp106) == null)
                                 Log.Debug($"No scp 106 found");
@@ -251,17 +250,17 @@ namespace ToucanPlugin
                             }
                             break;
                         case SpectatorAbilityType.Bonk:
-                            Spactatee.Scale = new UnityEngine.Vector3(1,0.4f,1);
+                            Spactatee.Scale = new UnityEngine.Vector3(1, 0.4f, 1);
                             break;
                         case SpectatorAbilityType.Spawn035:
-                            if(scp035.API.Scp035Data.GetScp035() == null)
-                            scp035.API.Scp035Data.Spawn035(Spactatee);
+                            if (scp035.API.Scp035Data.GetScp035() == null)
+                                scp035.API.Scp035Data.Spawn035(Spactatee);
                             break;
                     }
-                    if(Spactator.DisplayNickname == null)
-                    Spactatee.Broadcast(4, $"<i>Spectator Ability!\nAbility: <color=yellow>{SpectatorAbilityToNice(SpecAbil)}</color>\n<size=10>Spectator: {Spactator.Nickname}</size></i>");
+                    if (Spactator.DisplayNickname == null)
+                        Spactatee.Broadcast(4, $"<i>Spectator Ability!\nAbility: <color=yellow>{SpectatorAbilityToNice(SpecAbil)}</color>\n<size=10>Spectator: {Spactator.Nickname}</size></i>");
                     else
-                        Spactatee.Broadcast(4, $"Spectator Ability!\nAbility: {SpectatorAbilityToNice(SpecAbil)}\nSpectator: {Spactator.DisplayNickname}");
+                        Spactatee.Broadcast(4, $"<i>Spectator Ability!\nAbility: <color=yellow>{SpectatorAbilityToNice(SpecAbil)}</color>\n<size=10>Spectator: {Spactator.DisplayNickname}</size></i>");
                     break;
 
                 case "pet":

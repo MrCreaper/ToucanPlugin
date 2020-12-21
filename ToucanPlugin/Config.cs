@@ -152,7 +152,7 @@ namespace ToucanPlugin
                 PreSetSpawnPosRoom=RoomType.Unknown,
                 SpawnPos=new Handlers.XYZ() {X=0,Y=0,Z=0},
                 Hint=$"<i>You are a <color=yellow>Containment Engineer</color>. You had <color=yellow>one</color> job.</i>",
-            },            
+            },
             new Handlers.CustomPersonelSpawns() {
                 Enabled=false,
                 Name="MTF Medic",
@@ -188,14 +188,28 @@ namespace ToucanPlugin
                 Hint=$"<i>You are a <color=yellow>Chaos Hacker</green>. You can hack doors, your sprint is you AP.</i>",
             },
         };
-        public bool CanChaosHackerSpawn { get; set; } = false;
-        public List<int> ChaosHackerItems { get; set; } = new List<int> { 23, 14, 15, 12 };
         public bool Random008Spawn { get; set; } = false;
         [Description("Start the round automaticly after a minute")]
         public bool LonelyRound { get; set; } = false;
         public bool RandomGamemodes { get; set; } = false;
         public int RandomGamemodeChance { get; set; } = 10;
         public Dictionary<GamemodeType, int> GamemodeChances { get; set; } = new Dictionary<GamemodeType, int>();
+        [Description("SCP's that can speak using alternative speak")]
         public List<RoleType> AltSpeakScps { get; private set; } = new List<RoleType>() { RoleType.Scp049, RoleType.Scp0492, RoleType.Scp079, RoleType.Scp096, RoleType.Scp106, RoleType.Scp173, RoleType.Scp93953, RoleType.Scp93989 };
+        [Description("CI hacker ability costs")]
+        public List<Commands.Hack.CIHackingAbilityConfig> HackingAbility { get; set; } = new List<Commands.Hack.CIHackingAbilityConfig> {
+            new Commands.Hack.CIHackingAbilityConfig(){
+                Name="Intercom",
+                Cost=60
+            },
+            new Commands.Hack.CIHackingAbilityConfig(){
+                Name="Lights",
+                Cost=75
+            },
+            new Commands.Hack.CIHackingAbilityConfig(){
+                Name="Radio",
+                Cost=65
+            },
+        };
     }
 }
