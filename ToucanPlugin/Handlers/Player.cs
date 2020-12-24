@@ -34,7 +34,6 @@ namespace ToucanPlugin.Handlers
         }
         public void OnJoin(JoinedEventArgs ev)
         {
-            CmdBinding.KeyBind(KeyCode.Alpha1, ".79 blackout");
             if (ToucanPlugin.Instance.Config.ReplaceAdvertismentNames)
             {
                 List<string> PlayerNameSplit = new List<string>(ev.Player.Nickname.Split(' '));
@@ -289,6 +288,7 @@ namespace ToucanPlugin.Handlers
         }
         public void OnInteractingDoor(InteractingDoorEventArgs ev)
         {
+            if (perConnections[ev.Player] == null) return;
             if (!perConnections[ev.Player].Abilities.Contains(AbilityType.DoorHacking) || !ev.IsAllowed || ev.Door.destroyed) return;
             float ap = ev.Player.AdrenalineHealth;
             float apCost = 0;

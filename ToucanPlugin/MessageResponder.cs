@@ -188,9 +188,17 @@ namespace ToucanPlugin
                     break;
 
                 case "bestbois":
-                    BestBois = new List<string>(Cmd.Replace("bestbois ", "").Split(' '));
-                    if (BestBois.Count >= 2)
+                    List<string> BestBoisUp = new List<string>(Cmd.Replace("bestbois ", "").Split(' '));
+                    bool confirmed = false;
+                    BestBoisUp.ForEach(id => {
+                        if (!id.Contains("@steam") || !id.Contains("@discord"))
+                            confirmed = true;
+                    });
+                    if (BestBoisUp.Count >= 2 && confirmed)
+                    {
+                        BestBois = BestBoisUp;
                         Log.Info("Best bois recived!");
+                    }
                     else
                     {
                         Tcp.Send($"updateDataReq 1");
@@ -323,6 +331,22 @@ namespace ToucanPlugin
                         IsAliveAndPaused = false;
                     else
                         IsAliveAndPaused = true;
+                    break;
+
+                case "infoS":
+                    //Static Info
+                    Tcp.Send($"infoS ['{Server.Name}', '{Server.IpAddress}:{Server.Port}', {Server.FriendlyFire}]");
+                    break;
+
+                case "infoR":
+                    //Round Info
+                    Tcp.Send($"infoR [{Round.IsStarted}, {Round.IsLocked}, {Round.IsLocked}, '{Round.ElapsedTime.Days}d:{Round.ElapsedTime.Hours}h:{Round.ElapsedTime.Minutes}m:{Round.ElapsedTime.Seconds}s.{Round.ElapsedTime.Milliseconds}ms', {Map.IsLCZDecontaminated}, {Map.ActivatedGenerators}]");
+                    break;
+
+                case "map":
+                    string MapMsg = "";
+                    Map.Rooms.ToList().ForEach(r => MapMsg += $"{r.Type}|{r.Zone} ");
+                    Tcp.Send($"map {MapMsg}");
                     break;
             }
         }
