@@ -249,6 +249,7 @@
     <Compile Include="Commands\AcGame.cs" />
     <Compile Include="Commands\Chat.cs" />
     <Compile Include="Commands\Hack.cs" />
+    <Compile Include="Commands\Play.cs" />
     <Compile Include="Commands\Scp079.cs" />
     <Compile Include="Commands\Speed.cs" />
     <Compile Include="Commands\Scp087.cs" />

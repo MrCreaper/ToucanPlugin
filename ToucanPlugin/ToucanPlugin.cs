@@ -41,8 +41,8 @@ namespace ToucanPlugin
             server.StartDetectBlackout();
             foreach (GamemodeType Type in (GamemodeType[])Enum.GetValues(typeof(GamemodeType)))
             {
-                if (!ToucanPlugin.Instance.Config.GamemodeChances.ContainsKey(Type))
-                    ToucanPlugin.Instance.Config.GamemodeChances.Add(Type, 0);
+                if (!Instance.Config.GamemodeChances.ContainsKey(Type))
+                    Instance.Config.GamemodeChances.Add(Type, 0);
             }
         }
         public override void OnDisabled()
@@ -50,7 +50,7 @@ namespace ToucanPlugin
             base.OnDisabled();
             UnRegisterEvents();
             Unpatch();
-            Tcp.S.Disconnect(false);
+            Tcp.Disconnect();
         }
 
         private void Patch()
@@ -84,6 +84,8 @@ namespace ToucanPlugin
         {
             player = new Handlers.Player();
             server = new Handlers.Server();
+
+            Tcp.RecivedMessageEvent += new MessageResponder().Respond;
 
             Server.WaitingForPlayers += server.OnWaitingForPlayers;
             Server.RoundStarted += server.OnRoundStarted;

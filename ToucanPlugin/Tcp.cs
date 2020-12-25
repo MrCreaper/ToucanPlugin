@@ -10,14 +10,17 @@ using System.Threading.Tasks;
 
 namespace ToucanPlugin
 {
+    public delegate void TcpMsgDel(string msg);
     public class Tcp
     {
-        public static Socket S { get; set; } = null;
+        readonly Tcp tcp = new Tcp();
+        public event TcpMsgDel RecivedMessageEvent;
+        private static Socket S { get; set; } = null;
         readonly static List<String> messageQueue = new List<string>();
         static public Stopwatch topicUpdateTimer;
         private bool connecting = false;
         public int MaxMessageLenght = 3000;
-        public void Main()
+        private void Main()
         {
             if (connecting) return;
             connecting = true;
@@ -69,8 +72,7 @@ namespace ToucanPlugin
                             {
                                 byte[] bytes = new byte[MaxMessageLenght];
                                 int i = S.Receive(bytes);
-                                MessageResponder mr = new MessageResponder();
-                                mr.Respond(Encoding.UTF8.GetString(bytes));
+                                tcp.RecivedMessageEvent(Encoding.UTF8.GetString(bytes));
                             }
                             catch (Exception e)
                             {
@@ -85,6 +87,11 @@ namespace ToucanPlugin
                 Log.Error("Connecting failed");
                 connecting = false;
             }
+        }
+        public void Disconnect()
+        {
+            if (IsConnected())
+                S.Disconnect(false);
         }
         public static bool IsConnected()
         {
@@ -130,7 +137,7 @@ namespace ToucanPlugin
         public void SendLog(string log) =>
     Send($"log [{DateTime.Now}] {log}");
 
-        public void SendQueue()
+        private void SendQueue()
         {
             if (!IsConnected()) return;
             if (topicUpdateTimer.ElapsedMilliseconds >= 10000)

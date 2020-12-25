@@ -359,7 +359,7 @@ namespace ToucanPlugin.Handlers
             if (ap < apCost) ev.Player.Broadcast(2, $"Need {ap - apCost} more ap to open that door!");
             else
             {
-                _ = ap - apCost;
+                ap -= apCost;
                 if (ev.Door.isOpen) ev.Door.isOpen = false;
                 else
                     ev.Door.isOpen = true;

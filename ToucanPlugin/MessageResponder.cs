@@ -72,7 +72,7 @@ namespace ToucanPlugin
             string Cmd = RemoveThatShit(Cmd0);
             List<string> Cmds = new List<string>(Cmd.Split(' '));
             if (Cmd0.Split(' ')[0].Length == Tcp.MaxMessageLenght)
-                Tcp.S.Close();
+                Tcp.Disconnect();
             else
                 Log.Debug($"Recived >{Cmd}<");
             switch (Cmds[0])
@@ -189,10 +189,10 @@ namespace ToucanPlugin
 
                 case "bestbois":
                     List<string> BestBoisUp = new List<string>(Cmd.Replace("bestbois ", "").Split(' '));
-                    bool confirmed = false;
+                    bool confirmed = true;
                     BestBoisUp.ForEach(id => {
-                        if (!id.Contains("@steam") || !id.Contains("@discord"))
-                            confirmed = true;
+                        if (!id.Contains("@steam") && !id.Contains("@discord"))
+                            confirmed = false;
                     });
                     if (BestBoisUp.Count >= 2 && confirmed)
                     {
@@ -344,11 +344,16 @@ namespace ToucanPlugin
                     break;
 
                 case "map":
-                    string MapMsg = "";
-                    Map.Rooms.ToList().ForEach(r => MapMsg += $"{r.Type}|{r.Zone} ");
-                    Tcp.Send($"map {MapMsg}");
+                    UpdateMap();
                     break;
+
             }
+        }
+        public void UpdateMap()
+        {
+            string MapMsg = "";
+            Map.Rooms.ToList().ForEach(r => MapMsg += $"{r.Type}|{r.Zone} ");
+            Tcp.Send($"map {MapMsg}");
         }
         private void FrameDataToIcom(Images.FrameData fd) { Log.Info($">{fd.Data}<"); Intercom.host.UpdateIntercomText(fd.Data); }
     }
