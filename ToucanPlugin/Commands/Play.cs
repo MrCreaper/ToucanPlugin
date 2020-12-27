@@ -19,17 +19,9 @@ namespace ToucanPlugin.Commands
 
         public bool Execute(ArraySegment<string> arguments, ICommandSender Sender, out string response)
         {
-            if (Sender is CommandSender PCplayer)
-            {
-                new CommsHack.AudioAPI().PlayFile(arguments.Array[1], 0.5f);
-                response = $"Playing?";
-                return false;
-            }
-            else
-            {
-                response = $"Fuck off";
-                return true;
-            }
+            new CommsHack.AudioAPI().PlayFile(arguments.Array[1], 0.5f);
+            response = $"Playing?";
+            return true;
         }
     }
 }

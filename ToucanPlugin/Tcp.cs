@@ -13,7 +13,6 @@ namespace ToucanPlugin
     public delegate void TcpMsgDel(string msg);
     public class Tcp
     {
-        readonly Tcp tcp = new Tcp();
         public event TcpMsgDel RecivedMessageEvent;
         private static Socket S { get; set; } = null;
         readonly static List<String> messageQueue = new List<string>();
@@ -72,7 +71,7 @@ namespace ToucanPlugin
                             {
                                 byte[] bytes = new byte[MaxMessageLenght];
                                 int i = S.Receive(bytes);
-                                tcp.RecivedMessageEvent(Encoding.UTF8.GetString(bytes));
+                                RecivedMessageEvent(Encoding.UTF8.GetString(bytes));
                             }
                             catch (Exception e)
                             {

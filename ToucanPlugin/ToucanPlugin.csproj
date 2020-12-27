@@ -246,6 +246,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CassiePocedures.cs" />
     <Compile Include="Commands\AcGame.cs" />
     <Compile Include="Commands\Chat.cs" />
     <Compile Include="Commands\Hack.cs" />

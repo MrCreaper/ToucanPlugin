@@ -281,7 +281,7 @@ namespace ToucanPlugin.Handlers
                     if (p.AdrenalineHealth + 1 > p.MaxAdrenalineHealth)
                         p.AdrenalineHealth = p.MaxAdrenalineHealth;
                     else
-                        p.AdrenalineHealth = +1;
+                        p.AdrenalineHealth += 1;
                     Thread.Sleep(100);
                 }
             });
@@ -359,7 +359,7 @@ namespace ToucanPlugin.Handlers
             if (ap < apCost) ev.Player.Broadcast(2, $"Need {ap - apCost} more ap to open that door!");
             else
             {
-                ap -= apCost;
+                //ap -= apCost;
                 if (ev.Door.isOpen) ev.Door.isOpen = false;
                 else
                     ev.Door.isOpen = true;

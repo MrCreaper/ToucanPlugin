@@ -346,7 +346,6 @@ namespace ToucanPlugin
                 case "map":
                     UpdateMap();
                     break;
-
             }
         }
         public void UpdateMap()

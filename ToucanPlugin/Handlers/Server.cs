@@ -103,6 +103,7 @@ namespace ToucanPlugin.Handlers
             Tcp.SendLog("Round started");
             if (rnd.Next(0, 3) == 0 && Exiled.API.Features.Player.List.ToList().Find(x => x.Role == RoleType.Scp173) != null)
                 Map.Rooms.ToList().Find(x => x.Type == RoomType.Lcz173).Doors.ToList()[0].locked = true; // Lock 173 (1162)
+            new MessageResponder().UpdateMap();
             if (!GamemodeLogic.GamemodesPaused)
             {
                 if (GamemodeLogic.RoundGamemode == GamemodeType.None)

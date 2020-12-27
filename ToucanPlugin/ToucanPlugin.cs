@@ -20,6 +20,10 @@ namespace ToucanPlugin
         private Handlers.Player player;
         private Handlers.Server server;
 
+        private MessageResponder mr;
+        private Gamemodes.AmongUs gm0;
+        private Gamemodes.ZombieInfection gm1;
+
         private int _patchcounter;
 
         public Harmony Harmony { get; private set; }
@@ -85,7 +89,11 @@ namespace ToucanPlugin
             player = new Handlers.Player();
             server = new Handlers.Server();
 
-            Tcp.RecivedMessageEvent += new MessageResponder().Respond;
+            mr = new MessageResponder();
+            gm0 = new Gamemodes.AmongUs();
+            gm1 = new Gamemodes.ZombieInfection();
+
+            Tcp.RecivedMessageEvent += mr.Respond;
 
             Server.WaitingForPlayers += server.OnWaitingForPlayers;
             Server.RoundStarted += server.OnRoundStarted;
@@ -111,13 +119,19 @@ namespace ToucanPlugin
             Player.ChangingRole += player.OnChangingRole;
             Player.TriggeringTesla += player.OnTriggeringTesla;
 
-            Player.Hurting += new Gamemodes.AmongUs().OnHurting;
-            Player.ChangingRole += new Gamemodes.ZombieInfection().OnChangingRole;
+            Player.Hurting += gm0.OnHurting;
+            Player.ChangingRole += gm1.OnChangingRole;
         }
         public void UnRegisterEvents()
         {
             player = null;
             server = null;
+
+            mr = null;
+            gm0 = null;
+            gm1 = null;
+
+            Tcp.RecivedMessageEvent -= mr.Respond;
 
             Server.WaitingForPlayers -= server.OnWaitingForPlayers;
             Server.RoundStarted -= server.OnRoundStarted;
@@ -132,7 +146,6 @@ namespace ToucanPlugin
             Player.Escaping -= player.OnEscape;
             Player.Died -= player.OnDied;
             Player.Spawning -= player.OnSpawned;
-            Player.Spawning -= player.OnSpawned;
             Player.InteractingDoor -= player.OnInteractingDoor;
             Player.Banned -= player.OnBanned;
             Player.Kicked -= player.OnKicked;
@@ -144,8 +157,8 @@ namespace ToucanPlugin
             Player.ChangingRole -= player.OnChangingRole;
             Player.TriggeringTesla -= player.OnTriggeringTesla;
 
-            Player.Hurting -= new Gamemodes.AmongUs().OnHurting;
-            Player.ChangingRole -= new Gamemodes.ZombieInfection().OnChangingRole;
+            Player.Hurting -= gm0.OnHurting;
+            Player.ChangingRole -= gm1.OnChangingRole;
         }
     }
 }
