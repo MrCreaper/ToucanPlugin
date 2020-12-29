@@ -10,9 +10,11 @@ using System.Threading.Tasks;
 
 namespace ToucanPlugin
 {
+    public delegate void TcpConDel();
     public delegate void TcpMsgDel(string msg);
     public class Tcp
     {
+        public event TcpConDel ConnectedEvent;
         public event TcpMsgDel RecivedMessageEvent;
         private static Socket S { get; set; } = null;
         readonly static List<String> messageQueue = new List<string>();
@@ -65,6 +67,7 @@ namespace ToucanPlugin
                     {
                         connecting = false;
                         Log.Info("Connected To Toucan Server.");
+                        ConnectedEvent();
                         while (S.Connected)
                         {
                             try

@@ -288,7 +288,7 @@ namespace ToucanPlugin.Handlers
         }
         public void OnInteractingDoor(InteractingDoorEventArgs ev)
         {
-            if (perConnections[ev.Player] == null) return;
+            if (!perConnections.ContainsKey(ev.Player)) return;
             if (!perConnections[ev.Player].Abilities.Contains(AbilityType.DoorHacking) || !ev.IsAllowed || ev.Door.destroyed) return;
             float ap = ev.Player.AdrenalineHealth;
             float apCost = 0;
@@ -359,7 +359,7 @@ namespace ToucanPlugin.Handlers
             if (ap < apCost) ev.Player.Broadcast(2, $"Need {ap - apCost} more ap to open that door!");
             else
             {
-                //ap -= apCost;
+                ap -= apCost;
                 if (ev.Door.isOpen) ev.Door.isOpen = false;
                 else
                     ev.Door.isOpen = true;
@@ -490,13 +490,15 @@ namespace ToucanPlugin.Handlers
             if (ev.Player.Role == RoleType.Scp0492 && ev.IsInHurtingRange)
                 ev.Player.Position = new Vector3(ev.Player.Position.x + 5, ev.Player.Position.y, ev.Player.Position.z);
         }
-        public void StartDetectingCrouching()
+        private static bool CrouchingRunning = false;
+        public void StartDetectingCrouching(bool Enable = true)
         {
+            CrouchingRunning = Enable;
             Task.Factory.StartNew(() =>
             {
-                if (!ToucanPlugin.Instance.Config.CrouchingEnabled) return;
                 while (true)
-                    Exiled.API.Features.Player.List.ToList().ForEach(p =>
+                    if (!ToucanPlugin.Instance.Config.CrouchingEnabled || !CrouchingRunning) return;
+                Exiled.API.Features.Player.List.ToList().ForEach(p =>
                     {
                         if (p.MoveState == PlayerMovementState.Sneaking && !PlayersCrouchingList.Contains(p))
                         {

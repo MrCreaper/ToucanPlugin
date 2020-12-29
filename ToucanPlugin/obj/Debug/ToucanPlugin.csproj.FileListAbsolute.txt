@@ -27,8 +27,6 @@ C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Debug\l
 C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Debug\MediaToolkit.dll
 C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Debug\System.Diagnostics.DiagnosticSource.dll
 C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Debug\System.Diagnostics.DiagnosticSource.xml
-C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Debug\Assembly-CSharp-firstpass.dll
-C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Debug\Assembly-CSharp_publicized.dll
 C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Debug\CommsHack.dll
 C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\obj\Debug\ToucanPlugin.csprojAssemblyReference.cache
 C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Debug\SCP_575.dll
@@ -38,3 +36,17 @@ C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Debug\S
 C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Debug\Images.dll
 C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Debug\0NPCS.dll
 C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Debug\Stalky106V2.1.1.dll
+C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Debug\ToucanPlugin.dll.config
+C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Debug\Exiled.Bootstrap.dll
+C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll
+C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Debug\0Harmony.xml
+C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Debug\Exiled.API.xml
+C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Debug\Exiled.Bootstrap.xml
+C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Debug\Exiled.Events.xml
+C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Debug\Exiled.Loader.xml
+C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Debug\Exiled.Permissions.xml
+C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Debug\Exiled.Updater.xml
+C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Debug\System.Buffers.xml
+C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Debug\System.Memory.xml
+C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Debug\System.Numerics.Vectors.xml
+C:\Users\Kelvin Kersna\source\repos\ToucanPlugin-EXILED\ToucanPlugin\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml

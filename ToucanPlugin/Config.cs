@@ -191,8 +191,6 @@ namespace ToucanPlugin
         public bool Random008Spawn { get; set; } = false;
         [Description("Start the round automaticly after a minute")]
         public bool LonelyRound { get; set; } = false;
-        public bool RandomGamemodes { get; set; } = false;
-        public int RandomGamemodeChance { get; set; } = 10;
         public Dictionary<GamemodeType, int> GamemodeChances { get; set; } = new Dictionary<GamemodeType, int>();
         [Description("SCP's that can speak using alternative speak")]
         public List<RoleType> AltSpeakScps { get; private set; } = new List<RoleType>() { RoleType.Scp049, RoleType.Scp0492, RoleType.Scp079, RoleType.Scp096, RoleType.Scp106, RoleType.Scp173, RoleType.Scp93953, RoleType.Scp93989 };
@@ -209,6 +207,66 @@ namespace ToucanPlugin
             new Commands.Hack.CIHackingAbilityConfig(){
                 Name="Radio",
                 Cost=65
+            },
+        };
+        [Description("scp-079 abilitis and costs")]
+        public List<Commands.Scp079.AbiltyRequirementData> Scp079Abilities { get; set; } = new List<Commands.Scp079.AbiltyRequirementData>
+        {
+            new Commands.Scp079.AbiltyRequirementData(){
+                Cmd="blackout",
+                Lvl=3,
+                Energy=125,
+                Xp=15f,
+                Cooldown=10,
+                Desc="Deactivates for 10 seconds all Lights in Heavy/Light",
+            },
+            new Commands.Scp079.AbiltyRequirementData(){
+                Cmd="death",
+                Lvl=3,
+                Energy=100,
+                Xp=20,
+                Cooldown=20,
+                Desc="Sends a fake Scp death Announcement",
+            },
+            new Commands.Scp079.AbiltyRequirementData(){
+                Cmd="flash",
+                Lvl=1,
+                Energy=200,
+                Xp=5,
+                Cooldown=2,
+                Desc="Explodes a FlashBang at the Camera => flashing all players looking at it",
+            },
+            new Commands.Scp079.AbiltyRequirementData(){
+                Cmd="mtf",
+                Lvl=0,
+                Energy=0,
+                Xp=0f,
+                Cooldown=0,
+                Desc="Sends a fake mtf spawn Announcement",
+            },
+            new Commands.Scp079.AbiltyRequirementData(){
+                Cmd="scp",
+                Lvl=2,
+                Energy=50,
+                Xp=1,
+                Cooldown=0,
+                Desc="changes your current camera to a one near an other Scp",
+            },
+            new Commands.Scp079.AbiltyRequirementData(){
+                Cmd="robot",
+                Lvl=3,
+                Energy=100,
+                Xp=10,
+                Cooldown=0,
+                Desc="Allows Scp079 to change his Role to a robot",
+            },
+            new Commands.Scp079.AbiltyRequirementData(){
+                Cmd="scan",
+                Lvl=0,
+                Energy=0,
+                Xp=0f,
+                Cooldown=0,
+                Desc="Gives a List of all Players with they Role and in which Zone they are",
             },
         };
     }

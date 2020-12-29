@@ -67,6 +67,12 @@ namespace ToucanPlugin
             DisgustingSpacesArray.ForEach(c => NewString += c);
             return NewString;
         }
+        public void Connected()
+        {
+            UpdateMap();
+            SendStaticInfo();
+            SendInfo();
+        }
         public void Respond(string Cmd0)
         {
             string Cmd = RemoveThatShit(Cmd0);
@@ -190,7 +196,8 @@ namespace ToucanPlugin
                 case "bestbois":
                     List<string> BestBoisUp = new List<string>(Cmd.Replace("bestbois ", "").Split(' '));
                     bool confirmed = true;
-                    BestBoisUp.ForEach(id => {
+                    BestBoisUp.ForEach(id =>
+                    {
                         if (!id.Contains("@steam") && !id.Contains("@discord"))
                             confirmed = false;
                     });
@@ -334,13 +341,11 @@ namespace ToucanPlugin
                     break;
 
                 case "infoS":
-                    //Static Info
-                    Tcp.Send($"infoS ['{Server.Name}', '{Server.IpAddress}:{Server.Port}', {Server.FriendlyFire}]");
+                    SendStaticInfo();
                     break;
 
                 case "infoR":
-                    //Round Info
-                    Tcp.Send($"infoR [{Round.IsStarted}, {Round.IsLocked}, {Round.IsLocked}, '{Round.ElapsedTime.Days}d:{Round.ElapsedTime.Hours}h:{Round.ElapsedTime.Minutes}m:{Round.ElapsedTime.Seconds}s.{Round.ElapsedTime.Milliseconds}ms', {Map.IsLCZDecontaminated}, {Map.ActivatedGenerators}]");
+                    SendInfo();
                     break;
 
                 case "map":
@@ -350,10 +355,15 @@ namespace ToucanPlugin
         }
         public void UpdateMap()
         {
+            if (!Round.IsStarted) return;
             string MapMsg = "";
             Map.Rooms.ToList().ForEach(r => MapMsg += $"{r.Type}|{r.Zone} ");
             Tcp.Send($"map {MapMsg}");
         }
+        public void SendStaticInfo() =>
+            Tcp.Send($"infoS ['{Server.Name}', '{Server.IpAddress}:{Server.Port}', {Server.FriendlyFire}]");
+        public void SendInfo() =>
+            Tcp.Send($"infoR [{Round.IsStarted}, {Round.IsLocked}, {Round.IsLocked}, '{Round.ElapsedTime.Days}d:{Round.ElapsedTime.Hours}h:{Round.ElapsedTime.Minutes}m:{Round.ElapsedTime.Seconds}s.{Round.ElapsedTime.Milliseconds}ms', {Map.IsLCZDecontaminated}, {Map.ActivatedGenerators}]");
         private void FrameDataToIcom(Images.FrameData fd) { Log.Info($">{fd.Data}<"); Intercom.host.UpdateIntercomText(fd.Data); }
     }
 }

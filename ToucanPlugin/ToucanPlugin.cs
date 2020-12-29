@@ -43,11 +43,6 @@ namespace ToucanPlugin
             ToucanPlugin.Instance.Config.PlayerCountMentions.ForEach(r => server.LastPlayerCountMentions.Add(r.PlayerCount, false));
             player.StartDetectingCrouching();
             server.StartDetectBlackout();
-            foreach (GamemodeType Type in (GamemodeType[])Enum.GetValues(typeof(GamemodeType)))
-            {
-                if (!Instance.Config.GamemodeChances.ContainsKey(Type))
-                    Instance.Config.GamemodeChances.Add(Type, 0);
-            }
         }
         public override void OnDisabled()
         {
@@ -93,6 +88,7 @@ namespace ToucanPlugin
             gm0 = new Gamemodes.AmongUs();
             gm1 = new Gamemodes.ZombieInfection();
 
+            Tcp.ConnectedEvent += mr.Connected;
             Tcp.RecivedMessageEvent += mr.Respond;
 
             Server.WaitingForPlayers += server.OnWaitingForPlayers;
@@ -131,6 +127,7 @@ namespace ToucanPlugin
             gm0 = null;
             gm1 = null;
 
+            Tcp.ConnectedEvent -= mr.Connected;
             Tcp.RecivedMessageEvent -= mr.Respond;
 
             Server.WaitingForPlayers -= server.OnWaitingForPlayers;

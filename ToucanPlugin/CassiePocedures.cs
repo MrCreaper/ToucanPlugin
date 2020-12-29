@@ -7,6 +7,7 @@ using Exiled.API.Features;
 using Exiled.API.Enums;
 using MEC;
 using UnityEngine;
+using Exiled.API.Extensions;
 
 namespace ToucanPlugin
 {
@@ -65,7 +66,7 @@ namespace ToucanPlugin
                     DecoAll(ZoneType.HeavyContainment);
                     Map.Lifts.ToList().ForEach(l =>
                     {
-                        if (l.elevatorName == "" || l.elevatorName == "")
+                    if (LiftTypeExtension.Type(l) == ElevatorType.LczA || LiftTypeExtension.Type(l) == ElevatorType.LczB)
                             l.operative = false;
                     });
                     break;
@@ -76,14 +77,14 @@ namespace ToucanPlugin
                     PL1();
                     Map.Lifts.ToList().ForEach(l =>
                     {
-                        if (l.elevatorName == "" || l.elevatorName == "")
+                        if (LiftTypeExtension.Type(l) == ElevatorType.GateA || LiftTypeExtension.Type(l) == ElevatorType.GateB)
                             l.operative = false;
                     });
                     break;
                 case ZoneType.Surface:
                     Map.Lifts.ToList().ForEach(l =>
                     {
-                        if (l.elevatorName == "" || l.elevatorName == "")
+                        if (LiftTypeExtension.Type(l) == ElevatorType.GateA || LiftTypeExtension.Type(l) == ElevatorType.GateB)
                             l.operative = false;
                     });
                     DecoAll(ZoneType.Surface);

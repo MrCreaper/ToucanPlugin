@@ -106,6 +106,11 @@ namespace ToucanPlugin.Handlers
             new MessageResponder().UpdateMap();
             if (!GamemodeLogic.GamemodesPaused)
             {
+                foreach (GamemodeType Type in (GamemodeType[])Enum.GetValues(typeof(GamemodeType)))
+                {
+                    if (!ToucanPlugin.Instance.Config.GamemodeChances.ContainsKey(Type))
+                        ToucanPlugin.Instance.Config.GamemodeChances.Add(Type, 0);
+                }
                 if (GamemodeLogic.RoundGamemode == GamemodeType.None)
                     Map.Broadcast(5, ToucanPlugin.Instance.Config.RoundStartMessage);
                 else
@@ -117,10 +122,11 @@ namespace ToucanPlugin.Handlers
 
                 int TotalGamemodeChance = 0;
                 int NoGamemodeChance = 0;
-                ToucanPlugin.Instance.Config.GamemodeChances.ToList().ForEach(g => {
+                ToucanPlugin.Instance.Config.GamemodeChances.ToList().ForEach(g =>
+                {
                     TotalGamemodeChance += g.Value;
                     NoGamemodeChance += 100 - g.Value;
-                    });
+                });
                 int RandomGamemodeNumber = rnd.Next(0, TotalGamemodeChance + NoGamemodeChance);
                 int i = 0;
                 if (RandomGamemodeNumber > TotalGamemodeChance)
@@ -300,19 +306,11 @@ namespace ToucanPlugin.Handlers
             {
                 while (true)
                 {
-                    try
+                    if (SCP_575.Plugin.TimerOn != LastLights)
                     {
-                        if (SCP_575.Plugin.TimerOn != LastLights)
-                        {
-                            Log.Warn($"LIGHTS {SCP_575.Plugin.TimerOn}");
-                            Tcp.Send($"blackout {SCP_575.Plugin.TimerOn}");
-                            LastLights = SCP_575.Plugin.TimerOn;
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Log.Error($"ERROR WHILE DETECTING BLACKOUT: {e}");
-                        return;
+                        Log.Warn($"LIGHTS {SCP_575.Plugin.TimerOn}");
+                        Tcp.Send($"blackout {SCP_575.Plugin.TimerOn}");
+                        LastLights = SCP_575.Plugin.TimerOn;
                     }
                 }
             });
