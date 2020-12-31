@@ -12,7 +12,8 @@ namespace ToucanPlugin
     {
         public bool IsEnabled { get; set; } = true;
         public string ToucanServerIP { get; set; } = "";
-        [Description("Can buy stuff")]
+        public bool Debug = false;
+        [Description("Can buy stuff from the store?")]
         public bool CanBuy { get; set; } = true;
         [Description("Sets the for when someone joins the server. {players} will be replaced with the players name")]
         public string JoinedMessage { get; set; } = "{player} has joined the server.";

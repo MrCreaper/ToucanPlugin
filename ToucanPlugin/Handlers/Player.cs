@@ -65,14 +65,14 @@ namespace ToucanPlugin.Handlers
             }
             if (Exiled.API.Features.Player.List.Count() == 1 && !Round.IsStarted && ToucanPlugin.Instance.Config.LonelyRound)
                 Task.Factory.StartNew(() => LonelyRound());
-            UpdatePlayerList();
+            mr.UpdatePlayerList();
         }
         public void OnLeft(LeftEventArgs ev)
         {
             string message = ToucanPlugin.Instance.Config.LeftMessage.Replace("{player}", ev.Player.Nickname);
             Map.Broadcast(2, message);
             Tcp.SendLog($"**{ev.Player.Nickname} ({ev.Player.UserId}) Left [{Exiled.API.Features.Player.List.Count() - 1}/20]**");
-            UpdatePlayerList(ev.Player.UserId);
+            mr.UpdatePlayerList(ev.Player.UserId);
             if (Exiled.API.Features.Player.List.Count() - 1 <= 0 && Round.IsStarted)
                 Round.Restart();
             UpdateVoiceChannel(ev.Player, RoleType.None);
@@ -91,24 +91,6 @@ namespace ToucanPlugin.Handlers
                 }
                 else return;
             }
-        }
-        public string UpdatePlayerList(string ExcludedId = "")
-        {
-            string playerList = "[";
-            for (int i = 0; i <= Exiled.API.Features.Player.List.ToList().Count - 1; i++)
-            {
-                Exiled.API.Features.Player p = Exiled.API.Features.Player.List.ToList()[i];
-                if (ExcludedId != p.UserId)
-                {
-                    string Coma = ",";
-                    if (Exiled.API.Features.Player.List.ToList().Count - 1 == i || Exiled.API.Features.Player.List.ToList().Count == i)
-                        Coma = "";
-                    playerList += $"{{\"id\":{p.Id},\"name\":\"{p.Nickname.Replace("\"", "")}\",\"userid\":\"{p.UserId}\"}}{Coma}";
-                }
-            }
-            playerList += "]";
-            Tcp.Send($"list {playerList}");
-            return playerList;
         }
         public void OnEscape(EscapingEventArgs ev)
         {

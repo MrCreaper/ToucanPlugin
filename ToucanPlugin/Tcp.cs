@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -16,6 +17,7 @@ namespace ToucanPlugin
     {
         public event TcpConDel ConnectedEvent;
         public event TcpMsgDel RecivedMessageEvent;
+        int conPort = 173;
         private static Socket S { get; set; } = null;
         readonly static List<String> messageQueue = new List<string>();
         static public Stopwatch topicUpdateTimer;
@@ -32,7 +34,6 @@ namespace ToucanPlugin
                 // outside the for loop to make them accessible there after.
                 IPEndPoint hostEndPoint;
                 IPAddress hostAddress = null;
-                int conPort = 173; //Get it?
 
                 // Get DNS host information.
                 if (ToucanPlugin.Instance.Config.ToucanServerIP == "") { Log.Warn($"No Toucan Server ip set!"); return; };
@@ -50,7 +51,6 @@ namespace ToucanPlugin
                     // Creates the Socket to Send data over a Tcp connection.
                     S = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-
                     // Connect to the host using its IPEndPoint.
                     S.Connect(hostEndPoint);
 
@@ -66,7 +66,7 @@ namespace ToucanPlugin
                     else
                     {
                         connecting = false;
-                        Log.Info("Connected To Toucan Server.");
+                        //Log.Info("Waiting on Toucan confirmation...");
                         ConnectedEvent();
                         while (S.Connected)
                         {
@@ -86,7 +86,7 @@ namespace ToucanPlugin
             }
             catch
             {
-                Log.Error("Connecting failed");
+                Log.Error("Connecting Declined.");
                 connecting = false;
             }
         }
@@ -109,6 +109,16 @@ namespace ToucanPlugin
                 return false;
             }
         }
+        private bool IsPortAvailable(int port)
+        {
+            IPGlobalProperties ipGlobalProperties = IPGlobalProperties.GetIPGlobalProperties();
+            TcpConnectionInformation[] tcpConnInfoArray = ipGlobalProperties.GetActiveTcpConnections();
+
+            foreach (TcpConnectionInformation tcpi in tcpConnInfoArray)
+                if (tcpi.LocalEndPoint.Port == port)
+                    return false;
+            return true;
+        }
         private bool SendShit(string data)
         {
             if (data == null) return false;
@@ -119,18 +129,18 @@ namespace ToucanPlugin
                     // Process the data sent by the client.
                     byte[] niceData = Encoding.ASCII.GetBytes(data);
                     S.Send(niceData);
-                    Log.Debug($"Sent: {data}");
+                    Log.Debug($"Sent: {data}", ToucanPlugin.Instance.Config.Debug);
                     return true;
                 }
                 else
                 {
-                    Log.Debug($"Not Connected?");
+                    Log.Debug($"Not Connected?", ToucanPlugin.Instance.Config.Debug);
                     return false;
                 }
             }
             catch (Exception e)
             {
-                Log.Debug($"Failed to send data: {e}");
+                Log.Debug($"Failed to send data: {e}", ToucanPlugin.Instance.Config.Debug);
                 return false;
             }
         }
@@ -172,7 +182,7 @@ namespace ToucanPlugin
                             SendQueue();
                         else
                             Task.Factory.StartNew(() => Main());
-                        Thread.Sleep(1000);
+                        Thread.Sleep(20000);
                     }
                     catch (Exception e)
                     {

@@ -80,7 +80,7 @@ namespace ToucanPlugin
             if (Cmd0.Split(' ')[0].Length == Tcp.MaxMessageLenght)
                 Tcp.Disconnect();
             else
-                Log.Debug($"Recived >{Cmd}<");
+                Log.Debug($"Recived >{Cmd}<", ToucanPlugin.Instance.Config.Debug);
             switch (Cmds[0])
             {
                 case "itemBought":
@@ -97,13 +97,13 @@ namespace ToucanPlugin
                     switch (Cmds[1])
                     {
                         case "info":
-                            Log.Info(Cmd.Replace($"log [Toucan Server Message] {Cmds[1]} ", ""));
+                            Log.Info($"[Toucan Server Message] {Cmd.Replace($"{Cmds[0]} {Cmds[1]} ", "")}");
                             break;
                         case "warn":
-                            Log.Warn(Cmd.Replace($"log [Toucan Server Message] {Cmds[1]} ", ""));
+                            Log.Warn($"[Toucan Server Message] {Cmd.Replace($"{Cmds[0]} {Cmds[1]} ", "")}");
                             break;
                         case "error":
-                            Log.Error(Cmd.Replace($"log [Toucan Server Message] {Cmds[1]} ", ""));
+                            Log.Error($"[Toucan Server Message] {Cmd.Replace($"{Cmds[0]} {Cmds[1]} ", "")}");
                             break;
                     }
                     break;
@@ -255,7 +255,7 @@ namespace ToucanPlugin
                             break;*/
                         case SpectatorAbilityType.ForceStalk:
                             if (Player.List.ToList().Find(x => x.Role == RoleType.Scp106) == null)
-                                Log.Debug($"No scp 106 found");
+                                Log.Debug($"No scp 106 found", ToucanPlugin.Instance.Config.Debug);
                             else
                             {
                                 Player Scp106 = Player.List.ToList().Find(x => x.Role == RoleType.Scp106);
@@ -353,17 +353,36 @@ namespace ToucanPlugin
                     break;
             }
         }
+        public string UpdatePlayerList(string ExcludedId = "", bool autoSend = true)
+        {
+            string playerList = "[";
+            for (int i = 0; i <= Exiled.API.Features.Player.List.ToList().Count - 1; i++)
+            {
+                Exiled.API.Features.Player p = Exiled.API.Features.Player.List.ToList()[i];
+                if (ExcludedId != p.UserId)
+                {
+                    string Coma = ",";
+                    if (Exiled.API.Features.Player.List.ToList().Count - 1 == i || Exiled.API.Features.Player.List.ToList().Count == i)
+                        Coma = "";
+                    playerList += $"{{\"id\":{p.Id},\"name\":\"{p.Nickname.Replace("\"", "")}\",\"userid\":\"{p.UserId}\"}}{Coma}";
+                }
+            }
+            playerList += "]";
+            if(autoSend)
+            Tcp.Send($"list {playerList}");
+            return playerList;
+        }
         public void UpdateMap()
         {
             if (!Round.IsStarted) return;
             string MapMsg = "";
-            Map.Rooms.ToList().ForEach(r => MapMsg += $"{r.Type}|{r.Zone} ");
+            Map.Rooms.ToList().ForEach(r => MapMsg += $"{(int)r.Type}|{(int)r.Zone}|{r.transform.rotation.y} ");
             Tcp.Send($"map {MapMsg}");
         }
         public void SendStaticInfo() =>
             Tcp.Send($"infoS ['{Server.Name}', '{Server.IpAddress}:{Server.Port}', {Server.FriendlyFire}]");
         public void SendInfo() =>
-            Tcp.Send($"infoR [{Round.IsStarted}, {Round.IsLocked}, {Round.IsLocked}, '{Round.ElapsedTime.Days}d:{Round.ElapsedTime.Hours}h:{Round.ElapsedTime.Minutes}m:{Round.ElapsedTime.Seconds}s.{Round.ElapsedTime.Milliseconds}ms', {Map.IsLCZDecontaminated}, {Map.ActivatedGenerators}]");
+            Tcp.Send($"infoR [{Round.IsStarted}, {Round.IsLocked}, {Round.IsLobbyLocked}, '{Round.ElapsedTime.Days}d:{Round.ElapsedTime.Hours}h:{Round.ElapsedTime.Minutes}m:{Round.ElapsedTime.Seconds}s.{Round.ElapsedTime.Milliseconds}ms', {Map.IsLCZDecontaminated}, {Map.ActivatedGenerators}]");
         private void FrameDataToIcom(Images.FrameData fd) { Log.Info($">{fd.Data}<"); Intercom.host.UpdateIntercomText(fd.Data); }
     }
 }
