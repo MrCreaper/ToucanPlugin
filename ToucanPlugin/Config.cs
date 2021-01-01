@@ -12,7 +12,7 @@ namespace ToucanPlugin
     {
         public bool IsEnabled { get; set; } = true;
         public string ToucanServerIP { get; set; } = "";
-        public bool Debug = false;
+        public bool Debug { get; set; } = false;
         [Description("Can buy stuff from the store?")]
         public bool CanBuy { get; set; } = true;
         [Description("Sets the for when someone joins the server. {players} will be replaced with the players name")]

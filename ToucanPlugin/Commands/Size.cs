@@ -9,11 +9,11 @@ using UnityEngine;
 namespace ToucanPlugin.Commands
 {
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
-    class Scale : ICommand
+    class Size : ICommand
     {
-        public string Command { get; } = "scale";
+        public string Command { get; } = "size";
 
-        public string[] Aliases { get; } = { "size" };
+        public string[] Aliases { get; } = { };
 
         public string Description { get; } = "A command that can change a players size [size [id] [x] [y] [z]]";
 

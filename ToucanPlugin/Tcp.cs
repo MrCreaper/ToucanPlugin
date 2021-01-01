@@ -17,10 +17,12 @@ namespace ToucanPlugin
     {
         public event TcpConDel ConnectedEvent;
         public event TcpMsgDel RecivedMessageEvent;
-        int conPort = 173;
+
+        readonly int conPort = 173;
         private static Socket S { get; set; } = null;
         readonly static List<String> messageQueue = new List<string>();
         static public Stopwatch topicUpdateTimer;
+        static bool auth  = false;
         private bool connecting = false;
         public int MaxMessageLenght = 3000;
         private void Main()
@@ -47,7 +49,6 @@ namespace ToucanPlugin
                     hostAddress = IPaddresses[index];
                     hostEndPoint = new IPEndPoint(hostAddress, conPort);
 
-
                     // Creates the Socket to Send data over a Tcp connection.
                     S = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
@@ -60,21 +61,26 @@ namespace ToucanPlugin
                         // Connection failed, try next IPaddress.
                         Log.Error("Connection Failed");
                         S = null;
+                        auth = false;
                         continue;
                         //return;
                     }
                     else
                     {
                         connecting = false;
-                        //Log.Info("Waiting on Toucan confirmation...");
-                        ConnectedEvent();
                         while (S.Connected)
                         {
                             try
                             {
                                 byte[] bytes = new byte[MaxMessageLenght];
                                 int i = S.Receive(bytes);
-                                RecivedMessageEvent(Encoding.UTF8.GetString(bytes));
+                                if (!auth && Encoding.UTF8.GetString(bytes).StartsWith("auth"))
+                                {
+                                    Log.Info("Connected to Toucan Server");
+                                    auth = true;
+                                    ConnectedEvent();
+                                }
+                                else RecivedMessageEvent(Encoding.UTF8.GetString(bytes));
                             }
                             catch (Exception e)
                             {
@@ -86,12 +92,13 @@ namespace ToucanPlugin
             }
             catch
             {
-                Log.Error("Connecting Declined.");
+                Log.Error("Connecting failed.");
                 connecting = false;
             }
         }
         public void Disconnect()
         {
+            auth = false;
             if (IsConnected())
                 S.Disconnect(false);
         }
@@ -151,7 +158,8 @@ namespace ToucanPlugin
 
         private void SendQueue()
         {
-            if (!IsConnected()) return;
+            Log.Warn(auth);
+            if (!IsConnected() || !auth) return;
             if (topicUpdateTimer.ElapsedMilliseconds >= 10000)
             {
                 topicUpdateTimer.Reset();

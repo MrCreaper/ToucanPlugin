@@ -12,6 +12,7 @@ namespace ToucanPlugin.Commands
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     public class Scp079 : ICommand
     {
+        List<Player> Robots = new List<Player>();
         public string Command { get; } = "079";
 
         public string[] Aliases { get; } = { "79" };
@@ -22,19 +23,16 @@ namespace ToucanPlugin.Commands
         {
             List<string> args = new List<string>(arguments.Array);
             Player p = Player.List.ToList().Find(x => x.Sender == Sender);
-            if (p.Role != RoleType.Scp079)
+            if (p.Role != RoleType.Scp079 && !Robots.Contains(p))
             {
                 response = "Bruh";
-                return true;
+                return false;
             }
             List<AbiltyRequirementData> ard = ToucanPlugin.Instance.Config.Scp079Abilities;
             if (args.Count < 2)
             {
                 string CmdList = "cmd - cost - lvl - desc";
-                ard.ForEach(x =>
-                {
-                    CmdList += $"\n{x.Cmd.PadRight(10)} - {x.Energy} - {x.Lvl} - {x.Desc}";
-                });
+                ard.ForEach(x => CmdList += $"\n{x.Cmd.PadRight(10)} - {x.Energy} - {x.Lvl} - {x.Desc}");
                 response = CmdList;
                 return true;
             }
@@ -43,6 +41,18 @@ namespace ToucanPlugin.Commands
                 response = "Invalid subcommand";
                 return false;
             }
+            AbiltyRequirementData abil = ard.Find(x => x.Cmd == args[1]);
+            if (abil.Lvl > p.Level)
+            {
+                response = $"Too low level, required: {abil.Lvl}";
+                return false;
+            }
+            if (abil.Energy > p.Energy)
+            {
+                response = $"Too low Energy, required: {abil.Energy}";
+                return false;
+            }
+            p.Experience += abil.Xp;
             switch (ard.FindIndex(x => x.Cmd == args[1]))
             {
                 default:
@@ -77,6 +87,7 @@ namespace ToucanPlugin.Commands
                     return true;
                 case 5: //Robot
                     int RobotTime = 45;
+                    Robots.Add(p);
                     p.SetRole(RoleType.Tutorial);
                     p.Position = Exiled.API.Extensions.CameraExtensions.Room(p.Camera).Position;
                     p.SendConsoleMessage($"Robot mode active. For {RobotTime}", "#fffff");

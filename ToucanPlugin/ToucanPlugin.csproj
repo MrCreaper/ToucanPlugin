@@ -52,23 +52,23 @@
     <Reference Include="CommsHack">
       <HintPath>..\..\..\..\AppData\Roaming\EXILED\Plugins\CommsHack.dll</HintPath>
     </Reference>
-    <Reference Include="Exiled.API, Version=2.1.21.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\EXILED.2.1.21\lib\net472\Exiled.API.dll</HintPath>
+    <Reference Include="Exiled.API, Version=2.1.22.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\EXILED.2.1.22\lib\net472\Exiled.API.dll</HintPath>
     </Reference>
-    <Reference Include="Exiled.Bootstrap, Version=2.1.21.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\EXILED.2.1.21\lib\net472\Exiled.Bootstrap.dll</HintPath>
+    <Reference Include="Exiled.Bootstrap, Version=2.1.22.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\EXILED.2.1.22\lib\net472\Exiled.Bootstrap.dll</HintPath>
     </Reference>
-    <Reference Include="Exiled.Events, Version=2.1.21.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\EXILED.2.1.21\lib\net472\Exiled.Events.dll</HintPath>
+    <Reference Include="Exiled.Events, Version=2.1.22.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\EXILED.2.1.22\lib\net472\Exiled.Events.dll</HintPath>
     </Reference>
-    <Reference Include="Exiled.Loader, Version=2.1.21.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\EXILED.2.1.21\lib\net472\Exiled.Loader.dll</HintPath>
+    <Reference Include="Exiled.Loader, Version=2.1.22.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\EXILED.2.1.22\lib\net472\Exiled.Loader.dll</HintPath>
     </Reference>
-    <Reference Include="Exiled.Permissions, Version=2.1.21.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\EXILED.2.1.21\lib\net472\Exiled.Permissions.dll</HintPath>
+    <Reference Include="Exiled.Permissions, Version=2.1.22.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\EXILED.2.1.22\lib\net472\Exiled.Permissions.dll</HintPath>
     </Reference>
     <Reference Include="Exiled.Updater, Version=3.0.3.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\EXILED.2.1.21\lib\net472\Exiled.Updater.dll</HintPath>
+      <HintPath>..\packages\EXILED.2.1.22\lib\net472\Exiled.Updater.dll</HintPath>
     </Reference>
     <Reference Include="Images">
       <HintPath>..\..\..\..\AppData\Roaming\EXILED\Plugins\Images.dll</HintPath>
@@ -271,16 +271,14 @@
     <Compile Include="Commands\ListGame.cs" />
     <Compile Include="Commands\Pbc.cs" />
     <Compile Include="Commands\Balance.cs" />
-    <Compile Include="Commands\Grenade.cs" />
     <Compile Include="Commands\InchByInch.cs" />
-    <Compile Include="Commands\Kill.cs" />
     <Compile Include="Commands\Ahp.cs" />
     <Compile Include="Commands\Buy.cs" />
     <Compile Include="Commands\Helloworld.cs" />
     <Compile Include="Commands\Nuke.cs" />
     <Compile Include="Commands\ReflectControl.cs" />
     <Compile Include="Commands\Report.cs" />
-    <Compile Include="Commands\Scale.cs" />
+    <Compile Include="Commands\Size.cs" />
     <Compile Include="Commands\SpawnEffect.cs" />
     <Compile Include="Commands\SpecMode.cs" />
     <Compile Include="Commands\StartDec.cs" />

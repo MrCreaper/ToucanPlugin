@@ -83,6 +83,8 @@ namespace ToucanPlugin
                 Log.Debug($"Recived >{Cmd}<", ToucanPlugin.Instance.Config.Debug);
             switch (Cmds[0])
             {
+                default:
+                    return;
                 case "itemBought":
                     //itemBought {buyer} {item} {coins left}
                     Player p = Player.List.ToList().Find(x => x.UserId.Contains(Cmds[1]));
@@ -368,8 +370,8 @@ namespace ToucanPlugin
                 }
             }
             playerList += "]";
-            if(autoSend)
-            Tcp.Send($"list {playerList}");
+            if (autoSend)
+                Tcp.Send($"list {playerList}");
             return playerList;
         }
         public void UpdateMap()

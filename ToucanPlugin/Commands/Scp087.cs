@@ -30,6 +30,7 @@ namespace ToucanPlugin.Commands
                     Room Scp173Room = Map.Rooms.ToList().Find(x => x.Type == Exiled.API.Enums.RoomType.Lcz173);
                     //UnityEngine.Vector3 Scp173Room000 = new UnityEngine.Vector3(Scp173Room.Position.x - 6, Scp173Room.Position.y, Scp173Room.Position.z + 2);
                     UnityEngine.Vector3 Scp173Room000 = Scp173Room.Position;
+                    Scp173Room000.y += 2f;
                     float Scp087Top = Scp173Room000.y + 15;
                     float Scp087Bottom = Scp173Room000.y;
                     if (args[1] == "relase" || args[1] == "r")

@@ -43,6 +43,7 @@ namespace ToucanPlugin
             ToucanPlugin.Instance.Config.PlayerCountMentions.ForEach(r => server.LastPlayerCountMentions.Add(r.PlayerCount, false));
             player.StartDetectingCrouching();
             server.StartDetectBlackout();
+            Exiled.API.Features.Server.Name.Replace($"<color=#00000000><size=1>Exiled {Exiled.Loader.Loader.Version.ToString().Replace(".0", "")}</size></color>", "");
         }
         public override void OnDisabled()
         {
