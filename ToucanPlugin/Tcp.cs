@@ -158,7 +158,6 @@ namespace ToucanPlugin
 
         private void SendQueue()
         {
-            Log.Warn(auth);
             if (!IsConnected() || !auth) return;
             if (topicUpdateTimer.ElapsedMilliseconds >= 10000)
             {
@@ -190,7 +189,7 @@ namespace ToucanPlugin
                             SendQueue();
                         else
                             Task.Factory.StartNew(() => Main());
-                        Thread.Sleep(20000);
+                        Thread.Sleep(1000);
                     }
                     catch (Exception e)
                     {

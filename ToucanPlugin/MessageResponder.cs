@@ -378,13 +378,13 @@ namespace ToucanPlugin
         {
             if (!Round.IsStarted) return;
             string MapMsg = "";
-            Map.Rooms.ToList().ForEach(r => MapMsg += $"{(int)r.Type}|{(int)r.Zone}|{r.transform.rotation.y} ");
+            Map.Rooms.ToList().ForEach(r => MapMsg += $"{(int)r.Type}|{(int)r.Zone}|{r.transform.rotation.x} ");
             Tcp.Send($"map {MapMsg}");
         }
         public void SendStaticInfo() =>
-            Tcp.Send($"infoS ['{Server.Name}', '{Server.IpAddress}:{Server.Port}', {Server.FriendlyFire}]");
+            Tcp.Send($"infoS [\'{Server.Name}\', \'{Server.IpAddress}:{Server.Port}\', \'{Server.FriendlyFire}\']");
         public void SendInfo() =>
-            Tcp.Send($"infoR [{Round.IsStarted}, {Round.IsLocked}, {Round.IsLobbyLocked}, '{Round.ElapsedTime.Days}d:{Round.ElapsedTime.Hours}h:{Round.ElapsedTime.Minutes}m:{Round.ElapsedTime.Seconds}s.{Round.ElapsedTime.Milliseconds}ms', {Map.IsLCZDecontaminated}, {Map.ActivatedGenerators}]");
+            Tcp.Send($"infoR [\'{Round.IsStarted}\', \'{Round.IsLocked}\', \'{Round.IsLobbyLocked}\', \'{Round.ElapsedTime.Days}d:{Round.ElapsedTime.Hours}h:{Round.ElapsedTime.Minutes}m:{Round.ElapsedTime.Seconds}s.{Round.ElapsedTime.Milliseconds}ms\', \'{Map.IsLCZDecontaminated}\', {Map.ActivatedGenerators}]");
         private void FrameDataToIcom(Images.FrameData fd) { Log.Info($">{fd.Data}<"); Intercom.host.UpdateIntercomText(fd.Data); }
     }
 }
