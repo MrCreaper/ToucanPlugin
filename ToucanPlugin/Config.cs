@@ -192,7 +192,7 @@ namespace ToucanPlugin
         public bool Random008Spawn { get; set; } = false;
         [Description("Start the round automaticly after a minute")]
         public bool LonelyRound { get; set; } = false;
-        public Dictionary<GamemodeType, int> GamemodeChances { get; set; } = new Dictionary<GamemodeType, int>();
+        public Dictionary<GamemodeType, int> GamemodeChances { get; set; } = new Dictionary<GamemodeType, int> { { GamemodeType.None, 0 } };
         [Description("SCP's that can speak using alternative speak")]
         public List<RoleType> AltSpeakScps { get; private set; } = new List<RoleType>() { RoleType.Scp049, RoleType.Scp0492, RoleType.Scp079, RoleType.Scp096, RoleType.Scp106, RoleType.Scp173, RoleType.Scp93953, RoleType.Scp93989 };
         [Description("CI hacker ability costs")]

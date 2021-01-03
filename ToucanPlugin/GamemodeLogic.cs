@@ -10,7 +10,7 @@ namespace ToucanPlugin
         QuitePlace = 1,
         PeanutInfection = 2,
         AmongUs = 3,
-        CandyRush = 4,
+        //CandyRush = 4,
         Scp682 = 5,
         LivingNerd = 6,
         SpoopyGhosts = 7,
@@ -71,8 +71,8 @@ namespace ToucanPlugin
                     return "None";
                 case GamemodeType.AmongUs:
                     return "Among Us";
-                case GamemodeType.CandyRush:
-                    return "Candy Rush";
+                /*case GamemodeType.CandyRush:
+                    return "Candy Rush";*/
                 case GamemodeType.PeanutInfection:
                     return "Peanut Infection";
                 case GamemodeType.QuitePlace:

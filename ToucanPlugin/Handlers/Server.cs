@@ -101,16 +101,36 @@ namespace ToucanPlugin.Handlers
         {
             GamemodeLogic gl = new GamemodeLogic();
             Tcp.SendLog("Round started");
-            if (rnd.Next(0, 3) == 0 && Exiled.API.Features.Player.List.ToList().Find(x => x.Role == RoleType.Scp173) != null)
+            if (Exiled.API.Features.Player.List.ToList().Find(x => x.Role == RoleType.Scp173) != null)
                 Map.Rooms.ToList().Find(x => x.Type == RoomType.Lcz173).Doors.ToList()[0].locked = true; // Lock 173 (1162)
             new MessageResponder().UpdateMap();
             if (!GamemodeLogic.GamemodesPaused)
             {
+                int TotalGamemodeChance = 0;
+                int NoGamemodeChance = 0;
+                ToucanPlugin.Instance.Config.GamemodeChances.ToList().ForEach(g =>
+                {
+                        TotalGamemodeChance += g.Value;
+                        NoGamemodeChance += 100 - g.Value;
+                });
+                List<GamemodeType> GamemodesToAdd = new List<GamemodeType>();
                 foreach (GamemodeType Type in (GamemodeType[])Enum.GetValues(typeof(GamemodeType)))
                 {
                     if (!ToucanPlugin.Instance.Config.GamemodeChances.ContainsKey(Type))
                         ToucanPlugin.Instance.Config.GamemodeChances.Add(Type, 0);
                 }
+
+                int RandomGamemodeNumber = rnd.Next(0, TotalGamemodeChance + NoGamemodeChance);
+                int i = 0;
+                if (RandomGamemodeNumber > NoGamemodeChance)
+                    ToucanPlugin.Instance.Config.GamemodeChances.ToList().ForEach(g =>
+                {
+                    if (i >= RandomGamemodeNumber)
+                        GamemodeLogic.NextGamemode = g.Key;
+                    else
+                        i += g.Value;
+                });
+
                 if (GamemodeLogic.RoundGamemode == GamemodeType.None)
                     Map.Broadcast(5, ToucanPlugin.Instance.Config.RoundStartMessage);
                 else
@@ -120,23 +140,6 @@ namespace ToucanPlugin.Handlers
                 else
                     Map.Broadcast(5, $"Next Round Gamemode: <i><b>{gl.ConvertToNice(GamemodeLogic.RoundGamemode)}</b></i>");
 
-                int TotalGamemodeChance = 0;
-                int NoGamemodeChance = 0;
-                ToucanPlugin.Instance.Config.GamemodeChances.ToList().ForEach(g =>
-                {
-                    TotalGamemodeChance += g.Value;
-                    NoGamemodeChance += 100 - g.Value;
-                });
-                int RandomGamemodeNumber = rnd.Next(0, TotalGamemodeChance + NoGamemodeChance);
-                int i = 0;
-                if (RandomGamemodeNumber > TotalGamemodeChance)
-                    ToucanPlugin.Instance.Config.GamemodeChances.ToList().ForEach(g =>
-                {
-                    if (i >= RandomGamemodeNumber)
-                        GamemodeLogic.NextGamemode = g.Key;
-                    else
-                        i += g.Value;
-                });
                 ToucanPlugin.Instance.Config.PlayerCountMentions.ToList().ForEach(r =>
                 {
                     if (Whitelist.Whitelisted) return;
@@ -299,7 +302,7 @@ namespace ToucanPlugin.Handlers
             ev.Arguments.ForEach(arg => cmd += $" {arg}");
             if (!ev.Sender.IsHost) Tcp.Send($"slog [{DateTime.Now}] **{ev.Sender.Nickname}** ({ev.Sender.UserId}) Sent:\n```{cmd}```");
         }
-        public static bool LastLights = false;
+        static bool LastLights = false;
         public void StartDetectBlackout()
         {
             Task.Factory.StartNew(() =>
@@ -308,7 +311,6 @@ namespace ToucanPlugin.Handlers
                 {
                     if (SCP_575.Plugin.TimerOn != LastLights)
                     {
-                        Log.Warn($"LIGHTS {SCP_575.Plugin.TimerOn}");
                         Tcp.Send($"blackout {SCP_575.Plugin.TimerOn}");
                         LastLights = SCP_575.Plugin.TimerOn;
                     }

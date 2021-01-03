@@ -22,9 +22,10 @@ namespace ToucanPlugin
         private static Socket S { get; set; } = null;
         readonly static List<String> messageQueue = new List<string>();
         static public Stopwatch topicUpdateTimer;
-        static bool auth  = false;
+        public static bool auth = false;
         private bool connecting = false;
         public int MaxMessageLenght = 3000;
+        int AuthTimeout = 10000;
         private void Main()
         {
             if (connecting) return;
@@ -68,19 +69,35 @@ namespace ToucanPlugin
                     else
                     {
                         connecting = false;
+                        Log.Debug("Authenticating...", ToucanPlugin.Instance.Config.Debug);
+                        Stopwatch authTimer = new Stopwatch();
+                        authTimer.Start();
+                        Task.Factory.StartNew(() =>
+                        {
+                            while (true)
+                            {
+                                if (authTimer.ElapsedMilliseconds > AuthTimeout && !auth)
+                                {
+                                    Log.Debug("Authenication Timed out. FUCK", ToucanPlugin.Instance.Config.Debug);
+                                    Disconnect();
+                                    return;
+                                }
+                            }
+                        });
                         while (S.Connected)
                         {
                             try
                             {
                                 byte[] bytes = new byte[MaxMessageLenght];
                                 int i = S.Receive(bytes);
-                                if (!auth && Encoding.UTF8.GetString(bytes).StartsWith("auth"))
+                                string msg = Encoding.UTF8.GetString(bytes);
+                                RecivedMessageEvent(msg);
+                                if (!auth && msg.StartsWith("auth"))
                                 {
                                     Log.Info("Connected to Toucan Server");
                                     auth = true;
                                     ConnectedEvent();
                                 }
-                                else RecivedMessageEvent(Encoding.UTF8.GetString(bytes));
                             }
                             catch (Exception e)
                             {
@@ -101,6 +118,7 @@ namespace ToucanPlugin
             auth = false;
             if (IsConnected())
                 S.Disconnect(false);
+            Log.Debug("Disconnected");
         }
         public static bool IsConnected()
         {

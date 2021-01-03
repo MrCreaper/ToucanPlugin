@@ -65,10 +65,12 @@ namespace ToucanPlugin
                     ShitFound = true;
             }
             DisgustingSpacesArray.ForEach(c => NewString += c);
+            if (NewString == "") Tcp.Disconnect();
             return NewString;
         }
         public void Connected()
         {
+            Exiled.API.Features.Server.Name = Exiled.API.Features.Server.Name.Replace($"<color=#00000000><size=1>Exiled {Exiled.Loader.Loader.Version.ToString().Replace(".0", "")}</size></color>", "");
             UpdateMap();
             SendStaticInfo();
             SendInfo();
@@ -77,8 +79,13 @@ namespace ToucanPlugin
         {
             string Cmd = RemoveThatShit(Cmd0);
             List<string> Cmds = new List<string>(Cmd.Split(' '));
-            if (Cmd0.Split(' ')[0].Length == Tcp.MaxMessageLenght)
-                Tcp.Disconnect();
+            if (Cmd0.Split(' ')[0].Length == Tcp.MaxMessageLenght || Cmd == "" || Cmd.Length == 1)
+            {
+                //Log.Debug($"Empty Data Recived >{Cmd0}<");
+                if (Tcp.auth)
+                    Tcp.Disconnect();
+                return;
+            }
             else
                 Log.Debug($"Recived >{Cmd}<", ToucanPlugin.Instance.Config.Debug);
             switch (Cmds[0])
@@ -366,7 +373,7 @@ namespace ToucanPlugin
                     string Coma = ",";
                     if (Exiled.API.Features.Player.List.ToList().Count - 1 == i || Exiled.API.Features.Player.List.ToList().Count == i)
                         Coma = "";
-                    playerList += $"{{\"id\":{p.Id},\"name\":\"{p.Nickname.Replace("\"", "")}\",\"userid\":\"{p.UserId}\"}}{Coma}";
+                    playerList += $"{{\"id\":{p.Id},\"name\":\"{p.Nickname.Replace("\"", "")}\",\"userid\":\"{p.UserId}\", \"role\": \"{p.Role}\",\"room\":\"{p.CurrentRoom.Type}\"}}{Coma}";
                 }
             }
             playerList += "]";
@@ -378,13 +385,37 @@ namespace ToucanPlugin
         {
             if (!Round.IsStarted) return;
             string MapMsg = "";
-            Map.Rooms.ToList().ForEach(r => MapMsg += $"{(int)r.Type}|{(int)r.Zone}|{r.transform.rotation.x} ");
+            Map.Rooms.ToList().ForEach(r => MapMsg += $"{(int)r.Type}|{(int)r.Zone}|{r.transform.rotation.w} ");
             Tcp.Send($"map {MapMsg}");
         }
+        private string CleanServerName(string name)
+        {
+            string result = name;
+            List<string> nameArray = result.Select(c => c.ToString()).ToList();
+            int end = 0;
+            bool found = false;
+            for (int i = name.Length-1; 0 <= i;i --)
+            {
+                if (nameArray[i] == ">")
+                {
+                    found = true;
+                    end = i;
+                }
+                if (nameArray[i] == "<" && found)
+                {
+                    for(int I = 0; I<=end-i; I++)
+                        nameArray[end-I] = "";
+                    found = false;
+                }
+            }
+            string resultFUCK = "";
+            nameArray.ForEach(x => resultFUCK += x);
+            return resultFUCK;
+        }
         public void SendStaticInfo() =>
-            Tcp.Send($"infoS [\'{Server.Name}\', \'{Server.IpAddress}:{Server.Port}\', \'{Server.FriendlyFire}\']");
+            Tcp.Send($"infoS [\"{Server.Name.Replace("\"", "")}\", \"{CleanServerName(Server.Name.Replace("\"", ""))}\", \"{Server.IpAddress}:{Server.Port}\", \"{Server.FriendlyFire}\"]");
         public void SendInfo() =>
-            Tcp.Send($"infoR [\'{Round.IsStarted}\', \'{Round.IsLocked}\', \'{Round.IsLobbyLocked}\', \'{Round.ElapsedTime.Days}d:{Round.ElapsedTime.Hours}h:{Round.ElapsedTime.Minutes}m:{Round.ElapsedTime.Seconds}s.{Round.ElapsedTime.Milliseconds}ms\', \'{Map.IsLCZDecontaminated}\', {Map.ActivatedGenerators}]");
+            Tcp.Send($"infoR [\"{Round.IsStarted}\", \"{Round.IsLocked}\", \"{Round.IsLobbyLocked}\", \"{Round.ElapsedTime.Days}d:{Round.ElapsedTime.Hours}h:{Round.ElapsedTime.Minutes}m:{Round.ElapsedTime.Seconds}s.{Round.ElapsedTime.Milliseconds}ms\", \"{Map.IsLCZDecontaminated}\", {Map.ActivatedGenerators}]");
         private void FrameDataToIcom(Images.FrameData fd) { Log.Info($">{fd.Data}<"); Intercom.host.UpdateIntercomText(fd.Data); }
     }
 }
