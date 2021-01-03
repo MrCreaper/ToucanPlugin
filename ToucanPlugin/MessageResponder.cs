@@ -385,7 +385,7 @@ namespace ToucanPlugin
         {
             if (!Round.IsStarted) return;
             string MapMsg = "";
-            Map.Rooms.ToList().ForEach(r => MapMsg += $"{(int)r.Type}|{(int)r.Zone}|{r.transform.rotation.w} ");
+            Map.Rooms.ToList().ForEach(r => MapMsg += $"{(int)r.Type}|{(int)r.Zone}|{r.transform.rotation.y} ");
             Tcp.Send($"map {MapMsg}");
         }
         private string CleanServerName(string name)

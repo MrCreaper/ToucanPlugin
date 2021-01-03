@@ -104,37 +104,41 @@ namespace ToucanPlugin.Handlers
             if (Exiled.API.Features.Player.List.ToList().Find(x => x.Role == RoleType.Scp173) != null)
                 Map.Rooms.ToList().Find(x => x.Type == RoomType.Lcz173).Doors.ToList()[0].locked = true; // Lock 173 (1162)
             new MessageResponder().UpdateMap();
-            if (!GamemodeLogic.GamemodesPaused)
+            if (!GamemodeLogic.GamemodesPaused/* && Exiled.API.Features.Player.List.Count() >= 2*/)
             {
-                int TotalGamemodeChance = 0;
-                int NoGamemodeChance = 0;
-                ToucanPlugin.Instance.Config.GamemodeChances.ToList().ForEach(g =>
-                {
-                        TotalGamemodeChance += g.Value;
-                        NoGamemodeChance += 100 - g.Value;
-                });
                 List<GamemodeType> GamemodesToAdd = new List<GamemodeType>();
                 foreach (GamemodeType Type in (GamemodeType[])Enum.GetValues(typeof(GamemodeType)))
                 {
                     if (!ToucanPlugin.Instance.Config.GamemodeChances.ContainsKey(Type))
                         ToucanPlugin.Instance.Config.GamemodeChances.Add(Type, 0);
                 }
-
-                int RandomGamemodeNumber = rnd.Next(0, TotalGamemodeChance + NoGamemodeChance);
-                int i = 0;
-                if (RandomGamemodeNumber > NoGamemodeChance)
-                    ToucanPlugin.Instance.Config.GamemodeChances.ToList().ForEach(g =>
+                int Chance = 0;
+                int NoChance = 0;
+                int TotalChance = ToucanPlugin.Instance.Config.GamemodeChances.Count() * 100;
+                ToucanPlugin.Instance.Config.GamemodeChances.ToList().ForEach(g =>
                 {
-                    if (i >= RandomGamemodeNumber)
-                        GamemodeLogic.NextGamemode = g.Key;
-                    else
-                        i += g.Value;
+                    Chance += g.Value;
+                    NoChance += 100 - g.Value;
                 });
+                int EndMaxChance = TotalChance - NoChance;
 
+                int RandomGamemodeNumber = rnd.Next(0, EndMaxChance);
+                int i = 0;
+                bool found = false;
+                ToucanPlugin.Instance.Config.GamemodeChances.ToList().ForEach(g =>
+            {
+                i += g.Value;
+                if (i >= RandomGamemodeNumber && !found)
+                {
+                    found = true;
+                    GamemodeLogic.NextGamemode = g.Key;
+                }
+            });
                 if (GamemodeLogic.RoundGamemode == GamemodeType.None)
                     Map.Broadcast(5, ToucanPlugin.Instance.Config.RoundStartMessage);
                 else
                     Map.Broadcast(5, $"Gamemode: <i><b>{gl.ConvertToNice(GamemodeLogic.RoundGamemode)}</b></i>");
+
                 if (GamemodeLogic.NextGamemode == GamemodeType.None)
                     Map.Broadcast(5, ToucanPlugin.Instance.Config.RoundStartMessage);
                 else
@@ -271,13 +275,15 @@ namespace ToucanPlugin.Handlers
             SpecMode.TUTSpecList.Clear();
             List<Exiled.API.Features.Player> playerList = new List<Exiled.API.Features.Player>(ev.Players);
             Vector3 MTFSpawnLocaltion = new Vector3(0, 0, 0);
+            CustomSquadSpawns Squad = null;
             ToucanPlugin.Instance.Config.CustomSquads.ForEach(s =>
             {
-                if (s.Team != ev.NextKnownTeam && rnd.Next(s.ReplaceChance, 100) > s.ReplaceChance && s.MaxSCPKills < Player.SCPKills && s.MinSCPKills > Player.SCPKills) return;
+                if (s.Team != ev.NextKnownTeam || rnd.Next(s.ReplaceChance, 100) > s.ReplaceChance || s.MaxSCPKills < Player.SCPKills || s.MinSCPKills > Player.SCPKills || Squad != null) return;
+                Squad = s;
                 ev.Players.Clear();
                 playerList.ForEach(p =>
                 {
-                    p.SetRole(s.Role);
+                    p.SetRole(s.Role, true);
                     if (s.MaxHealth != -1) p.MaxHealth = s.MaxHealth;
                     if (s.MaxAdrenalin != -1) p.MaxAdrenalineHealth = s.MaxAdrenalin;
                     if (s.MaxEnergy != -1) p.MaxEnergy = s.MaxEnergy;
