@@ -5,6 +5,7 @@ using System.Linq;
 using ToucanPlugin.Commands;
 using NPCS;
 using VideoLibrary;
+using Exiled.API.Enums;
 
 namespace ToucanPlugin
 {
@@ -371,9 +372,9 @@ namespace ToucanPlugin
                 if (ExcludedId != p.UserId)
                 {
                     string Coma = ",";
-                    if (Exiled.API.Features.Player.List.ToList().Count - 1 == i || Exiled.API.Features.Player.List.ToList().Count == i)
+                    if (Exiled.API.Features.Player.List.ToList().Count - 1 >= i || Exiled.API.Features.Player.List.ToList().Count >= i || Exiled.API.Features.Player.List.ToList().Count >= i + 1 && Player.List.ToList()[i + 1].UserId == ExcludedId)
                         Coma = "";
-                    playerList += $"{{\"id\":{p.Id},\"name\":\"{p.Nickname.Replace("\"", "")}\",\"userid\":\"{p.UserId}\", \"role\": \"{p.Role}\",\"room\":\"{p.CurrentRoom.Type}\"}}{Coma}";
+                    playerList += $"{{\"id\":{p.Id},\"name\":\"{p.Nickname.Replace("\"", "")}\",\"userid\":\"{p.UserId}\", \"role\": \"{p.Role}\",\"room\":\"{p.CurrentRoom.Type}\"}}, \"x\":{p.Position.x}, \"y\":{p.Position.y}}}{Coma}";
                 }
             }
             playerList += "]";
@@ -381,12 +382,21 @@ namespace ToucanPlugin
                 Tcp.Send($"list {playerList}");
             return playerList;
         }
-        public void UpdateMap()
+        public string UpdateMap()
         {
-            if (!Round.IsStarted) return;
             string MapMsg = "";
-            Map.Rooms.ToList().ForEach(r => MapMsg += $"{(int)r.Type}|{(int)r.Zone}|{r.transform.rotation.y} ");
+            ZoneType lastZone = ZoneType.Unspecified;
+            Map.Rooms.ToList().ForEach(r =>
+            {
+                if (lastZone != r.Zone)
+                {
+                    lastZone = r.Zone;
+                    MapMsg += $"{(int)r.Zone} ";
+                }
+                MapMsg += $"{(int)r.Type}|{r.Transform.position.x}|{r.Transform.position.y}|{r.Transform.rotation.y} ";
+            });
             Tcp.Send($"map {MapMsg}");
+            return MapMsg;
         }
         private string CleanServerName(string name)
         {
@@ -394,7 +404,7 @@ namespace ToucanPlugin
             List<string> nameArray = result.Select(c => c.ToString()).ToList();
             int end = 0;
             bool found = false;
-            for (int i = name.Length-1; 0 <= i;i --)
+            for (int i = name.Length - 1; 0 <= i; i--)
             {
                 if (nameArray[i] == ">")
                 {
@@ -403,8 +413,8 @@ namespace ToucanPlugin
                 }
                 if (nameArray[i] == "<" && found)
                 {
-                    for(int I = 0; I<=end-i; I++)
-                        nameArray[end-I] = "";
+                    for (int I = 0; I <= end - i; I++)
+                        nameArray[end - I] = "";
                     found = false;
                 }
             }
@@ -415,7 +425,7 @@ namespace ToucanPlugin
         public void SendStaticInfo() =>
             Tcp.Send($"infoS [\"{Server.Name.Replace("\"", "")}\", \"{CleanServerName(Server.Name.Replace("\"", ""))}\", \"{Server.IpAddress}:{Server.Port}\", \"{Server.FriendlyFire}\"]");
         public void SendInfo() =>
-            Tcp.Send($"infoR [\"{Round.IsStarted}\", \"{Round.IsLocked}\", \"{Round.IsLobbyLocked}\", \"{Round.ElapsedTime.Days}d:{Round.ElapsedTime.Hours}h:{Round.ElapsedTime.Minutes}m:{Round.ElapsedTime.Seconds}s.{Round.ElapsedTime.Milliseconds}ms\", \"{Map.IsLCZDecontaminated}\", {Map.ActivatedGenerators}]");
+            Tcp.Send($"infoR [\"{Round.IsStarted}\", \"{Round.IsLocked}\", \"{Round.IsLobbyLocked}\", \"{Round.ElapsedTime.Days}d:{Round.ElapsedTime.Hours}h:{Round.ElapsedTime.Minutes}m:{Round.ElapsedTime.Seconds}s.{Round.ElapsedTime.Milliseconds}ms\", \"{Map.IsLCZDecontaminated}\", {Map.ActivatedGenerators}, \"{GamemodeLogic.RoundGamemode}\", \"{GamemodeLogic.NextGamemode}\"]");
         private void FrameDataToIcom(Images.FrameData fd) { Log.Info($">{fd.Data}<"); Intercom.host.UpdateIntercomText(fd.Data); }
     }
 }

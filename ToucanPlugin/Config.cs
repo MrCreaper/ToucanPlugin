@@ -193,7 +193,7 @@ namespace ToucanPlugin
         [Description("Start the round automaticly after a minute")]
         public bool LonelyRound { get; set; } = false;
         public Dictionary<GamemodeType, int> GamemodeChances { get; set; } = new Dictionary<GamemodeType, int> { 
-            { GamemodeType.None, 0 },
+        { GamemodeType.None, 0 },
         { GamemodeType.QuitePlace, 0 },
         { GamemodeType.PeanutInfection, 0 },
         { GamemodeType.AmongUs, 0 },
@@ -241,17 +241,17 @@ namespace ToucanPlugin
             new Commands.Scp079.AbiltyRequirementData(){
                 Cmd="flash",
                 Lvl=1,
-                Energy=200,
+                Energy=50,
                 Xp=5,
                 Cooldown=2,
                 Desc="Explodes a FlashBang at the Camera => flashing all players looking at it",
             },
             new Commands.Scp079.AbiltyRequirementData(){
                 Cmd="mtf",
-                Lvl=0,
-                Energy=0,
-                Xp=0f,
-                Cooldown=0,
+                Lvl=2,
+                Energy=50,
+                Xp=5f,
+                Cooldown=15,
                 Desc="Sends a fake mtf spawn Announcement",
             },
             new Commands.Scp079.AbiltyRequirementData(){
@@ -272,9 +272,9 @@ namespace ToucanPlugin
             },
             new Commands.Scp079.AbiltyRequirementData(){
                 Cmd="scan",
-                Lvl=0,
-                Energy=0,
-                Xp=0f,
+                Lvl=2,
+                Energy=80,
+                Xp=5f,
                 Cooldown=0,
                 Desc="Gives a List of all Players with they Role and in which Zone they are",
             },

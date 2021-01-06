@@ -6,10 +6,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using MEC;
+using Grenades;
+using Mirror;
+using UnityEngine;
 
 namespace ToucanPlugin.Commands
 {
-    [CommandHandler(typeof(RemoteAdminCommandHandler))]
+    [CommandHandler(typeof(ClientCommandHandler))]
     public class Scp079 : ICommand
     {
         List<Player> Robots = new List<Player>();
@@ -42,9 +45,9 @@ namespace ToucanPlugin.Commands
                 return false;
             }
             AbiltyRequirementData abil = ard.Find(x => x.Cmd == args[1]);
-            if (abil.Lvl > p.Level)
+            if (abil.Lvl > p.Level -1)
             {
-                response = $"Too low level, required: {abil.Lvl}";
+                response = $"Too low access tier, required: {abil.Lvl}";
                 return false;
             }
             if (abil.Energy > p.Energy)
@@ -67,12 +70,17 @@ namespace ToucanPlugin.Commands
                     response = "Faking death announcment...";
                     return true;
                 case 2: //Flash
-                    Exiled.API.Extensions.Item.Spawn(ItemType.GrenadeFlash, 0, p.Camera.head.position);
+                    UnityEngine.Vector3 relativeVelocity = p.Camera.head.position; // Thx AdminTools <3
+                    GrenadeManager component1 = p.ReferenceHub.GetComponent<GrenadeManager>();
+                    FlashGrenade component2 = UnityEngine.Object.Instantiate<GameObject>(((IEnumerable<GrenadeSettings>)component1.availableGrenades).FirstOrDefault<GrenadeSettings>((Func<GrenadeSettings, bool>)(g => g.inventoryID == ItemType.GrenadeFlash)).grenadeInstance).GetComponent<FlashGrenade>();
+                    component2.InitData(component1, relativeVelocity, UnityEngine.Vector3.zero);
+                    NetworkServer.Spawn(component2.gameObject);
                     response = "Flashing...";
                     return true;
                 case 3: //Fake Mtf annc
-                    Cassie.Message("SCP-079 successfully terminated by generator recontainment sequence.");
-                    response = "Faking death announcment...";
+                    char[] alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
+                    Cassie.Message($"MtfUnit NATO_{alpha[new System.Random().Next(0, alpha.Length -1)]} {new System.Random().Next()} HasEntered AllRemaining  NoSCPsLeft ");
+                    response = "Faking mtf spawn announcment...";
                     return true;
                 case 4: //scp
                     List<int> scpidlist = new List<int>();
@@ -81,7 +89,7 @@ namespace ToucanPlugin.Commands
                         if (x.Team == Team.SCP && x.Role != RoleType.Scp079)
                             scpidlist.Add(x.Id);
                     });
-                    Player scp = Player.List.ToList().Find(fuck => fuck.Id == scpidlist[new Random().Next(0, scpidlist.Count)]);
+                    Player scp = Player.List.ToList().Find(fuck => fuck.Id == scpidlist[new System.Random().Next(0, scpidlist.Count)]);
                     p.Camera = scp.CurrentRoom.GetComponent<Camera079>();
                     response = "Dont loose him <3";
                     return true;

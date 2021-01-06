@@ -278,7 +278,7 @@ namespace ToucanPlugin.Handlers
             CustomSquadSpawns Squad = null;
             ToucanPlugin.Instance.Config.CustomSquads.ForEach(s =>
             {
-                if (s.Team != ev.NextKnownTeam || rnd.Next(s.ReplaceChance, 100) > s.ReplaceChance || s.MaxSCPKills < Player.SCPKills || s.MinSCPKills > Player.SCPKills || Squad != null) return;
+                if (s.Team != ev.NextKnownTeam || rnd.Next(0, 100) > s.ReplaceChance || s.MaxSCPKills < Player.SCPKills || s.MinSCPKills > Player.SCPKills || Squad != null) return;
                 Squad = s;
                 ev.Players.Clear();
                 playerList.ForEach(p =>

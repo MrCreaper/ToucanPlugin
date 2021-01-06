@@ -138,7 +138,7 @@ namespace ToucanPlugin
         }
         private bool PS1Enabled = false;
         private bool PS1Running = false;
-        public void PS1(bool Enabled)
+        public void PS1(bool Enabled = true)
         {
             PS1Enabled = Enabled;
             if (PS1Running) return;
