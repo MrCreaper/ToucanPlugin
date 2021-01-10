@@ -44,14 +44,14 @@ namespace ToucanPlugin
         {
             r.Doors.ToList().ForEach(d =>
             {
-                d.isOpen = false;
+                d.GetComponent<Door> =false;
                 d.locked = true;
             });
             r.Players.ToList().ForEach(p => p.EnableEffect<CustomPlayerEffects.Decontaminating>());
         }
         public void PB2(ZoneType z)
         {
-            Door HvyEzCheckpoint = Map.Rooms.ToList().Find(x => x.Type == RoomType.HczEzCheckpoint).Doors.ToList().Find(door => door.doorType == Door.DoorTypes.Checkpoint);
+            Door HvyEzCheckpoint = Map.Rooms.ToList().Find(x => x.Type == RoomType.HczEzCheckpoint).Doors.ToList().Find(door => door.Type == DoorType.CheckpointEntrance);
             switch (z)
             {
                 case ZoneType.Unspecified:
