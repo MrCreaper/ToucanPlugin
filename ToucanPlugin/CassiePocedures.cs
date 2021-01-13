@@ -8,6 +8,8 @@ using Exiled.API.Enums;
 using MEC;
 using UnityEngine;
 using Exiled.API.Extensions;
+using Interactables.Interobjects;
+using Interactables.Interobjects.DoorUtils;
 
 namespace ToucanPlugin
 {
@@ -44,14 +46,14 @@ namespace ToucanPlugin
         {
             r.Doors.ToList().ForEach(d =>
             {
-                d.GetComponent<Door> =false;
-                d.locked = true;
+                d.NetworkTargetState = false;
+                d.NetworkActiveLocks = 1;
             });
             r.Players.ToList().ForEach(p => p.EnableEffect<CustomPlayerEffects.Decontaminating>());
         }
         public void PB2(ZoneType z)
         {
-            Door HvyEzCheckpoint = Map.Rooms.ToList().Find(x => x.Type == RoomType.HczEzCheckpoint).Doors.ToList().Find(door => door.Type == DoorType.CheckpointEntrance);
+            DoorVariant HvyEzCheckpoint = Map.Rooms.ToList().Find(x => x.Type == RoomType.HczEzCheckpoint).Doors.ToList().Find(door => door.Type() == DoorType.CheckpointEntrance);
             switch (z)
             {
                 case ZoneType.Unspecified:
@@ -61,8 +63,8 @@ namespace ToucanPlugin
                     Map.StartDecontamination();
                     break;
                 case ZoneType.HeavyContainment:
-                    HvyEzCheckpoint.isOpen = false;
-                    HvyEzCheckpoint.locked = true;
+                    HvyEzCheckpoint.NetworkTargetState = false;
+                    HvyEzCheckpoint.NetworkActiveLocks = 1;
                     DecoAll(ZoneType.HeavyContainment);
                     Map.Lifts.ToList().ForEach(l =>
                     {
@@ -71,8 +73,8 @@ namespace ToucanPlugin
                     });
                     break;
                 case ZoneType.Entrance:
-                    HvyEzCheckpoint.isOpen = false;
-                    HvyEzCheckpoint.locked = true;
+                    HvyEzCheckpoint.NetworkTargetState = false;
+                    HvyEzCheckpoint.ServerChangeLock(DoorLockReason.SpecialDoorFeature, true);
                     DecoAll(ZoneType.Entrance);
                     PL1();
                     Map.Lifts.ToList().ForEach(l =>
@@ -110,21 +112,21 @@ namespace ToucanPlugin
         }
         public void PL1(bool Enabled = true)
         {
-            Door gA = Map.Rooms.ToList().Find(x => x.Type == RoomType.EzGateA).Doors.ToList().Find(door => door.doorType == Door.DoorTypes.HeavyGate);
-            Door gB = Map.Rooms.ToList().Find(x => x.Type == RoomType.EzGateB).Doors.ToList().Find(door => door.doorType == Door.DoorTypes.HeavyGate);
-            gA.isOpen = false;
-            gA.locked = Enabled;
-            gB.isOpen = false;
-            gB.locked = Enabled;
+            DoorVariant gA = Map.Doors.ToList().Find(door => door.Type() ==DoorType.GateA);
+            DoorVariant gB = Map.Rooms.ToList().Find(x => x.Type == RoomType.EzGateB).Doors.ToList().Find(door => door.Type() == DoorType.GateB);
+            gA.NetworkTargetState = false;
+            gA.ServerChangeLock(DoorLockReason.SpecialDoorFeature, Enabled);
+            gB.NetworkTargetState = false;
+            gB.ServerChangeLock(DoorLockReason.SpecialDoorFeature, Enabled);
         }
         public void PL2(bool Enabled = true)
         {
             Map.Doors.ToList().ForEach(d =>
             {
-                if (d.doorType == Door.DoorTypes.Checkpoint || d.doorType == Door.DoorTypes.HeavyGate && d.DoorName.Contains("ent"))
+                if (d.Type() == DoorType.CheckpointEntrance || d.Type() == DoorType.CheckpointLczA || d.Type() == DoorType.CheckpointLczB || d.Type() == DoorType.GateA || d.Type() == DoorType.GateB)
                 {
-                    d.isOpen = !Enabled;
-                    d.locked = Enabled;
+                    d.NetworkTargetState = !Enabled;
+                    d.ServerChangeLock(DoorLockReason.SpecialDoorFeature, Enabled);
                 }
             });
         }
@@ -132,8 +134,8 @@ namespace ToucanPlugin
         {
             Map.Doors.ToList().ForEach(d =>
             {
-                d.isOpen = false;
-                d.locked = Enabled;
+                d.NetworkTargetState = false;
+                d.ServerChangeLock(DoorLockReason.SpecialDoorFeature, Enabled);
             });
         }
         private bool PS1Enabled = false;

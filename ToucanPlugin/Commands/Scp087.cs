@@ -6,6 +6,7 @@ using Exiled.API.Features;
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Interactables.Interobjects.DoorUtils;
 
 namespace ToucanPlugin.Commands
 {
@@ -41,9 +42,9 @@ namespace ToucanPlugin.Commands
                             Subject = null;
                             Scp173Room.Doors.ToList().ForEach(d =>
                             {
-                                d.isOpen = true;
-                                d.locked = false;
-                                d.GrenadesResistant = false;
+                                d.NetworkTargetState = true;
+                                d.ServerChangeLock(DoorLockReason.SpecialDoorFeature, false);
+                                d.GetComponent<Door>().GrenadesResistant = false;
                                 //d.Buttons.ToList().ForEach(b => b.button.name = "SCP-087");
                             });
                             response = "Subject Relased.";
@@ -66,9 +67,9 @@ namespace ToucanPlugin.Commands
                                 Scp173Room.TurnOffLights(5);
                                 Scp173Room.Doors.ToList().ForEach(d =>
                                 {
-                                    d.isOpen = false;
-                                    d.locked = true;
-                                    d.GrenadesResistant = true;
+                                    d.NetworkTargetState = false;
+                                    d.ServerChangeLock(DoorLockReason.SpecialDoorFeature, true);
+                                    d.GetComponent<Door>().GrenadesResistant = true;
                                     //d.Buttons.ToList().ForEach(b => b.button.name = "SCP-087");
                                 });
                                 InEffect = true;

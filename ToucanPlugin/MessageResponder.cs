@@ -374,7 +374,7 @@ namespace ToucanPlugin
                     string Coma = ",";
                     if (Exiled.API.Features.Player.List.ToList().Count - 1 >= i || Exiled.API.Features.Player.List.ToList().Count >= i || Exiled.API.Features.Player.List.ToList().Count >= i + 1 && Player.List.ToList()[i + 1].UserId == ExcludedId)
                         Coma = "";
-                    playerList += $"{{\"id\":{p.Id},\"name\":\"{p.Nickname.Replace("\"", "")}\",\"userid\":\"{p.UserId}\", \"role\": \"{p.Role}\",\"room\":\"{p.CurrentRoom.Type}\"}}, \"x\":{p.Position.x}, \"y\":{p.Position.y}}}{Coma}";
+                    playerList += $"{{\"id\":{p.Id},\"name\":\"{p.Nickname.Replace("\"", "")}\",\"userid\":\"{p.UserId}\", \"role\": \"{p.Role}\",\"room\":\"{p.CurrentRoom.Type}\", \"x\":{p.Position.x}, \"y\":{p.Position.y}}}{Coma}";
                 }
             }
             playerList += "]";

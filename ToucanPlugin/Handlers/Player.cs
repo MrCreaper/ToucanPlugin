@@ -1,6 +1,7 @@
 ﻿using Exiled.API.Enums;
 using Exiled.API.Extensions;
 using Exiled.API.Features;
+using Interactables.Interobjects.DoorUtils;
 using Exiled.Events.EventArgs;
 using System.Collections.Generic;
 using System.Linq;
@@ -271,7 +272,7 @@ namespace ToucanPlugin.Handlers
         public void OnInteractingDoor(InteractingDoorEventArgs ev)
         {
             if (!perConnections.ContainsKey(ev.Player)) return;
-            if (!perConnections[ev.Player].Abilities.Contains(AbilityType.DoorHacking) || !ev.IsAllowed || ev.Door.destroyed) return;
+            if (!perConnections[ev.Player].Abilities.Contains(AbilityType.DoorHacking) || !ev.IsAllowed || ev.Door.GetComponent<Interactables.Interobjects.BreakableDoor>()._destroyed) return;
             float ap = ev.Player.AdrenalineHealth;
             float apCost = 0;
             switch (ev.Door.Type())
@@ -342,9 +343,10 @@ namespace ToucanPlugin.Handlers
             else
             {
                 ap -= apCost;
-                if (ev.Door.isOpen) ev.Door.isOpen = false;
+                if (ev.Door.NetworkTargetState) 
+                    ev.Door.NetworkTargetState = false;
                 else
-                    ev.Door.isOpen = true;
+                    ev.Door.NetworkTargetState = true;
             }
         }
 

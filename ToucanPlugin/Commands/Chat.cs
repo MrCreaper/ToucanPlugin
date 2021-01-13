@@ -53,7 +53,7 @@ namespace ToucanPlugin.Commands
         {
             Exiled.API.Features.Player.List.ToList().ForEach(p => { 
                 p.SendConsoleMessage(M, "#ff8c00");
-                p.ShowHint($"<color=yellow>New Message!</color>\n<size=100>{M}</size>\n(<color=yellow><size=10>Open console whit ~ key and check .help!</size></color>)");
+                p.ShowHint($"<color=yellow>New Message!</color>\n<size=30>{M}</size>\n<color=yellow><size=20>(Open console whit ~ key and check .help)</size></color>");
             });
         }
     }

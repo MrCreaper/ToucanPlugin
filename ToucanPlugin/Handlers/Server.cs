@@ -1,6 +1,9 @@
 ﻿using Exiled.API.Enums;
+using Exiled.API.Extensions;
 using Exiled.API.Features;
 using Exiled.Events.EventArgs;
+using Interactables.Interobjects;
+using Interactables.Interobjects.DoorUtils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -102,7 +105,7 @@ namespace ToucanPlugin.Handlers
             GamemodeLogic gl = new GamemodeLogic();
             Tcp.SendLog("Round started");
             if (Exiled.API.Features.Player.List.ToList().Find(x => x.Role == RoleType.Scp173) != null)
-                Map.Rooms.ToList().Find(x => x.Type == RoomType.Lcz173).Doors.ToList()[0].locked = true; // Lock 173 (1162)
+                Map.Doors.ToList().Find(x => x.Type() == DoorType.CheckpointEntrance).NetworkTargetState = true; // Lock 173 (1162)
             new MessageResponder().UpdateMap();
             if (!GamemodeLogic.GamemodesPaused/* && Exiled.API.Features.Player.List.Count() >= 2*/)
             {
