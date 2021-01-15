@@ -75,7 +75,12 @@ namespace ToucanPlugin.Handlers
             Tcp.SendLog($"**{ev.Player.Nickname} ({ev.Player.UserId}) Left [{Exiled.API.Features.Player.List.Count() - 1}/20]**");
             mr.UpdatePlayerList(ev.Player.UserId);
             if (Exiled.API.Features.Player.List.Count() - 1 <= 0 && Round.IsStarted)
-                Round.Restart();
+            {
+                Log.Warn("Empty server, restarting...");
+                GamemodeLogic.NextGamemode = GamemodeType.None;
+                if (ToucanPlugin.Instance.Config.RestartEmptyServer)
+                    Round.Restart();
+            }
             UpdateVoiceChannel(ev.Player, RoleType.None);
         }
         private void LonelyRound()

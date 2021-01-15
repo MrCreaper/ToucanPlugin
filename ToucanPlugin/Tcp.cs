@@ -26,6 +26,7 @@ namespace ToucanPlugin
         private bool connecting = false;
         public int MaxMessageLenght = 3000;
         int AuthTimeout = 10000;
+        static int DissconnectCounter = 0;
         private void Main()
         {
             if (connecting) return;
@@ -76,9 +77,11 @@ namespace ToucanPlugin
                         {
                             while (true)
                             {
-                                if (authTimer.ElapsedMilliseconds > AuthTimeout && !auth)
+                                if (authTimer.ElapsedMilliseconds > AuthTimeout && !auth && !IsConnected())
                                 {
-                                    Log.Debug("Authenication Timed out. FUCK", ToucanPlugin.Instance.Config.Debug);
+                                    DissconnectCounter++;
+                                    Log.Debug($"Authenication Timed out [{DissconnectCounter}]. FUCK", ToucanPlugin.Instance.Config.Debug);
+                                    if(DissconnectCounter <= 5)
                                     Disconnect();
                                     return;
                                 }

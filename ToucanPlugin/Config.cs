@@ -21,6 +21,8 @@ namespace ToucanPlugin
         public string LeftMessage { get; set; } = "{player} has left the server.";
         [Description("Sets the message when the round starts")]
         public string RoundStartMessage { get; set; } = "";
+        [Description("New chat message hint, {S} = Sender Nickname {M} = Message")]
+        public string ChatHint { get; set; } = "<color=yellow> New Message!</color>\n<size=30>{S}: {M}</size>\n<color=yellow><size=15>(Open console whit ~key and check.help)</size></color>";
         [Description("Reflect team damage")]
         public bool ReflectTeamDMG { get; set; } = false;
         [Description("Crouching...")]
@@ -192,6 +194,8 @@ namespace ToucanPlugin
         public bool Random008Spawn { get; set; } = false;
         [Description("Start the round automaticly after a minute")]
         public bool LonelyRound { get; set; } = false;
+        [Description(":)")]
+        public bool RestartEmptyServer { get; set; } = false;
         public Dictionary<GamemodeType, int> GamemodeChances { get; set; } = new Dictionary<GamemodeType, int> { 
         { GamemodeType.None, 0 },
         { GamemodeType.QuitePlace, 0 },

@@ -75,6 +75,7 @@ namespace ToucanPlugin
             UpdateMap();
             SendStaticInfo();
             SendInfo();
+            UpdatePlayerList();
         }
         public void Respond(string Cmd0)
         {
@@ -83,7 +84,7 @@ namespace ToucanPlugin
             if (Cmd0.Split(' ')[0].Length == Tcp.MaxMessageLenght || Cmd == "" || Cmd.Length == 1)
             {
                 //Log.Debug($"Empty Data Recived >{Cmd0}<");
-                if (Tcp.auth)
+                if (!Tcp.auth)
                     Tcp.Disconnect();
                 return;
             }
@@ -138,7 +139,17 @@ namespace ToucanPlugin
                     break;
 
                 case "msg":
-                    new Chat().SendMsgInGame(Cmd.Replace($"{Cmds[0]} ", ""));
+                    string fullMsg = Cmd.Replace($"{Cmds[0]} ", "");
+                    List<string> fullMsgC = fullMsg.Select(c => c.ToString()).ToList();
+                    int msgStart = 0;
+                    for (int i = 0; i < fullMsg.Length -1; i++)
+                    {
+                        if (fullMsgC[i] == ":" && msgStart == 0)
+                            msgStart = i;
+                    }
+                    string Sender = fullMsg.Remove(msgStart - 1, fullMsg.Length - 1);
+                    string Message = fullMsg.Remove(1, msgStart + 1);
+                    new Chat().SendMsgInGame(Sender, Message);
                     break;
 
                 case "kill":
@@ -372,9 +383,9 @@ namespace ToucanPlugin
                 if (ExcludedId != p.UserId)
                 {
                     string Coma = ",";
-                    if (Exiled.API.Features.Player.List.ToList().Count - 1 >= i || Exiled.API.Features.Player.List.ToList().Count >= i || Exiled.API.Features.Player.List.ToList().Count >= i + 1 && Player.List.ToList()[i + 1].UserId == ExcludedId)
+                    if (Player.List.ToList().Count - 1 >= i || Player.List.ToList()[i + 1].UserId == ExcludedId && Player.List.ToList().Count >= i)
                         Coma = "";
-                    playerList += $"{{\"id\":{p.Id},\"name\":\"{p.Nickname.Replace("\"", "")}\",\"userid\":\"{p.UserId}\", \"role\": \"{p.Role}\",\"room\":\"{p.CurrentRoom.Type}\", \"x\":{p.Position.x}, \"y\":{p.Position.y}}}{Coma}";
+                    playerList += $"{{\"id\":{p.Id},\"name\":\"{p.Nickname.Replace("\"", "")}\",\"userid\":\"{p.UserId}\", \"role\": \"{p.Role}\",\"room\":\"{p.CurrentRoom.Type}\",\"x\":{p.Position.x},\"y\":{p.Position.y}}}{Coma}";
                 }
             }
             playerList += "]";

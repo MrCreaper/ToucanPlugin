@@ -145,7 +145,7 @@ namespace ToucanPlugin.Handlers
                 if (GamemodeLogic.NextGamemode == GamemodeType.None)
                     Map.Broadcast(5, ToucanPlugin.Instance.Config.RoundStartMessage);
                 else
-                    Map.Broadcast(5, $"Next Round Gamemode: <i><b>{gl.ConvertToNice(GamemodeLogic.RoundGamemode)}</b></i>");
+                    Map.Broadcast(5, $"Next Round Gamemode: <i><b>{gl.ConvertToNice(GamemodeLogic.NextGamemode)}</b></i>");
 
                 ToucanPlugin.Instance.Config.PlayerCountMentions.ToList().ForEach(r =>
                 {

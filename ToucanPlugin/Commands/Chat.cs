@@ -12,7 +12,7 @@ namespace ToucanPlugin.Commands
 
         public string[] Aliases { get; } = { "tc" };
 
-        public string Description { get; } = "Chat throght in game, and thorugh our discord!";
+        public string Description { get; } = "Chat throght in game or discord.";
 
         public bool Execute(ArraySegment<string> arguments, ICommandSender Sender, out string response)
         {
@@ -28,11 +28,8 @@ namespace ToucanPlugin.Commands
                         else
                             msg += $" {arguments.Array[i]}";
                     }
-                    string FullMsg;
-                    string FullMsgD;
-                    FullMsg = $"{player.Nickname}: {msg}";
-                    FullMsgD = $"**{player.Nickname}** (*{player.SenderId}*): `{msg}`";
-                    SendMsgInGame(FullMsg);
+                    string FullMsgD = $"**{player.Nickname}** (*{player.SenderId}*): `{msg}`";
+                    SendMsgInGame(player.Nickname,msg);
                     Tcp.Send($"msg {FullMsgD}");
                     response = "Message Sent!";
                     return true;
@@ -49,11 +46,11 @@ namespace ToucanPlugin.Commands
                 return true;
             }
         }
-        public void SendMsgInGame(string M)
+        public void SendMsgInGame(string Sender, string Msg)
         {
             Exiled.API.Features.Player.List.ToList().ForEach(p => { 
-                p.SendConsoleMessage(M, "#ff8c00");
-                p.ShowHint($"<color=yellow>New Message!</color>\n<size=30>{M}</size>\n<color=yellow><size=20>(Open console whit ~ key and check .help)</size></color>");
+                p.SendConsoleMessage($"{Sender}: {Msg}", "#ff8c00");
+                p.ShowHint(ToucanPlugin.Instance.Config.ChatHint.Replace("{M}", Msg).Replace("{S}", Sender));
             });
         }
     }
