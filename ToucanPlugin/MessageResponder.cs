@@ -7,8 +7,31 @@ using NPCS;
 using VideoLibrary;
 using Exiled.API.Enums;
 
+namespace CustomExtensions
+{
+    // Extension methods must be defined in a static class.
+    public static class StringExtension
+    {
+        // This is the extension method.
+        // The first parameter takes the "this" modifier
+        // and specifies the type for which the method is defined.
+        public static string Slice(this string input, int start, int end)
+        {
+            List<string> CList = input.Select(c => c.ToString()).ToList();
+            string output = "";
+            for (int i = start; i < end; i++)
+            {
+                CList[i] = "";
+            }
+            CList.ForEach(c => output += c);
+            return output;
+        }
+    }
+}
+
 namespace ToucanPlugin
 {
+    using CustomExtensions;
     class MessageResponder
     {
         readonly Tcp Tcp = new Tcp();
@@ -142,13 +165,13 @@ namespace ToucanPlugin
                     string fullMsg = Cmd.Replace($"{Cmds[0]} ", "");
                     List<string> fullMsgC = fullMsg.Select(c => c.ToString()).ToList();
                     int msgStart = 0;
-                    for (int i = 0; i < fullMsg.Length -1; i++)
+                    for (int i = 0; i < fullMsg.Length - 1; i++)
                     {
                         if (fullMsgC[i] == ":" && msgStart == 0)
                             msgStart = i;
                     }
-                    string Sender = fullMsg.Remove(msgStart - 1, fullMsg.Length - 1);
-                    string Message = fullMsg.Remove(1, msgStart + 1);
+                    string Sender = fullMsg.Slice(msgStart - 1, fullMsg.Length - 1);
+                    string Message = fullMsg.Slice(1, msgStart + 1);
                     new Chat().SendMsgInGame(Sender, Message);
                     break;
 

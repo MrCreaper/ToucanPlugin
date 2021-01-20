@@ -85,15 +85,15 @@ namespace ToucanPlugin.Handlers
         }
         private void LonelyRound()
         {
-            for (int i = 0; i < 60; i++)
+            for (int i = 60; i >= 0; i--)
             {
                 if (Exiled.API.Features.Player.List.Count() == 1 && !Round.IsStarted && !Round.IsLobbyLocked)
                 {
-                    if (i == 59) Round.Start();
-                    if (i == 30) Map.ShowHint("Automatic round Starting in...", 5);
-                    if (i >= 35) Map.ShowHint($"{60 - i}", 1);
-                    if (i == 59) Map.ShowHint($"Starting a really lonely round..!", 5);
-                    Thread.Sleep(1250);
+                    if (i == 0) Round.Start();
+                    if (i == 30) Map.ShowHint($"Starting a really lonely round..!", 5);
+                    if (i >= 35) Map.ShowHint($"{i}", 1);
+                    if (i == 59) Map.ShowHint("Automatic round Starting in...", 5);
+                    Thread.Sleep(1200);
                 }
                 else return;
             }
@@ -348,7 +348,7 @@ namespace ToucanPlugin.Handlers
             else
             {
                 ap -= apCost;
-                if (ev.Door.NetworkTargetState) 
+                if (ev.Door.NetworkTargetState)
                     ev.Door.NetworkTargetState = false;
                 else
                     ev.Door.NetworkTargetState = true;

@@ -70,43 +70,47 @@ namespace ToucanPlugin
                     else
                     {
                         connecting = false;
-                        Log.Debug("Authenticating...", ToucanPlugin.Instance.Config.Debug);
-                        Stopwatch authTimer = new Stopwatch();
-                        authTimer.Start();
-                        Task.Factory.StartNew(() =>
+                        if (!auth)
                         {
-                            while (true)
+                            Log.Debug("Authenticating...", ToucanPlugin.Instance.Config.Debug);
+                            Stopwatch authTimer = new Stopwatch();
+                            authTimer.Start();
+                            Task.Factory.StartNew(() =>
                             {
-                                if (authTimer.ElapsedMilliseconds > AuthTimeout && !auth && !IsConnected())
+                                while (true)
                                 {
-                                    DissconnectCounter++;
-                                    Log.Debug($"Authenication Timed out [{DissconnectCounter}]. FUCK", ToucanPlugin.Instance.Config.Debug);
-                                    if(DissconnectCounter <= 5)
-                                    Disconnect();
-                                    return;
+                                    if (authTimer.ElapsedMilliseconds > AuthTimeout && !auth && !IsConnected())
+                                    {
+                                        DissconnectCounter++;
+                                        Log.Debug($"Authenication Timed out [{DissconnectCounter}]. FUCK", ToucanPlugin.Instance.Config.Debug);
+                                        if (DissconnectCounter <= 5)
+                                            Disconnect();
+                                        return;
+                                    }
                                 }
-                            }
-                        });
-                        while (S.Connected)
-                        {
-                            try
-                            {
-                                byte[] bytes = new byte[MaxMessageLenght];
-                                int i = S.Receive(bytes);
-                                string msg = Encoding.UTF8.GetString(bytes);
-                                RecivedMessageEvent(msg);
-                                if (!auth && msg.StartsWith("auth"))
-                                {
-                                    Log.Info("Connected to Toucan Server");
-                                    auth = true;
-                                    ConnectedEvent();
-                                }
-                            }
-                            catch (Exception e)
-                            {
-                                Log.Error($"Message Responder Failed/Reciving messages Failed, {e}");
-                            }
+                            });
                         }
+                            while (S.Connected)
+                            {
+                                try
+                                {
+                                    byte[] bytes = new byte[MaxMessageLenght];
+                                    int i = S.Receive(bytes);
+                                    string msg = Encoding.UTF8.GetString(bytes);
+                                    RecivedMessageEvent(msg);
+                                    if (!auth && msg.StartsWith("auth"))
+                                    {
+                                        Log.Info("Connected to Toucan Server");
+                                        auth = true;
+                                        ConnectedEvent();
+                                    }
+                                }
+                                catch (Exception e)
+                                {
+                                    Log.Error($"Message Responder Failed/Reciving messages Failed, {e}");
+                                }
+                            }
+
                     }
                 }
             }

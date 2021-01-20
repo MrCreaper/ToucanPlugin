@@ -258,10 +258,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="API.cs" />
     <Compile Include="CassiePocedures.cs" />
     <Compile Include="Commands\AcGame.cs" />
     <Compile Include="Commands\Chat.cs" />
     <Compile Include="Commands\Hack.cs" />
+    <Compile Include="Commands\Ping.cs" />
     <Compile Include="Commands\Play.cs" />
     <Compile Include="Commands\Scp079.cs" />
     <Compile Include="Commands\Speed.cs" />
