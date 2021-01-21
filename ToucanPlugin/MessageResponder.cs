@@ -94,7 +94,8 @@ namespace ToucanPlugin
         }
         public void Connected()
         {
-            Exiled.API.Features.Server.Name = Exiled.API.Features.Server.Name.Replace($"<color=#00000000><size=1>Exiled {Exiled.Loader.Loader.Version.ToString().Replace(".0", "")}</size></color>", "");
+            if (Server.Name != null)
+                Exiled.API.Features.Server.Name = Exiled.API.Features.Server.Name.Replace($"<color=#00000000><size=1>Exiled {Exiled.Loader.Loader.Version.ToString().Replace(".0", "")}</size></color>", "");
             UpdateMap();
             SendStaticInfo();
             SendInfo();
@@ -418,6 +419,7 @@ namespace ToucanPlugin
         }
         public string UpdateMap()
         {
+            if (Map.Rooms == null) return null;
             string MapMsg = "";
             ZoneType lastZone = ZoneType.Unspecified;
             Map.Rooms.ToList().ForEach(r =>

@@ -104,13 +104,12 @@ namespace ToucanPlugin
                                         auth = true;
                                         ConnectedEvent();
                                     }
-                                }
+                            }
                                 catch (Exception e)
                                 {
                                     Log.Error($"Message Responder Failed/Reciving messages Failed, {e}");
                                 }
-                            }
-
+                        }
                     }
                 }
             }
@@ -210,11 +209,11 @@ namespace ToucanPlugin
                 {
                     try
                     {
-                        if (IsConnected())
+                        if (IsConnected() && auth)
                             SendQueue();
                         else
                             Task.Factory.StartNew(() => Main());
-                        Thread.Sleep(1000);
+                        Thread.Sleep(2000);
                     }
                     catch (Exception e)
                     {
