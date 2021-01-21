@@ -486,20 +486,23 @@ namespace ToucanPlugin.Handlers
             Task.Factory.StartNew(() =>
             {
                 while (true)
+                {
                     if (!ToucanPlugin.Instance.Config.CrouchingEnabled || !CrouchingRunning) return;
-                Exiled.API.Features.Player.List.ToList().ForEach(p =>
-                    {
-                        if (p.MoveState == PlayerMovementState.Sneaking && !PlayersCrouchingList.Contains(p))
+                    Exiled.API.Features.Player.List.ToList().ForEach(p =>
                         {
-                            p.Scale = new Vector3(ToucanPlugin.Instance.Config.CrouchingSize.X, ToucanPlugin.Instance.Config.CrouchingSize.Y, ToucanPlugin.Instance.Config.CrouchingSize.Z);
-                            PlayersCrouchingList.Add(p);
-                        }
-                        else if (p.MoveState != PlayerMovementState.Sneaking && PlayersCrouchingList.Contains(p))
-                        {
-                            p.Scale = new Vector3(1, 1, 1);
-                            PlayersCrouchingList.Remove(p);
-                        }
-                    });
+                            if (p.MoveState == PlayerMovementState.Sneaking && !PlayersCrouchingList.Contains(p))
+                            {
+                                p.Scale = new Vector3(ToucanPlugin.Instance.Config.CrouchingSize.X, ToucanPlugin.Instance.Config.CrouchingSize.Y, ToucanPlugin.Instance.Config.CrouchingSize.Z);
+                                PlayersCrouchingList.Add(p);
+                            }
+                            else if (p.MoveState != PlayerMovementState.Sneaking && PlayersCrouchingList.Contains(p))
+                            {
+                                p.Scale = new Vector3(1, 1, 1);
+                                PlayersCrouchingList.Remove(p);
+                            }
+                        });
+                    Thread.Sleep(500);
+                }
             });
         }
     }

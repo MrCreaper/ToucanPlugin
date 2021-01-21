@@ -6,6 +6,7 @@ using System;
 using Player = Exiled.Events.Handlers.Player;
 using Server = Exiled.Events.Handlers.Server;
 using System.Diagnostics;
+using System.Linq;
 
 namespace ToucanPlugin
 {
@@ -39,7 +40,7 @@ namespace ToucanPlugin
             Patch();
             Tcp.topicUpdateTimer = Stopwatch.StartNew();
             Tcp.topicUpdateTimer.Start();
-            Tcp.Start();
+            //Tcp.Start();
             ToucanPlugin.Instance.Config.PlayerCountMentions.ForEach(r => server.LastPlayerCountMentions.Add(r.PlayerCount, false));
             player.StartDetectingCrouching();
             server.StartDetectBlackout();

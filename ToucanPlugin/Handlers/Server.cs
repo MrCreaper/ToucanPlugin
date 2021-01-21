@@ -323,6 +323,7 @@ namespace ToucanPlugin.Handlers
                         Tcp.Send($"blackout {SCP_575.Plugin.TimerOn}");
                         LastLights = SCP_575.Plugin.TimerOn;
                     }
+                    Thread.Sleep(1000);
                 }
             });
         }
