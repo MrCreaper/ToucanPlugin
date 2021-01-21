@@ -19,7 +19,12 @@ namespace ToucanPlugin.Commands
         public bool Execute(ArraySegment<string> arguments, ICommandSender Sender, out string response)
         {
             Player p = Player.List.ToList().Find(x => x.Sender == Sender);
-            if(!p.IsHost)
+            if(p == null)
+            {
+                response = "What are you?";
+                return false;
+            }
+            if (!p.IsHost)
             {
                 response = "No, sorry.";
                 return false;

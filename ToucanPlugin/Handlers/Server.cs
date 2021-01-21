@@ -147,7 +147,7 @@ namespace ToucanPlugin.Handlers
                 else
                     Map.Broadcast(5, $"Next Round Gamemode: <i><b>{gl.ConvertToNice(GamemodeLogic.NextGamemode)}</b></i>");
 
-                ToucanPlugin.Instance.Config.PlayerCountMentions.ToList().ForEach(r =>
+                /*ToucanPlugin.Instance.Config.PlayerCountMentions.ToList().ForEach(r =>
                 {
                     if (Whitelist.Whitelisted) return;
                     if (!LastPlayerCountMentions[r.PlayerCount] && Exiled.API.Features.Player.List.ToList().Count == r.PlayerCount)
@@ -157,12 +157,18 @@ namespace ToucanPlugin.Handlers
                     }
                     if (LastPlayerCountMentions[r.PlayerCount] && Exiled.API.Features.Player.List.ToList().Count < r.PlayerCount)
                         LastPlayerCountMentions[r.PlayerCount] = false;
-                });
+                });*/
             }
+            Player.StartDetectingCrouching();
+            StartDetectBlackout();
         }
 
-        public void OnRestartingRound() =>
+        public void OnRestartingRound()
+        {
             Tcp.SendLog($"Round restarting...");
+            Player.StartDetectingCrouching(false);
+            StartDetectBlackout(false);
+        }
         public void OnRoundEnded(RoundEndedEventArgs ev)
         {
             if (ToucanPlugin.Instance.Config.DetonateAtRoundEnded && Warhead.IsDetonated)
@@ -312,15 +318,19 @@ namespace ToucanPlugin.Handlers
             if (!ev.Sender.IsHost) Tcp.Send($"slog [{DateTime.Now}] **{ev.Sender.Nickname}** ({ev.Sender.UserId}) Sent:\n```{cmd}```");
         }
         static bool LastLights = false;
-        public void StartDetectBlackout()
+        private static bool BlackoutRunning = false;
+        public static void StartDetectBlackout(bool Enable = true)
         {
+            BlackoutRunning = Enable;
             Task.Factory.StartNew(() =>
             {
                 while (true)
                 {
+                    if (!BlackoutRunning) return;
                     if (SCP_575.Plugin.TimerOn != LastLights)
                     {
-                        Tcp.Send($"blackout {SCP_575.Plugin.TimerOn}");
+                        Tcp tcp = new Tcp();
+                        tcp.Send($"blackout {SCP_575.Plugin.TimerOn}");
                         LastLights = SCP_575.Plugin.TimerOn;
                     }
                     Thread.Sleep(1000);

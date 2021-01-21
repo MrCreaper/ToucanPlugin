@@ -40,10 +40,8 @@ namespace ToucanPlugin
             Patch();
             Tcp.topicUpdateTimer = Stopwatch.StartNew();
             Tcp.topicUpdateTimer.Start();
-            //Tcp.Start();
-            ToucanPlugin.Instance.Config.PlayerCountMentions.ForEach(r => server.LastPlayerCountMentions.Add(r.PlayerCount, false));
-            player.StartDetectingCrouching();
-            server.StartDetectBlackout();
+            Tcp.Start();
+            //ToucanPlugin.Instance.Config.PlayerCountMentions.ForEach(r => server.LastPlayerCountMentions.Add(r.PlayerCount, false));
         }
         public override void OnDisabled()
         {

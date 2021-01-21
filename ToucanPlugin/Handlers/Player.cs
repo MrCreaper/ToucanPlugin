@@ -13,7 +13,7 @@ using UnityEngine;
 
 namespace ToucanPlugin.Handlers
 {
-    class Player
+    public class Player
     {
         readonly Tcp Tcp = new Tcp();
         public static bool Has008RandomSpawned { get; set; } = false;
@@ -480,7 +480,7 @@ namespace ToucanPlugin.Handlers
                 ev.Player.Position = new Vector3(ev.Player.Position.x + 5, ev.Player.Position.y, ev.Player.Position.z);
         }
         private static bool CrouchingRunning = false;
-        public void StartDetectingCrouching(bool Enable = true)
+        public static void StartDetectingCrouching(bool Enable = true)
         {
             CrouchingRunning = Enable;
             Task.Factory.StartNew(() =>

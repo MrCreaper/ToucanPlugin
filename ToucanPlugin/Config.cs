@@ -11,7 +11,7 @@ namespace ToucanPlugin
     public class Config : IConfig
     {
         public bool IsEnabled { get; set; } = true;
-        public string ToucanServerIP { get; set; } = "";
+        public string ToucanServerIP { get; set; } = "scpsl.mrtoucan.dev";
         public bool Debug { get; set; } = false;
         [Description("Can buy stuff from the store?")]
         public bool CanBuy { get; set; } = true;
@@ -44,13 +44,13 @@ namespace ToucanPlugin
         [Description("Thing to replace advertisment part of a name whit")]
         public string ReplaceAdvertismentNamesWhit { get; set; } = "[ADVERTISMENT DENIED]";
         public List<string> ADBlacklist { get; set; } = new List<string> { ".com", ".tf", "ttv/", "YT", ".money", "csgo" };
-        public List<Handlers.PlayerCountMentionsClass> PlayerCountMentions { get; set; } = new List<Handlers.PlayerCountMentionsClass>()
+        /*public List<Handlers.PlayerCountMentionsClass> PlayerCountMentions { get; set; } = new List<Handlers.PlayerCountMentionsClass>()
         {
             new Handlers.PlayerCountMentionsClass() {
                 PlayerCount=-1,
                 RoleID="Example Role id, idk",
             },
-        };
+        };*/
         public Dictionary<string, string> PlayerRoleMentions { get; set; } = new Dictionary<string, string>();
         [Description("Detonate the alpha warhead at the end of the round.")]
         public bool DetonateAtRoundEnded { get; set; } = false;
