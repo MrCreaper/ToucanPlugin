@@ -7,6 +7,8 @@ using Player = Exiled.Events.Handlers.Player;
 using Server = Exiled.Events.Handlers.Server;
 using System.Diagnostics;
 using System.Linq;
+using MEC;
+using System.Collections.Generic;
 
 namespace ToucanPlugin
 {
@@ -25,6 +27,7 @@ namespace ToucanPlugin
         private Gamemodes.AmongUs gm0;
         private Gamemodes.ZombieInfection gm1;
 
+        public string VersionStr = $"{ToucanPlugin.Instance.Version.Major}.{ToucanPlugin.Instance.Version.Minor}.{ToucanPlugin.Instance.Version.Revision}";
         private int _patchcounter;
 
         public Harmony Harmony { get; private set; }
@@ -35,13 +38,14 @@ namespace ToucanPlugin
         public override void OnEnabled()
         {
             base.OnEnabled();
-            Log.Info($"Enabling Toucan Plugin V{Instance.Version.Major}.{Instance.Version.Minor}.{Instance.Version.Revision}");
+            Log.Info($"Hes right, Toucan Plugin (V{VersionStr}) is enabled");
             RegisterEvents();
             Patch();
             Tcp.topicUpdateTimer = Stopwatch.StartNew();
             Tcp.topicUpdateTimer.Start();
             Tcp.Start();
             //ToucanPlugin.Instance.Config.PlayerCountMentions.ForEach(r => server.LastPlayerCountMentions.Add(r.PlayerCount, false));
+            AutoUpdates();
         }
         public override void OnDisabled()
         {
@@ -155,6 +159,16 @@ namespace ToucanPlugin
 
             Player.Hurting -= gm0.OnHurting;
             Player.ChangingRole -= gm1.OnChangingRole;
+        }
+        private IEnumerator<float> AutoUpdates()
+        {
+            AutoUpdater.CheckReleases();
+            while (true)
+            {
+                yield return Timing.WaitForSeconds(7200);
+
+                AutoUpdater.RunUpdater(10000);
+            }
         }
     }
 }

@@ -259,6 +259,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="API.cs" />
+    <Compile Include="AutoUpdater.cs" />
     <Compile Include="CassiePocedures.cs" />
     <Compile Include="Commands\AcGame.cs" />
     <Compile Include="Commands\Chat.cs" />
@@ -305,6 +306,7 @@
     <Compile Include="Handlers\Player.cs" />
     <Compile Include="Handlers\Server.cs" />
     <Compile Include="MessageResponder.cs" />
+    <Compile Include="Patches\HiddenExiled.cs" />
     <Compile Include="Patches\IntercomMusicPatch.cs" />
     <Compile Include="Patches\RadioHackPatch.cs" />
     <Compile Include="Patches\RadioPatch.cs" />
