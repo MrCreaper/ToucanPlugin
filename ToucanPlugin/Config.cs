@@ -283,7 +283,5 @@ namespace ToucanPlugin
                 Desc="Gives a List of all Players with they Role and in which Zone they are",
             },
         };
-        [Description("I dont wana be on that statistic!")]
-        public bool HiddenExiled { get; set; } = false;
     }
 }

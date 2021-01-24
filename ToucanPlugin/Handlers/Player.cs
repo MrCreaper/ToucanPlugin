@@ -277,7 +277,7 @@ namespace ToucanPlugin.Handlers
         public void OnInteractingDoor(InteractingDoorEventArgs ev)
         {
             if (!perConnections.ContainsKey(ev.Player)) return;
-            if (!perConnections[ev.Player].Abilities.Contains(AbilityType.DoorHacking) || !ev.IsAllowed || ev.Door.GetComponent<Interactables.Interobjects.BreakableDoor>().IsDestroyed) return;
+            if (!perConnections[ev.Player].Abilities.Contains(AbilityType.DoorHacking) || !ev.IsAllowed || ev.Door.GetComponent<Interactables.Interobjects.BreakableDoor>()._destroyed) return;
             float ap = ev.Player.AdrenalineHealth;
             float apCost = 0;
             switch (ev.Door.Type())

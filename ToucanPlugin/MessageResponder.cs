@@ -94,6 +94,8 @@ namespace ToucanPlugin
         }
         public void Connected()
         {
+            if (Server.Name != null)
+                Exiled.API.Features.Server.Name = Exiled.API.Features.Server.Name.Replace($"<color=#00000000><size=1>Exiled {Exiled.Loader.Loader.Version.ToString().Replace(".0", "")}</size></color>", "");
             UpdateMap();
             SendStaticInfo();
             SendInfo();
