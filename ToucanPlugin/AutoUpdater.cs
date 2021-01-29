@@ -13,7 +13,7 @@ namespace ToucanPlugin
 {
     public static class AutoUpdater
     {
-        public const long REPOID = 297982389;
+        public const long REPOID = 51658450;//297982389
         public static string GitHubGetReleasesTemplate = $"https://api.github.com/repositories/{REPOID}/releases";
         private static HttpClient httpClient = new HttpClient();
         public static void CheckReleases()

@@ -37,8 +37,8 @@ namespace ToucanPlugin
         public string DefaultKickAllReason { get; set; } = "[Everyone was Kicked by {kicker}] No Reason";
         [Description("Default Ban message, when the banner didnt add a reason to why")]
         public string DefaultBanReason { get; set; } = "[Banned by {banner}] No Reason";
-        [Description("Can the inch by inch thing be cured whit scp500")]
-        public bool InchByInchCureable { get; set; } = true;
+        //[Description("Can the inch by inch thing be cured whit scp500")]
+        //public bool InchByInchCureable { get; set; } = true;
         [Description("Replace advertisment names")]
         public bool ReplaceAdvertismentNames { get; set; } = true;
         [Description("Thing to replace advertisment part of a name whit")]
@@ -283,7 +283,7 @@ namespace ToucanPlugin
                 Desc="Gives a List of all Players with they Role and in which Zone they are",
             },
         };
-        [Description("I dont wana be on that statistic!")]
+        [Description("I dont wana be part of that statistic!")]
         public bool HiddenExiled { get; set; } = false;
     }
 }

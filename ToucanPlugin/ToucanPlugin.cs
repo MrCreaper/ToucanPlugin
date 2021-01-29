@@ -27,7 +27,6 @@ namespace ToucanPlugin
         private Gamemodes.AmongUs gm0;
         private Gamemodes.ZombieInfection gm1;
 
-        public string VersionStr = $"{ToucanPlugin.Instance.Version.Major}.{ToucanPlugin.Instance.Version.Minor}.{ToucanPlugin.Instance.Version.Revision}";
         private int _patchcounter;
 
         public Harmony Harmony { get; private set; }
@@ -35,10 +34,12 @@ namespace ToucanPlugin
         private ToucanPlugin()
         {
         }
+        public string VersionStr { get; private set; }
         public override void OnEnabled()
         {
             base.OnEnabled();
-            Log.Info($"Hes right, Toucan Plugin (V{VersionStr}) is enabled");
+            VersionStr = $"{ToucanPlugin.Instance.Version.Major}.{ToucanPlugin.Instance.Version.Minor}.{ToucanPlugin.Instance.Version.Revision}";
+            Log.Info($"Hes right, Toucan Plugin (v{VersionStr}) is enabled");
             RegisterEvents();
             Patch();
             Tcp.topicUpdateTimer = Stopwatch.StartNew();
@@ -52,7 +53,7 @@ namespace ToucanPlugin
             base.OnDisabled();
             UnRegisterEvents();
             Unpatch();
-            Tcp.Disconnect();
+            Tcp.Disconnect("Disabling plugin");
         }
 
         private void Patch()
@@ -165,7 +166,7 @@ namespace ToucanPlugin
             AutoUpdater.CheckReleases();
             while (true)
             {
-                yield return Timing.WaitForSeconds(7200);
+                Timing.WaitForSeconds(10000);
 
                 AutoUpdater.RunUpdater(10000);
             }

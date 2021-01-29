@@ -311,6 +311,7 @@
     <Compile Include="Patches\RadioHackPatch.cs" />
     <Compile Include="Patches\RadioPatch.cs" />
     <Compile Include="Patches\ScpSpeak.cs" />
+    <Compile Include="SyncVarHackExtensions.cs" />
     <Compile Include="Tcp.cs" />
     <Compile Include="ToucanPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

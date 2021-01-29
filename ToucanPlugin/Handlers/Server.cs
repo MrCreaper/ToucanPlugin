@@ -287,7 +287,20 @@ namespace ToucanPlugin.Handlers
             CustomSquadSpawns Squad = null;
             ToucanPlugin.Instance.Config.CustomSquads.ForEach(s =>
             {
-                if (s.Team != ev.NextKnownTeam || rnd.Next(0, 100) > s.ReplaceChance || s.MaxSCPKills < Player.SCPKills || s.MinSCPKills > Player.SCPKills || Squad != null) return;
+                bool Invalid = false;
+                typeof(CustomSquadSpawns).GetMembers().ToList().ForEach(x => {
+                    Log.Warn(x);
+                    System.Reflection.MemberInfo[] mem = s.GetType().GetMember(x.ToString());
+                    Log.Warn(mem.Length);
+                    if (mem.Length == 0)
+                    {
+                        Invalid = true;
+                        string list = "";
+                        mem.ToList().ForEach(m => list += $"\n{m.Name}");
+                        Log.Error($"Custom squad \"{s.Name}\" is missing: {list}");
+                    }
+                    });
+                if (s.Team != ev.NextKnownTeam || rnd.Next(0, 100) > s.ReplaceChance || s.MaxSCPKills < Player.SCPKills || s.MinSCPKills > Player.SCPKills || Squad != null || Invalid) return;
                 Squad = s;
                 ev.Players.Clear();
                 playerList.ForEach(p =>

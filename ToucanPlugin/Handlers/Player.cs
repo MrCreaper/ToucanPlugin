@@ -56,6 +56,7 @@ namespace ToucanPlugin.Handlers
             //Top ranker Role
             if (mr.BestBois != null && mr.BestBois.Contains(ev.Player.UserId))
             {
+                //p.SendCustomSyncVar(p.ReferenceHub.networkIdentity, typeof(ServerRoles), nameof(ServerRoles.NetworkMyText), "FUCK");
                 UserGroup topGroup = new UserGroup
                 {
                     BadgeText = "Highest Ranker",
@@ -98,6 +99,128 @@ namespace ToucanPlugin.Handlers
                 else return;
             }
         }
+        /*private void UpdateHud()
+        {
+            string template = "<align=left><voffset=38em><size=50%><alpha=#44>SanyaPlugin Ex-HUD [VERSION] ([STATS])\n<alpha=#ff></size></align><align=right>[LIST]</align><align=center>[CENTER_UP][CENTER][CENTER_DOWN][BOTTOM]</align></voffset>";
+        }
+        private void UpdateExHud()
+        {
+            if (DisableHud || !_plugin.Config.ExHudEnabled) return;
+            if (!(_timer > 1f)) return;
+
+            string curText = _hudTemplate.Replace("[STATS]",
+                $"St:{DateTime.Now:HH:mm:ss} " +
+                $"Rtt:{LiteNetLib4MirrorServer.Peers[player.Connection.connectionId].Ping}ms " +
+                $"Ps:{ServerConsole.PlayersAmount}/{CustomNetworkManager.slots} " +
+                $"Em:{(int)EventHandlers.eventmode} " +
+                $"Ti:{RespawnTickets.Singleton.GetAvailableTickets(SpawnableTeamType.NineTailedFox)}/{RespawnTickets.Singleton.GetAvailableTickets(SpawnableTeamType.ChaosInsurgency)} " +
+                $"Vc:{(player.IsMuted ? "D" : "E")}");
+
+            //[SCPLIST]
+            if (RoundSummary.singleton._roundEnded && EventHandlers.sortedDamages != null)
+            {
+                int rankcounter = 1;
+                string damageList = string.Empty;
+                damageList += "Round Damage Ranking:\n";
+                foreach (var stats in EventHandlers.sortedDamages)
+                {
+                    if (stats.Value == 0) continue;
+                    damageList += $"[{rankcounter}]{stats.Key}({stats.Value}Damage)\n";
+                    rankcounter++;
+                    if (rankcounter > 5) break;
+                }
+                damageList.TrimEnd('\n');
+
+                curText = curText.Replace("[LIST]", FormatStringForHud(damageList, 6));
+            }
+            else if (player.Team == Team.SCP)
+            {
+                string scpList = string.Empty;
+                foreach (var scp in scplists)
+                    if (scp.Role == RoleType.Scp079)
+                        scpList += $"{scp.ReferenceHub.characterClassManager.CurRole.fullName}:Tier{scp.ReferenceHub.scp079PlayerScript.curLvl + 1}\n";
+                    else
+                        scpList += $"{scp.ReferenceHub.characterClassManager.CurRole.fullName}:{scp.GetHealthAmountPercent()}%\n";
+                scpList.TrimEnd('\n');
+
+                curText = curText.Replace("[LIST]", FormatStringForHud(scpList, 6));
+            }
+            else if (player.Team == Team.MTF)
+            {
+                string MtfList = string.Empty;
+                MtfList += $"<color=#5b6370>FacilityGuard:{RoundSummary.singleton.CountRole(RoleType.FacilityGuard)}</color>\n";
+                MtfList += $"<color=#003eca>Commander:{RoundSummary.singleton.CountRole(RoleType.NtfCommander)}</color>\n";
+                MtfList += $"<color=#0096ff>Lieutenant:{RoundSummary.singleton.CountRole(RoleType.NtfLieutenant)}</color>\n";
+                MtfList += $"<color=#6fc3ff>Cadet:{RoundSummary.singleton.CountRole(RoleType.NtfCadet)}</color>\n";
+                MtfList += $"<color=#0096ff>NTFScientist:{RoundSummary.singleton.CountRole(RoleType.NtfScientist)}</color>\n";
+                MtfList += $"<color=#ffff7c>Scientist:{RoundSummary.singleton.CountRole(RoleType.Scientist)}</color>\n";
+                MtfList.TrimEnd('\n');
+
+                curText = curText.Replace("[LIST]", FormatStringForHud(MtfList, 6));
+            }
+            else if (player.Team == Team.CHI)
+            {
+                string CiList = string.Empty;
+                CiList += $"<color=#008f1e>ChaosInsurgency:{RoundSummary.singleton.CountRole(RoleType.ChaosInsurgency)}</color>\n";
+                CiList += $"<color=#ff8e00>ClassD:{RoundSummary.singleton.CountRole(RoleType.ClassD)}</color>\n";
+                CiList.TrimEnd('\n');
+
+                curText = curText.Replace("[LIST]", FormatStringForHud(CiList, 6));
+            }
+            else
+                curText = curText.Replace("[LIST]", FormatStringForHud(string.Empty, 6));
+
+            //[CENTER_UP]
+            if (player.Role == RoleType.Scp079)
+                curText = curText.Replace("[CENTER_UP]", FormatStringForHud(player.ReferenceHub.animationController.curAnim == 1 ? "Extend:Enabled" : "Extend:Disabled", 6));
+            else if (player.Role == RoleType.Scp049)
+                if (!player.ReferenceHub.fpc.NetworkforceStopInputs)
+                    curText = curText.Replace("[CENTER_UP]", FormatStringForHud($"Corpse in stack:{SanyaPlugin.Instance.Handlers.scp049stackAmount}", 6));
+                else
+                    curText = curText.Replace("[CENTER_UP]", FormatStringForHud($"Trying to cure...", 6));
+            else
+                curText = curText.Replace("[CENTER_UP]", FormatStringForHud(string.Empty, 6));
+
+            //[CENTER]
+            if (AlphaWarheadController.Host.inProgress && !AlphaWarheadController.Host.detonated)
+                if (!AlphaWarheadController.Host.doorsOpen)
+                    curText = curText.Replace("[CENTER]", FormatStringForHud(
+                        (AlphaWarheadController._resumeScenario < 0
+                        ? AlphaWarheadController.Host.scenarios_resume[AlphaWarheadController._startScenario].tMinusTime.ToString("\n00 : 00")
+                        : AlphaWarheadController.Host.scenarios_resume[AlphaWarheadController._resumeScenario].tMinusTime.ToString("\n00 : 00")
+                    ), 6));
+                else
+                    curText = curText.Replace("[CENTER]", FormatStringForHud($"<color=#ff0000>{AlphaWarheadController.Host.timeToDetonation.ToString("\n00 : 00")}</color>", 6));
+            else
+                curText = curText.Replace("[CENTER]", FormatStringForHud(string.Empty, 6));
+
+            //[CENTER_DOWN]
+            if (player.Team == Team.RIP && _respawnCounter != -1 && !Warhead.IsDetonated)
+                if (_respawnCounter == 0)
+                    curText = curText.Replace("[CENTER_DOWN]", FormatStringForHud($"間もなくリスポーンします", 6));
+                else
+                    curText = curText.Replace("[CENTER_DOWN]", FormatStringForHud($"リスポーンまで{_respawnCounter}秒", 6));
+            else if (!string.IsNullOrEmpty(_hudCenterDownString))
+                curText = curText.Replace("[CENTER_DOWN]", FormatStringForHud(_hudCenterDownString, 6));
+            else
+                curText = curText.Replace("[CENTER_DOWN]", FormatStringForHud(string.Empty, 6));
+
+            //[BOTTOM]
+            if (Intercom.host.speaking && Intercom.host.speaker != null)
+                curText = curText.Replace("[BOTTOM]", $"{Player.Get(Intercom.host.speaker)?.Nickname}が放送中...");
+            else
+                curText = curText.Replace("[BOTTOM]", string.Empty);
+
+            _hudText = curText;
+            player.SendTextHintNotEffect(_hudText, 2);
+        }
+        private string FormatStringForHud(string text, int needNewLine)
+        {
+            int curNewLine = text.Count(x => x == '\n');
+            for (int i = 0; i < needNewLine - curNewLine; i++)
+                text += '\n';
+            return text;
+        }*/
         public void OnEscape(EscapingEventArgs ev)
         {
             bool classBool;
@@ -355,10 +478,16 @@ namespace ToucanPlugin.Handlers
             }
         }
 
-        public void OnBanned(BannedEventArgs ev) =>
-            Tcp.SendLog($"```{ev.Details.Issuer} ({ev.Details.OriginalName}) banned player {ev.Player.Nickname} ({ev.Player.UserId}). Ban duration: {ev.Details.Expires}. Reason: {ev.Details.Reason}.```");
-        public void OnKicked(KickedEventArgs ev) =>
+        public void OnBanned(BannedEventArgs ev)
+        {
+            if (ev.Player != null)
+                Tcp.SendLog($"```{ev.Details.Issuer} ({ev.Details.OriginalName}) banned player {ev.Player.Nickname} ({ev.Player.UserId}). Ban duration: {ev.Details.Expires}. Reason: {ev.Details.Reason}.```");
+        }
+        public void OnKicked(KickedEventArgs ev)
+        {
+            if(ev.Player != null)
             Tcp.SendLog($"```{ev.Player.Nickname} ({ev.Player.UserId}) has been kicked. Reason: {ev.Reason}```");
+        }
         public void OnMedicalItemUsed(UsedMedicalItemEventArgs ev)
         {
             if (ev.Item == ItemType.SCP207) Tcp.Send($"stats {ev.Player.UserId} cokedrunk 1");

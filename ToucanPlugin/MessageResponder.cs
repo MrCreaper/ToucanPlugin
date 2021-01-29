@@ -89,7 +89,7 @@ namespace ToucanPlugin
                     ShitFound = true;
             }
             DisgustingSpacesArray.ForEach(c => NewString += c);
-            if (NewString == "") Tcp.Disconnect();
+            if (NewString == "") Tcp.Disconnect("Nothing in the new string?");
             return NewString;
         }
         public void Connected()
@@ -105,9 +105,9 @@ namespace ToucanPlugin
             List<string> Cmds = new List<string>(Cmd.Split(' '));
             if (Cmd0.Split(' ')[0].Length == Tcp.MaxMessageLenght || Cmd == "" || Cmd.Length == 1)
             {
-                //Log.Debug($"Empty Data Recived >{Cmd0}<");
+                Log.Debug($"Empty Data Recived >{Cmd0}<");
                 if (!Tcp.auth)
-                    Tcp.Disconnect();
+                    Tcp.Disconnect("Not authenticated?");
                 return;
             }
             else
@@ -115,7 +115,13 @@ namespace ToucanPlugin
             switch (Cmds[0])
             {
                 default:
+                    Log.Debug("The fuck is that?", ToucanPlugin.Instance.Config.Debug);
                     return;
+
+                case "ping":
+                    Tcp.Send("ping");
+                    break;
+
                 case "itemBought":
                     //itemBought {buyer} {item} {coins left}
                     Player p = Player.List.ToList().Find(x => x.UserId.Contains(Cmds[1]));
@@ -127,16 +133,18 @@ namespace ToucanPlugin
                     break;
 
                 case "log":
+                    string log = Cmd.Replace($"{Cmds[0]} {Cmds[1]} ", "");
                     switch (Cmds[1])
                     {
                         case "info":
-                            Log.Info($"[Toucan Server Message] {Cmd.Replace($"{Cmds[0]} {Cmds[1]} ", "")}");
+                            Log.Info($"[Toucan Server Message] {log}");
                             break;
                         case "warn":
-                            Log.Warn($"[Toucan Server Message] {Cmd.Replace($"{Cmds[0]} {Cmds[1]} ", "")}");
+                            ServerLogs.print($"[WARN] <color=#00000>[Toucan Server Message]</color> {log}");
+                            Log.Warn($"[Toucan Server Message] {log}");
                             break;
                         case "error":
-                            Log.Error($"[Toucan Server Message] {Cmd.Replace($"{Cmds[0]} {Cmds[1]} ", "")}");
+                            Log.Error($"[Toucan Server Message] {log}");
                             break;
                     }
                     break;
@@ -417,7 +425,7 @@ namespace ToucanPlugin
         }
         public string UpdateMap()
         {
-            if (Map.Rooms == null) return null;
+            if (!Round.IsStarted) return null;
             string MapMsg = "";
             ZoneType lastZone = ZoneType.Unspecified;
             Map.Rooms.ToList().ForEach(r =>
@@ -457,7 +465,7 @@ namespace ToucanPlugin
             return resultFUCK;
         }
         public void SendStaticInfo() =>
-            Tcp.Send($"infoS [\"{Server.Name.Replace("\"", "")}\", \"{CleanServerName(Server.Name.Replace("\"", ""))}\", \"{Server.IpAddress}:{Server.Port}\", \"{Server.FriendlyFire}\"]");
+            Tcp.Send($"infoS [\"{Server.Name.Replace("\"", "")}\", \"{CleanServerName(Server.Name.Replace("\"", ""))}\", \"{Server.IpAddress}:{Server.Port}\", \"{Server.FriendlyFire}\", \"{GameCore.Version.VersionString}\", \"{Exiled.Loader.Loader.Version}\", \"{ToucanPlugin.Instance.VersionStr}\"]");
         public void SendInfo() =>
             Tcp.Send($"infoR [\"{Round.IsStarted}\", \"{Round.IsLocked}\", \"{Round.IsLobbyLocked}\", \"{Round.ElapsedTime.Days}d:{Round.ElapsedTime.Hours}h:{Round.ElapsedTime.Minutes}m:{Round.ElapsedTime.Seconds}s.{Round.ElapsedTime.Milliseconds}ms\", \"{Map.IsLCZDecontaminated}\", {Map.ActivatedGenerators}, \"{GamemodeLogic.RoundGamemode}\", \"{GamemodeLogic.NextGamemode}\"]");
         private void FrameDataToIcom(Images.FrameData fd) { Log.Info($">{fd.Data}<"); Intercom.host.UpdateIntercomText(fd.Data); }

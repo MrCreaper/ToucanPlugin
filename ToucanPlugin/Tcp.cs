@@ -22,14 +22,18 @@ namespace ToucanPlugin
         private static Socket S { get; set; } = null;
         readonly static List<String> messageQueue = new List<string>();
         static public Stopwatch topicUpdateTimer;
+        static public Stopwatch chillTimer = new Stopwatch();
         public static bool auth = false;
-        private bool connecting = false;
+        private static bool connected = false;
+        private static bool connecting = false;
+        private static bool STOP = false;
         public int MaxMessageLenght = 3000;
-        int AuthTimeout = 10000;
+        const int AuthTimeout = 10000;
+        const int ChillTimeout = 30000;
         static int DissconnectCounter = 0;
         private void Main()
         {
-            if (connecting) return;
+            if (connecting || IsConnected() || auth || connected) return;
             connecting = true;
             try
             {
@@ -69,7 +73,12 @@ namespace ToucanPlugin
                     }
                     else
                     {
-                        connecting = false;
+                        connected = true;
+                        Task.Factory.StartNew(() =>
+                        {
+                            Thread.Sleep(10000);
+                            connecting = false;
+                        });
                         if (!auth)
                         {
                             Log.Debug("Authenticating...", ToucanPlugin.Instance.Config.Debug);
@@ -83,32 +92,44 @@ namespace ToucanPlugin
                                     {
                                         DissconnectCounter++;
                                         Log.Debug($"Authenication Timed out [{DissconnectCounter}]. FUCK", ToucanPlugin.Instance.Config.Debug);
-                                        if (DissconnectCounter <= 5)
-                                            Disconnect();
+                                        if (DissconnectCounter >= 5)
+                                        {
+                                            chillTimer.Start();
+                                            Log.Debug("Starting chill");
+                                            Disconnect("Chill man");
+                                        }
+                                        if (DissconnectCounter >= 10)
+                                        {
+                                            STOP = true;
+                                            Log.Error("Shit has gone really wrong.");
+                                        }
                                         return;
                                     }
                                 }
                             });
                         }
-                            while (S.Connected)
+                        while (S.Connected)
+                        {
+                            try
                             {
-                                try
+                                byte[] bytes = new byte[MaxMessageLenght];
+                                int i = S.Receive(bytes);
+                                string msg = Encoding.UTF8.GetString(bytes);
+                                if (!auth && msg.StartsWith("auth"))
                                 {
-                                    byte[] bytes = new byte[MaxMessageLenght];
-                                    int i = S.Receive(bytes);
-                                    string msg = Encoding.UTF8.GetString(bytes);
-                                    RecivedMessageEvent(msg);
-                                    if (!auth && msg.StartsWith("auth"))
-                                    {
-                                        Log.Info("Connected to Toucan Server");
-                                        auth = true;
-                                        ConnectedEvent();
-                                    }
-                            }
-                                catch (Exception e)
-                                {
-                                    Log.Error($"Message Responder Failed/Reciving messages Failed, {e}");
+                                    auth = true;
+                                    connected = true;
+                                    Log.Debug("Authanticated");
+                                    ConnectedEvent();
+                                    Log.Info("Connected to Toucan Server");
                                 }
+                                else RecivedMessageEvent(msg);
+                                Thread.Sleep(30000);
+                            }
+                            catch (Exception e)
+                            {
+                                Log.Error($"Message Responder Failed/Reciving messages Failed, {e}");
+                            }
                         }
                     }
                 }
@@ -119,12 +140,13 @@ namespace ToucanPlugin
                 connecting = false;
             }
         }
-        public void Disconnect()
+        public void Disconnect(string Reason = "")
         {
             auth = false;
+            connected = false;
             if (IsConnected())
                 S.Disconnect(false);
-            Log.Debug("Disconnected");
+            Log.Debug($"Disconnected, {Reason}", ToucanPlugin.Instance.Config.Debug);
         }
         public static bool IsConnected()
         {
@@ -178,7 +200,7 @@ namespace ToucanPlugin
         public void Send(string data) =>
             messageQueue.Add(data);
         public void SendLog(string log) =>
-    Send($"log [{DateTime.Now}] {log}");
+            Send($"log [{DateTime.Now}] {log}");
 
         private void SendQueue()
         {
@@ -200,19 +222,31 @@ namespace ToucanPlugin
             if (messageQueue.Count != 0)
                 Log.Error("Could not send all messages.");
         }
-
+        string lastDebug = "";
         public void Start()
         {
             Task.Factory.StartNew(() =>
             {
+                Thread.Sleep(7000);
                 while (true)
                 {
                     try
                     {
+                        if (!IsConnected()) // Just in case
+                            auth = false;
+                        if (ToucanPlugin.Instance.Config.Debug)
+                        {
+                            string fuckingDebugMsg = $"\nauth: {auth}\nconnected: {IsConnected()}\nconnected 2: {connected}\nconnecting: {connecting}\ndissconnect count: {DissconnectCounter}\nchilling: {chillTimer.IsRunning} [ {chillTimer.ElapsedMilliseconds} ]\nSTOP: {STOP}"
+                            if(lastDebug != fuckingDebugMsg)
+                            Log.Debug(fuckingDebugMsg);
+                        }
                         if (IsConnected() && auth)
                             SendQueue();
-                        else
+                        else if (!IsConnected() && !chillTimer.IsRunning && !STOP)
                             Task.Factory.StartNew(() => Main());
+
+                        if (chillTimer.ElapsedMilliseconds > ChillTimeout)
+                            chillTimer.Reset();
                         Thread.Sleep(2000);
                     }
                     catch (Exception e)
