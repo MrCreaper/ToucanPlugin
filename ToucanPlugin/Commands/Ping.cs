@@ -2,13 +2,15 @@
 using Exiled.API.Features;
 using Grenades;
 using System;
+using System.Diagnostics;
 using System.Linq;
 
 namespace ToucanPlugin.Commands
 {
-    [CommandHandler(typeof(RemoteAdminCommandHandler))]
+    [CommandHandler(typeof(GameConsoleCommandHandler))]
     class Ping : ICommand
     {
+        public static Stopwatch st = new Stopwatch();
         Tcp tcp = new Tcp();
         public string Command { get; } = "ping";
 
@@ -19,11 +21,6 @@ namespace ToucanPlugin.Commands
         public bool Execute(ArraySegment<string> arguments, ICommandSender Sender, out string response)
         {
             Player p = Player.List.ToList().Find(x => x.Sender == Sender);
-            if (p != null)
-            {
-                response = "No, sorry.";
-                return false;
-            }
             if (!Tcp.IsConnected())
             {
                 response = "What the hell do you want me to ping here?";
@@ -31,10 +28,16 @@ namespace ToucanPlugin.Commands
             }
             if (!Tcp.auth)
             {
-                response = "Not yet authenticated";
+                response = "Not authenticated";
+                return false;
+            }
+            if (st.IsRunning)
+            {
+                response = "Oh shit, is it that slow?\nWell just wait a bit alrigth?";
                 return false;
             }
             tcp.Send("ping");
+            st.Start();
             response = "Pinging...";
             return true;
         }

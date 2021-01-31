@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("ToucanPlugin")]
-[assembly: AssemblyDescription("A Plugin that goes well whit the Toucan bot on discord!")]
+[assembly: AssemblyDescription("Combine Pleasures")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Mr.Creaper101")]
 [assembly: AssemblyProduct("ToucanPlugin")]

@@ -9,6 +9,9 @@ using System.Diagnostics;
 using System.Linq;
 using MEC;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Net.Http;
 
 namespace ToucanPlugin
 {
@@ -35,22 +38,25 @@ namespace ToucanPlugin
         {
         }
         public string VersionStr { get; private set; }
+        public bool Enabled { get; private set; }
         public override void OnEnabled()
         {
             base.OnEnabled();
+            Enabled = true;
             VersionStr = $"{ToucanPlugin.Instance.Version.Major}.{ToucanPlugin.Instance.Version.Minor}.{ToucanPlugin.Instance.Version.Revision}";
             Log.Info($"Hes right, Toucan Plugin (v{VersionStr}) is enabled");
+            if (ToucanPlugin.Instance.Config.Debug)
+                Log.Debug("Mh. Lets see whats going on...");
             RegisterEvents();
             Patch();
-            Tcp.topicUpdateTimer = Stopwatch.StartNew();
-            Tcp.topicUpdateTimer.Start();
             Tcp.Start();
             //ToucanPlugin.Instance.Config.PlayerCountMentions.ForEach(r => server.LastPlayerCountMentions.Add(r.PlayerCount, false));
-            AutoUpdates();
+            Task.Factory.StartNew(() => AutoUpdate());
         }
         public override void OnDisabled()
         {
             base.OnDisabled();
+            Enabled = false;
             UnRegisterEvents();
             Unpatch();
             Tcp.Disconnect("Disabling plugin");
@@ -95,6 +101,8 @@ namespace ToucanPlugin
             Tcp.ConnectedEvent += mr.Connected;
             Tcp.RecivedMessageEvent += mr.Respond;
 
+            Tcp.IdleModeUpdateEvent += OnIdlemodeUpdate;
+
             Server.WaitingForPlayers += server.OnWaitingForPlayers;
             Server.RoundStarted += server.OnRoundStarted;
             Server.RestartingRound += server.OnRestartingRound;
@@ -134,6 +142,8 @@ namespace ToucanPlugin
             Tcp.ConnectedEvent -= mr.Connected;
             Tcp.RecivedMessageEvent -= mr.Respond;
 
+            Tcp.IdleModeUpdateEvent -= OnIdlemodeUpdate;
+
             Server.WaitingForPlayers -= server.OnWaitingForPlayers;
             Server.RoundStarted -= server.OnRoundStarted;
             Server.RestartingRound -= server.OnRestartingRound;
@@ -161,14 +171,29 @@ namespace ToucanPlugin
             Player.Hurting -= gm0.OnHurting;
             Player.ChangingRole -= gm1.OnChangingRole;
         }
-        private IEnumerator<float> AutoUpdates()
+        public void OnIdlemodeUpdate(bool NewState)
         {
-            AutoUpdater.CheckReleases();
+            // This is an awful idea
+            //Log.Debug($"New idlemode state: {NewState}", ToucanPlugin.Instance.Config.Debug);
+            if (!NewState && !Tcp.connecting)
+                Tcp.Start();
+        }
+        private async Task AutoUpdate()
+        {
+            Log.Debug($"Checking for updates... {await AutoUpdater.UpToDate()}", Instance.Config.Debug);
+            if (Instance.Config.Debug)
+                if (await AutoUpdater.UpToDate())
+                    Log.Debug("No updates");
+                else Log.Debug("Update found");
             while (true)
             {
-                Timing.WaitForSeconds(10000);
-
-                AutoUpdater.RunUpdater(10000);
+                Log.Debug("Checking for updates... again...", Instance.Config.Debug);
+                if (!await AutoUpdater.UpToDate())
+                {
+                    Log.Info("Update found");
+                    await AutoUpdater.Update();
+                }
+                Thread.Sleep(3600000); //1h
             }
         }
     }

@@ -105,7 +105,9 @@ namespace ToucanPlugin
             List<string> Cmds = new List<string>(Cmd.Split(' '));
             if (Cmd0.Split(' ')[0].Length == Tcp.MaxMessageLenght || Cmd == "" || Cmd.Length == 1)
             {
-                Log.Debug($"Empty Data Recived >{Cmd0}<");
+                //Log.Debug($"Empty Data Recived >{Cmd0}<", ToucanPlugin.Instance.Config.Debug);
+                if (!Tcp.IsConnected()) // Just in case
+                    Tcp.auth = false;
                 if (!Tcp.auth)
                     Tcp.Disconnect("Not authenticated?");
                 return;
@@ -120,6 +122,11 @@ namespace ToucanPlugin
 
                 case "ping":
                     Tcp.Send("ping");
+                    break;
+
+                case "pong":
+                    Log.Info($"Pong! ({Ping.st.ElapsedMilliseconds}ms)");
+                    Ping.st.Reset();
                     break;
 
                 case "itemBought":
@@ -140,11 +147,13 @@ namespace ToucanPlugin
                             Log.Info($"[Toucan Server Message] {log}");
                             break;
                         case "warn":
-                            ServerLogs.print($"[WARN] <color=#00000>[Toucan Server Message]</color> {log}");
                             Log.Warn($"[Toucan Server Message] {log}");
                             break;
                         case "error":
                             Log.Error($"[Toucan Server Message] {log}");
+                            break;
+                        case "debug":
+                            Log.Debug($"[Toucan Server Message] {log}");
                             break;
                     }
                     break;
@@ -413,7 +422,7 @@ namespace ToucanPlugin
                 if (ExcludedId != p.UserId)
                 {
                     string Coma = ",";
-                    if (Player.List.ToList().Count - 1 >= i || Player.List.ToList()[i + 1].UserId == ExcludedId && Player.List.ToList().Count >= i)
+                    if (Player.List.ToList().Count - 1 >= i || Player.List.ToList()[i + 1].UserId == ExcludedId && Player.List.ToList().Count <= i)
                         Coma = "";
                     playerList += $"{{\"id\":{p.Id},\"name\":\"{p.Nickname.Replace("\"", "")}\",\"userid\":\"{p.UserId}\", \"role\": \"{p.Role}\",\"room\":\"{p.CurrentRoom.Type}\",\"x\":{p.Position.x},\"y\":{p.Position.y}}}{Coma}";
                 }

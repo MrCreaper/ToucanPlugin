@@ -13,19 +13,23 @@ namespace ToucanPlugin
 {
     public delegate void TcpConDel();
     public delegate void TcpMsgDel(string msg);
+
+    public delegate void IdleModeUpdate(bool newState);
     public class Tcp
     {
-        public event TcpConDel ConnectedEvent;
-        public event TcpMsgDel RecivedMessageEvent;
+        public static event TcpConDel ConnectedEvent;
+        public static event TcpMsgDel RecivedMessageEvent;
+
+        public static event IdleModeUpdate IdleModeUpdateEvent;
 
         readonly int conPort = 173;
         private static Socket S { get; set; } = null;
         readonly static List<String> messageQueue = new List<string>();
-        static public Stopwatch topicUpdateTimer;
-        static public Stopwatch chillTimer = new Stopwatch();
+        private static Stopwatch topicUpdateTimer;
+        private static Stopwatch chillTimer = new Stopwatch();
         public static bool auth = false;
         private static bool connected = false;
-        private static bool connecting = false;
+        public static bool connecting = false;
         private static bool STOP = false;
         public int MaxMessageLenght = 3000;
         const int AuthTimeout = 10000;
@@ -95,7 +99,7 @@ namespace ToucanPlugin
                                         if (DissconnectCounter >= 5)
                                         {
                                             chillTimer.Start();
-                                            Log.Debug("Starting chill");
+                                            Log.Debug("Starting chill", ToucanPlugin.Instance.Config.Debug);
                                             Disconnect("Chill man");
                                         }
                                         if (DissconnectCounter >= 10)
@@ -115,11 +119,11 @@ namespace ToucanPlugin
                                 byte[] bytes = new byte[MaxMessageLenght];
                                 int i = S.Receive(bytes);
                                 string msg = Encoding.UTF8.GetString(bytes);
-                                if (!auth && msg.StartsWith("auth"))
+                                if (!auth && msg.StartsWith("auth")) // Uncomment when you figure out "On Disscounnected"
                                 {
                                     auth = true;
                                     connected = true;
-                                    Log.Debug("Authanticated");
+                                    Log.Debug("Authanticated", ToucanPlugin.Instance.Config.Debug);
                                     ConnectedEvent();
                                     Log.Info("Connected to Toucan Server");
                                 }
@@ -225,20 +229,24 @@ namespace ToucanPlugin
         string lastDebug = "";
         public void Start()
         {
+            Log.Debug("Starting Tcp...");
+            topicUpdateTimer.Restart();
             Task.Factory.StartNew(() =>
             {
+                IdleModeUpdateEvent(IdleMode.IdleModeActive);
                 Thread.Sleep(7000);
-                while (true)
+                while (!IdleMode.IdleModeActive)
                 {
                     try
                     {
-                        if (!IsConnected()) // Just in case
-                            auth = false;
                         if (ToucanPlugin.Instance.Config.Debug)
                         {
-                            string fuckingDebugMsg = $"\nauth: {auth}\nconnected: {IsConnected()}\nconnected 2: {connected}\nconnecting: {connecting}\ndissconnect count: {DissconnectCounter}\nchilling: {chillTimer.IsRunning} [ {chillTimer.ElapsedMilliseconds} ]\nSTOP: {STOP}"
-                            if(lastDebug != fuckingDebugMsg)
-                            Log.Debug(fuckingDebugMsg);
+                            string fuckingDebugMsg = $"\nauth: {auth}\nconnected: {IsConnected()}\nconnected 2: {connected}\nconnecting: {connecting}\ndissconnect count: {DissconnectCounter}\nchilling: {chillTimer.IsRunning} [ {chillTimer.ElapsedMilliseconds} ]\nSTOP: {STOP}";
+                            if (lastDebug != fuckingDebugMsg)
+                            {
+                                lastDebug = fuckingDebugMsg;
+                                Log.Debug(fuckingDebugMsg);
+                            }
                         }
                         if (IsConnected() && auth)
                             SendQueue();
@@ -247,13 +255,16 @@ namespace ToucanPlugin
 
                         if (chillTimer.ElapsedMilliseconds > ChillTimeout)
                             chillTimer.Reset();
-                        Thread.Sleep(2000);
+                        Thread.Sleep(7000);
                     }
                     catch (Exception e)
                     {
                         Log.Error($"Could not connect: {e}");
                     }
                 }
+                // If i fucking uncomment this it all fucking breaks
+                //Log.Debug($"Idle mode updated", ToucanPlugin.Instance.Config.Debug);
+                IdleModeUpdateEvent(IdleMode.IdleModeActive);
             });
         }
     }

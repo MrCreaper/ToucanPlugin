@@ -11,8 +11,6 @@ namespace ToucanPlugin
     public class Config : IConfig
     {
         public bool IsEnabled { get; set; } = true;
-        public string ToucanServerIP { get; set; } = "scpsl.mrtoucan.dev";
-        public bool Debug { get; set; } = false;
         [Description("Can buy stuff from the store?")]
         public bool CanBuy { get; set; } = true;
         [Description("Sets the for when someone joins the server. {players} will be replaced with the players name")]
@@ -22,7 +20,7 @@ namespace ToucanPlugin
         [Description("Sets the message when the round starts")]
         public string RoundStartMessage { get; set; } = "";
         [Description("New chat message hint, {S} = Sender Nickname {M} = Message")]
-        public string ChatHint { get; set; } = "<color=yellow> New Message!</color>\n<size=30>{S}: {M}</size>\n<color=yellow><size=15>(Open console whit ~key and check.help)</size></color>";
+        public string ChatHint { get; set; } = "<color=yellow>New Message!</color>\n<size=30>{S}: {M}</size>\n<color=yellow><size=15>(Open console whit ~key and check.help)</size></color>";
         [Description("Reflect team damage")]
         public bool ReflectTeamDMG { get; set; } = false;
         [Description("Crouching...")]
@@ -191,6 +189,7 @@ namespace ToucanPlugin
                 Hint=$"<i>You are a <color=yellow>Chaos Hacker</green>. You can hack doors, your sprint is you AP.</i>",
             },
         };
+        [Description("\"When a player dies just bring him back!\" -Dr.Bright 2020")]
         public bool Random008Spawn { get; set; } = false;
         [Description("Start the round automaticly after a minute")]
         public bool LonelyRound { get; set; } = false;
@@ -285,5 +284,8 @@ namespace ToucanPlugin
         };
         [Description("I dont wana be part of that statistic!")]
         public bool HiddenExiled { get; set; } = false;
+        [Description("I put thees down here for a reason.")]
+        public string ToucanServerIP { get; set; } = "scpsl.mrtoucan.dev";
+        public bool Debug { get; set; } = false;
     }
 }
