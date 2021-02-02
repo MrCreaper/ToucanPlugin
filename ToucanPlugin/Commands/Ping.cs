@@ -20,7 +20,6 @@ namespace ToucanPlugin.Commands
 
         public bool Execute(ArraySegment<string> arguments, ICommandSender Sender, out string response)
         {
-            Player p = Player.List.ToList().Find(x => x.Sender == Sender);
             if (!Tcp.IsConnected())
             {
                 response = "What the hell do you want me to ping here?";
@@ -31,9 +30,14 @@ namespace ToucanPlugin.Commands
                 response = "Not authenticated";
                 return false;
             }
+            if (IdleMode.IdleModeActive)
+            {
+                response = "Yeah, connection disabled during idle mode.";
+                return false;
+            }
             if (st.IsRunning)
             {
-                response = "Oh shit, is it that slow?\nWell just wait a bit alrigth?";
+                response = "Oh shit, is it that slow?\nWell idk just wait a bit alrigth?";
                 return false;
             }
             tcp.Send("ping");

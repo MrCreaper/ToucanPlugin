@@ -140,7 +140,10 @@ namespace ToucanPlugin.Handlers
                 if (GamemodeLogic.RoundGamemode == GamemodeType.None)
                     Map.Broadcast(5, ToucanPlugin.Instance.Config.RoundStartMessage);
                 else
+                {
+                    GamemodeLogic.BigBrainStarter();
                     Map.Broadcast(5, $"Gamemode: <i><b>{gl.ConvertToNice(GamemodeLogic.RoundGamemode)}</b></i>");
+                }
 
                 if (GamemodeLogic.NextGamemode == GamemodeType.None)
                     Map.Broadcast(5, ToucanPlugin.Instance.Config.RoundStartMessage);

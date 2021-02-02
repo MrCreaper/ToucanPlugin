@@ -21,38 +21,38 @@ namespace ToucanPlugin
         public static bool GamemodesPaused { get; set; } = false;
         public static GamemodeType NextGamemode { get; set; } = GamemodeType.None;
         public static GamemodeType RoundGamemode { get; set; } = GamemodeType.None;
-        public void GamemodeStarter()
+        public static void BigBrainStarter() => GamemodeStarter(NextGamemode);
+        public static void GamemodeStarter(GamemodeType gm)
         {
-            if (RoundGamemode != GamemodeType.None)
-                switch (RoundGamemode)
-                {
-                    case GamemodeType.QuitePlace:
-                        new QuietPlace().Setup();
-                        break;
-                    case GamemodeType.PeanutInfection:
-                        new RealPeanutInfection().Setup();
-                        break;
-                    case GamemodeType.AmongUs:
-                        new AmongUs().Setup();
-                        break;
-                    /*case GamemodeType.CandyRush:
-                        new CandyRush().Setup();
-                        break;*/
-                    case GamemodeType.Scp682:
-                        new Scp682().Setup();
-                        break;
-                    case GamemodeType.LivingNerd:
-                        new LivingNerd().Setup();
-                        break;
-                    case GamemodeType.SpoopyGhosts:
-                        new SpoopyGhosts().Setup();
-                        break;
-                    case GamemodeType.ZombieInfection:
-                        new ZombieInfection().Setup();
-                        break;
-                }
+            switch (gm)
+            {
+                case GamemodeType.QuitePlace:
+                    new QuietPlace().Setup();
+                    break;
+                case GamemodeType.PeanutInfection:
+                    new RealPeanutInfection().Setup();
+                    break;
+                case GamemodeType.AmongUs:
+                    new AmongUs().Setup();
+                    break;
+                /*case GamemodeType.CandyRush:
+                    new CandyRush().Setup();
+                    break;*/
+                case GamemodeType.Scp682:
+                    new Scp682().Setup();
+                    break;
+                case GamemodeType.LivingNerd:
+                    new LivingNerd().Setup();
+                    break;
+                case GamemodeType.SpoopyGhosts:
+                    new SpoopyGhosts().Setup();
+                    break;
+                case GamemodeType.ZombieInfection:
+                    new ZombieInfection().Setup();
+                    break;
+            }
         }
-        public void ClearCache()
+        public void ClearCache() // End of the round stuff
         {
             RoundGamemode = GamemodeType.None;
             AmongUs.DeathCords.Clear();

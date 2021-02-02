@@ -106,10 +106,10 @@ namespace ToucanPlugin
             if (Cmd0.Split(' ')[0].Length == Tcp.MaxMessageLenght || Cmd == "" || Cmd.Length == 1)
             {
                 //Log.Debug($"Empty Data Recived >{Cmd0}<", ToucanPlugin.Instance.Config.Debug);
-                if (!Tcp.IsConnected()) // Just in case
+                if (!Tcp.IsConnected() || !Tcp.connected) // Just in case
                     Tcp.auth = false;
                 if (!Tcp.auth)
-                    Tcp.Disconnect("Not authenticated?");
+                    Tcp.Disconnect("Not authenticated? / Empty data recived");
                 return;
             }
             else

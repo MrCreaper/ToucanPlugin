@@ -43,10 +43,9 @@ namespace ToucanPlugin
         {
             base.OnEnabled();
             Enabled = true;
-            VersionStr = $"{ToucanPlugin.Instance.Version.Major}.{ToucanPlugin.Instance.Version.Minor}.{ToucanPlugin.Instance.Version.Revision}";
-            Log.Info($"Hes right, Toucan Plugin (v{VersionStr}) is enabled");
-            if (ToucanPlugin.Instance.Config.Debug)
-                Log.Debug("Mh. Lets see whats going on...");
+            VersionStr = $"{Instance.Version.Major}.{Instance.Version.Minor}.{Instance.Version.Revision}.{Instance.Version.Build}";
+            Log.Info($"Hes right, {Instance.Name} (v{VersionStr}) is enabled");
+            Log.Debug("Mh. Lets see whats going on...", Instance.Config.Debug);
             RegisterEvents();
             Patch();
             Tcp.Start();
@@ -173,22 +172,25 @@ namespace ToucanPlugin
         }
         public void OnIdlemodeUpdate(bool NewState)
         {
-            // This is an awful idea
+            // This is an awful idea, idle mode is never gonna end if debugs on..
             //Log.Debug($"New idlemode state: {NewState}", ToucanPlugin.Instance.Config.Debug);
             if (!NewState && !Tcp.connecting)
                 Tcp.Start();
         }
-        private async Task AutoUpdate()
+        private async void AutoUpdate()
         {
-            Log.Debug($"Checking for updates... {await AutoUpdater.UpToDate()}", Instance.Config.Debug);
+            /*Release[] Releases = AutoUpdater.GetReleases(AutoUpdater.REPOID).Result;
+            string list = $"{Instance.Name} releases:";
+            Releases.ToList().ForEach(r => list += $"\n{r.TagName}");
+            Log.Debug(list);*/
             if (Instance.Config.Debug)
-                if (await AutoUpdater.UpToDate())
+                if (AutoUpdater.UpToDate().Result)
                     Log.Debug("No updates");
                 else Log.Debug("Update found");
             while (true)
             {
                 Log.Debug("Checking for updates... again...", Instance.Config.Debug);
-                if (!await AutoUpdater.UpToDate())
+                if (!AutoUpdater.UpToDate().Result)
                 {
                     Log.Info("Update found");
                     await AutoUpdater.Update();

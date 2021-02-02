@@ -25,10 +25,10 @@ namespace ToucanPlugin
         readonly int conPort = 173;
         private static Socket S { get; set; } = null;
         readonly static List<String> messageQueue = new List<string>();
-        private static Stopwatch topicUpdateTimer;
+        private static Stopwatch topicUpdateTimer = new Stopwatch();
         private static Stopwatch chillTimer = new Stopwatch();
         public static bool auth = false;
-        private static bool connected = false;
+        public static bool connected = false;
         public static bool connecting = false;
         private static bool STOP = false;
         public int MaxMessageLenght = 3000;
@@ -39,6 +39,7 @@ namespace ToucanPlugin
         {
             if (connecting || IsConnected() || auth || connected) return;
             connecting = true;
+            Log.Debug("Starting Tcp Main", ToucanPlugin.Instance.Config.Debug);
             try
             {
                 // Define those variables to be evaluated in the next for loop and
@@ -95,7 +96,7 @@ namespace ToucanPlugin
                                     if (authTimer.ElapsedMilliseconds > AuthTimeout && !auth && !IsConnected())
                                     {
                                         DissconnectCounter++;
-                                        Log.Debug($"Authenication Timed out [{DissconnectCounter}]. FUCK", ToucanPlugin.Instance.Config.Debug);
+                                        Log.Debug($"Authenication timed out [{DissconnectCounter}]. FUCK", ToucanPlugin.Instance.Config.Debug);
                                         if (DissconnectCounter >= 5)
                                         {
                                             chillTimer.Start();
@@ -127,7 +128,9 @@ namespace ToucanPlugin
                                     ConnectedEvent();
                                     Log.Info("Connected to Toucan Server");
                                 }
-                                else RecivedMessageEvent(msg);
+                                else
+                                    if (auth)
+                                    RecivedMessageEvent(msg);
                                 Thread.Sleep(30000);
                             }
                             catch (Exception e)
@@ -148,6 +151,7 @@ namespace ToucanPlugin
         {
             auth = false;
             connected = false;
+            connecting = false;
             if (IsConnected())
                 S.Disconnect(false);
             Log.Debug($"Disconnected, {Reason}", ToucanPlugin.Instance.Config.Debug);
@@ -233,8 +237,8 @@ namespace ToucanPlugin
             topicUpdateTimer.Restart();
             Task.Factory.StartNew(() =>
             {
-                IdleModeUpdateEvent(IdleMode.IdleModeActive);
                 Thread.Sleep(7000);
+                //IdleModeUpdateEvent(IdleMode.IdleModeActive);
                 while (!IdleMode.IdleModeActive)
                 {
                     try

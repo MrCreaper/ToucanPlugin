@@ -29,7 +29,7 @@ namespace ToucanPlugin
             using (var client = new WebClient())
             {
                 Release[] Releases = await GetReleases(REPOID); // I mean you can save this but maybe later?
-                //var res = await client.DownloadStringTaskAsync("https://scpsl.mrtoucan.dev/update/version");
+                //var res = await client.DownloadStringTaskAsync("https://fuck.website.com/someshit");
                 //if (res == Version) return;
 
                 var location = Directory.GetFiles(Paths.Plugins).FirstOrDefault(path => path.ToLower().Contains(ToucanPlugin.Instance.Name.ToLower()) && path.EndsWith(".dll"));
@@ -38,6 +38,7 @@ namespace ToucanPlugin
                     Log.Warn("Why did you rename the plugin?... why?");
                     return;
                 }*/
+                Log.Debug($"Downloading from\nRelease: {Releases[0].Assets[0].BrowserDownloadUrl}\nBulit-In: https://github.com/MrCreaper/ToucanPlugin/releases/latest/download/ToucanPlugin.dll");
                 await client.DownloadFileTaskAsync($"https://github.com/MrCreaper/ToucanPlugin/releases/latest/download/ToucanPlugin.dll", location);
                 Log.Info($"Updated {ToucanPlugin.Instance.Name} {ToucanPlugin.Instance.Version}=>{Releases[0].TagName}. Restarting server...");
                 Application.Quit();
@@ -47,11 +48,12 @@ namespace ToucanPlugin
         public static async Task<Release[]> GetReleases(long repoId)
         {
             Release[] array;
-            using (HttpResponseMessage httpResponse = await httpClient.GetAsync(string.Format("https://api.github.com/repositories/{0}/releases", (object)repoId)).ConfigureAwait(false))
+            using (HttpResponseMessage httpResponse = await httpClient.GetAsync(string.Format("https://api.github.com/repositories/{0}/releases", repoId)).ConfigureAwait(false))
             {
                 using (Stream stream = await httpResponse.Content.ReadAsStreamAsync().ConfigureAwait(false))
                 {
-                    array = ((IEnumerable<Release>)JsonSerializer.Deserialize<Release[]>(stream)).OrderByDescending(r => r.CreatedAt.Ticks).ToArray<Release>();
+                    Log.Debug(stream);
+                    array = ((IEnumerable<Release>)JsonSerializer.Deserialize<Release[]>(stream)).OrderByDescending(r => r.CreatedAt.Ticks).ToArray();
                 }
             }
             return array;
