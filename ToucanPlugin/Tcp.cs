@@ -8,6 +8,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using ToucanPlugin.API;
 
 namespace ToucanPlugin
 {
@@ -23,7 +24,7 @@ namespace ToucanPlugin
         public static event IdleModeUpdate IdleModeUpdateEvent;
 
         readonly int conPort = 173;
-        private static Socket S { get; set; } = null;
+        public static Socket S { get; set; } = null;
         readonly static List<String> messageQueue = new List<string>();
         private static Stopwatch topicUpdateTimer = new Stopwatch();
         private static Stopwatch chillTimer = new Stopwatch();
@@ -229,6 +230,39 @@ namespace ToucanPlugin
             }
             if (messageQueue.Count != 0)
                 Log.Error("Could not send all messages.");
+        }
+        public string Ping(int count = 4)
+        {
+            IPEndPoint hostEndPoint;
+            IPAddress hostAddress = null;
+            var times = new List<double>();
+            for (int i = 0; i < count; i++)
+            {
+                var sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                sock.Blocking = true;
+
+                var stopwatch = new Stopwatch();
+
+                // Measure the Connect call only
+                stopwatch.Start();
+                if (ToucanPlugin.Instance.Config.ToucanServerIP == "") { Log.Warn($"No Toucan Server ip set!"); return "No ip set"; };
+                IPHostEntry hostInfo = Dns.GetHostEntry(ToucanPlugin.Instance.Config.ToucanServerIP);
+                // Get the DNS IP addresses associated with the host.
+                IPAddress[] IPaddresses = hostInfo.AddressList;
+                hostAddress = IPaddresses[0];
+                hostEndPoint = new IPEndPoint(hostAddress, conPort);
+                sock.Connect(hostEndPoint);
+                stopwatch.Stop();
+
+                double t = stopwatch.Elapsed.TotalMilliseconds;
+                Console.WriteLine("{0:0.00}ms", t);
+                times.Add(t);
+
+                sock.Close();
+
+                Thread.Sleep(1000);
+            }
+            return $"avg: {times.Avg()}ms\nmin: {times.Min()}ms\nmax: {times.Max()}ms";
         }
         string lastDebug = "";
         public void Start()

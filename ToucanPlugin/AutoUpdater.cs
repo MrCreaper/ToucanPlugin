@@ -52,7 +52,6 @@ namespace ToucanPlugin
             {
                 using (Stream stream = await httpResponse.Content.ReadAsStreamAsync().ConfigureAwait(false))
                 {
-                    Log.Debug(stream);
                     array = ((IEnumerable<Release>)JsonSerializer.Deserialize<Release[]>(stream)).OrderByDescending(r => r.CreatedAt.Ticks).ToArray();
                 }
             }

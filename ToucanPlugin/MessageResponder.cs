@@ -233,7 +233,7 @@ namespace ToucanPlugin
 
                 case "restartRound":
                     Log.Info("Remote restart round recived.");
-                    Round.Restart();
+                    Round.ForceEnd();
                     break;
 
                 case "store":

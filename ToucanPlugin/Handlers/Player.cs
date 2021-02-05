@@ -33,7 +33,7 @@ namespace ToucanPlugin.Handlers
                 return;
             }
         }
-        public void OnJoin(JoinedEventArgs ev)
+        public void OnJoin(VerifiedEventArgs ev)
         {
             if (ToucanPlugin.Instance.Config.ReplaceAdvertismentNames)
             {
@@ -69,7 +69,7 @@ namespace ToucanPlugin.Handlers
                 Task.Factory.StartNew(() => LonelyRound());
             mr.UpdatePlayerList();
         }
-        public void OnLeft(LeftEventArgs ev)
+        public void OnLeft(DestroyingEventArgs ev)
         {
             string message = ToucanPlugin.Instance.Config.LeftMessage.Replace("{player}", ev.Player.Nickname);
             Map.Broadcast(2, message);
@@ -80,7 +80,7 @@ namespace ToucanPlugin.Handlers
                 Log.Warn("Empty server, restarting...");
                 GamemodeLogic.NextGamemode = GamemodeType.None;
                 if (ToucanPlugin.Instance.Config.RestartEmptyServer)
-                    Round.Restart();
+                    Round.ForceEnd();
             }
             UpdateVoiceChannel(ev.Player, RoleType.None);
         }
