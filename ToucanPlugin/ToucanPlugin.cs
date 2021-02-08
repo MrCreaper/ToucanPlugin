@@ -110,8 +110,8 @@ namespace ToucanPlugin
             Server.SendingRemoteAdminCommand += server.OnSendingRemoteAdminCommand;
 
             Player.PreAuthenticating += player.OnPreAuthenticating;
-            Player.Verified += player.OnJoin;
-            Player.Destroying += player.OnLeft;
+            Player.Joined += player.OnJoin;
+            Player.Left += player.OnLeft;
             Player.Escaping += player.OnEscape;
             Player.Died += player.OnDied;
             Player.Spawning += player.OnSpawned;
@@ -151,8 +151,8 @@ namespace ToucanPlugin
             Server.SendingRemoteAdminCommand -= server.OnSendingRemoteAdminCommand;
 
             Player.PreAuthenticating -= player.OnPreAuthenticating;
-            Player.Verified -= player.OnJoin;
-            Player.Destroying -= player.OnLeft;
+            Player.Joined -= player.OnJoin;
+            Player.Left -= player.OnLeft;
             Player.Escaping -= player.OnEscape;
             Player.Died -= player.OnDied;
             Player.Spawning -= player.OnSpawned;

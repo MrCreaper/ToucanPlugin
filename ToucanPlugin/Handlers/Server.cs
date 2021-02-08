@@ -291,13 +291,14 @@ namespace ToucanPlugin.Handlers
             ToucanPlugin.Instance.Config.CustomSquads.ForEach(s =>
             {
                 bool Invalid = false;
-                string list = "";
+                string list = $"";
                 typeof(CustomSquadSpawns).GetMembers().ToList().ForEach(x =>
                 {
-                    if (!s.GetType().IsDefined(x.GetType(), false))
+                    Log.Warn($"{s.GetType()} {x.GetType()}");
+                    if (!s.GetType().IsDefined(x.GetType(), true))
                     {
                         Invalid = true;
-                        list += $"\n{x.ToString()}";
+                        list += $"\n{x}";
                     }
                 });
                 if (Invalid)

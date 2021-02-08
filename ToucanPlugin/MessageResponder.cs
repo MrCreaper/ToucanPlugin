@@ -34,6 +34,7 @@ namespace ToucanPlugin
     using CustomExtensions;
     class MessageResponder
     {
+        private const int V = 1;
         readonly Tcp Tcp = new Tcp();
         readonly Whitelist wl = new Whitelist();
         public List<string> BestBois;
@@ -411,6 +412,23 @@ namespace ToucanPlugin
                 case "map":
                     UpdateMap();
                     break;
+
+                case "twitch":
+                    // twitch [Channel name] [player id] [other shit like follow/bits]
+                    if (!ToucanPlugin.Instance.Config.TwitchPlays) return;
+                    if (ToucanPlugin.Instance.Config.TwitchPlaysChannelWhitelist.Count != 0)
+                        if (!ToucanPlugin.Instance.Config.TwitchPlaysChannelWhitelist.Contains(Cmds[2])) return;
+                    if(!int.TryParse(Cmds[4], out _) && Cmds[4] == "follow") // Should maybe make this disablable? for server stability concerns..
+                    {
+                        Player channel = Player.List.ToList().Find(x => x.UserId == Cmds[3]);
+                        Npc follow = NPCS.Methods.CreateNPC(new UnityEngine.Vector3(), new UnityEngine.Vector2(), new UnityEngine.Vector3((float)new Random().NextDouble(), (float)new Random().NextDouble(), (float)new Random().NextDouble()), (RoleType)Enum.GetValues(typeof(RoleType)).GetValue(new Random().Next(0, Enum.GetValues(typeof(RoleType)).Length)), (ItemType)Enum.GetValues(typeof(ItemType)).GetValue(new Random().Next(0, Enum.GetValues(typeof(ItemType)).Length)), Cmds[5]);
+                        follow.Follow(channel);
+                        channel.ShowHint($"New follower!\n<color=yellow>{Cmds[5]}</color>",4);
+                    }
+                    else
+                    switch (Cmds[4]) {
+                    }
+                    break;
             }
         }
         public string UpdatePlayerList(string ExcludedId = "", bool autoSend = true)
@@ -419,8 +437,10 @@ namespace ToucanPlugin
             for (int i = 0; i <= Exiled.API.Features.Player.List.ToList().Count - 1; i++)
             {
                 Exiled.API.Features.Player p = Exiled.API.Features.Player.List.ToList()[i];
+                if (p == null) Log.Warn("MISSING PLAYER");
                 if (ExcludedId != p.UserId)
                 {
+                    Log.Warn($"{Player.List.ToList().Count - 1 >= i} {Player.List.ToList()[i + 1].UserId == ExcludedId} {Player.List.ToList().Count <= i} == {Player.List.ToList().Count - 1 >= i || Player.List.ToList()[i + 1].UserId == ExcludedId && Player.List.ToList().Count <= i}");
                     string Coma = ",";
                     if (Player.List.ToList().Count - 1 >= i || Player.List.ToList()[i + 1].UserId == ExcludedId && Player.List.ToList().Count <= i)
                         Coma = "";

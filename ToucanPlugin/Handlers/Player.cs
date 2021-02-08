@@ -33,8 +33,9 @@ namespace ToucanPlugin.Handlers
                 return;
             }
         }
-        public void OnJoin(VerifiedEventArgs ev)
+        public void OnJoin(JoinedEventArgs ev)
         {
+            if (ev.Player == null) Log.Warn("oh shit");
             if (ToucanPlugin.Instance.Config.ReplaceAdvertismentNames)
             {
                 List<string> PlayerNameSplit = new List<string>(ev.Player.Nickname.Split(' '));
@@ -69,7 +70,7 @@ namespace ToucanPlugin.Handlers
                 Task.Factory.StartNew(() => LonelyRound());
             mr.UpdatePlayerList();
         }
-        public void OnLeft(DestroyingEventArgs ev)
+        public void OnLeft(LeftEventArgs ev)
         {
             string message = ToucanPlugin.Instance.Config.LeftMessage.Replace("{player}", ev.Player.Nickname);
             Map.Broadcast(2, message);

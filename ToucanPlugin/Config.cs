@@ -13,6 +13,10 @@ namespace ToucanPlugin
         public bool IsEnabled { get; set; } = true;
         [Description("Can buy stuff from the store?")]
         public bool CanBuy { get; set; } = true;
+        [Description("I dont trust \"Chat\"")]
+        public bool TwitchPlays { get; set; } = false;
+        [Description("Leave empty to disable. For if you have trust issues")]
+        public List<string> TwitchPlaysChannelWhitelist { get; set; } = new List<string>();
         [Description("Sets the for when someone joins the server. {players} will be replaced with the players name")]
         public string JoinedMessage { get; set; } = "{player} has joined the server.";
         [Description("Sets the for when someone leaves the server. {players} will be replaced with the players name")]
