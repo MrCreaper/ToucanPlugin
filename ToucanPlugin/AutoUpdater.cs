@@ -14,13 +14,21 @@ namespace ToucanPlugin
     public class AutoUpdater
     {
         public const long REPOID = 297982389;
+        public const long ExiledREPOID = 51658450;
         public static string GitHubGetReleasesTemplate = $"https://api.github.com/repositories/{REPOID}/releases";
         private static HttpClient httpClient = CreateHttpClient();
 
         public static async Task<bool> UpToDate()
         {
             Release[] Releases = await GetReleases(REPOID);
-            if (ToucanPlugin.Instance.VersionStr == Releases[0].TagName) return true;
+            if (ToucanPlugin.Instance.Version.ToString() == Releases[0].TagName) return true;
+            return false;
+        }
+
+        public static async Task<bool> UpToDateExiled()
+        {
+            Release[] Releases = await GetReleases(REPOID);
+            if (Exiled.Loader.Loader.Version.ToString() == Releases[0].TagName) return true;
             return false;
         }
 

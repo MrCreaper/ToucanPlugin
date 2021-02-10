@@ -267,7 +267,7 @@ namespace ToucanPlugin
         string lastDebug = "";
         public void Start()
         {
-            Log.Debug("Starting Tcp...");
+            Log.Debug("Starting Tcp...", ToucanPlugin.Instance.Config.Debug);
             topicUpdateTimer.Restart();
             Task.Factory.StartNew(() =>
             {

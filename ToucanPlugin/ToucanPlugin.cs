@@ -37,14 +37,16 @@ namespace ToucanPlugin
         private ToucanPlugin()
         {
         }
-        public string VersionStr { get; private set; }
-        public bool Enabled { get; private set; }
+        public bool Enabled { get; private set; } = false;
         public override void OnEnabled()
         {
+            if (Instance.RequiredExiledVersion > Loader.Version && !Instance.Config.Debug) {
+                Log.Error($"Nope. Exiled {Instance.RequiredExiledVersion}^");
+                return;
+            };
             base.OnEnabled();
             Enabled = true;
-            VersionStr = $"{Instance.Version.Major}.{Instance.Version.Minor}.{Instance.Version.Revision}.{Instance.Version.Build}";
-            Log.Info($"Hes right, {Instance.Name} (v{VersionStr}) is enabled");
+            Log.Info($"Hes right, {Instance.Name} (v{Instance.Version}) is enabled");
             Log.Debug("Mh. Lets see whats going on...", Instance.Config.Debug);
             RegisterEvents();
             Patch();

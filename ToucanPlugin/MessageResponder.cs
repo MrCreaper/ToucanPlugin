@@ -494,7 +494,7 @@ namespace ToucanPlugin
             return resultFUCK;
         }
         public void SendStaticInfo() =>
-            Tcp.Send($"infoS [\"{Server.Name.Replace("\"", "")}\", \"{CleanServerName(Server.Name.Replace("\"", ""))}\", \"{Server.IpAddress}:{Server.Port}\", \"{Server.FriendlyFire}\", \"{GameCore.Version.VersionString}\", \"{Exiled.Loader.Loader.Version}\", \"{ToucanPlugin.Instance.VersionStr}\"]");
+            Tcp.Send($"infoS [\"{Server.Name.Replace("\"", "")}\", \"{CleanServerName(Server.Name.Replace("\"", ""))}\", \"{Server.IpAddress}:{Server.Port}\", \"{Server.FriendlyFire}\", \"{GameCore.Version.VersionString}\", \"{Exiled.Loader.Loader.Version}\", \"{ToucanPlugin.Instance.Version}\"]");
         public void SendInfo() =>
             Tcp.Send($"infoR [\"{Round.IsStarted}\", \"{Round.IsLocked}\", \"{Round.IsLobbyLocked}\", \"{Round.ElapsedTime.Days}d:{Round.ElapsedTime.Hours}h:{Round.ElapsedTime.Minutes}m:{Round.ElapsedTime.Seconds}s.{Round.ElapsedTime.Milliseconds}ms\", \"{Map.IsLCZDecontaminated}\", {Map.ActivatedGenerators}, \"{GamemodeLogic.RoundGamemode}\", \"{GamemodeLogic.NextGamemode}\"]");
         private void FrameDataToIcom(Images.FrameData fd) { Log.Info($">{fd.Data}<"); Intercom.host.UpdateIntercomText(fd.Data); }
