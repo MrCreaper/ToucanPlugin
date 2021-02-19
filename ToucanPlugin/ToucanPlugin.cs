@@ -13,11 +13,9 @@ namespace ToucanPlugin
     public class ToucanPlugin : Plugin<Config>
     {
         readonly Tcp Tcp = new Tcp();
-        public static ToucanPlugin Singleton;
-        public Harmony Instance;
 
-        public override Version Version { get; } = Singleton.Version;
-        public override Version RequiredExiledVersion { get; } = new Version(2, 2, 4, 0);
+        public override Version Version { get; } = new Version(1, 0, 0);
+        public override Version RequiredExiledVersion { get; } = new Version(2, 2, 5);
 
         public override PluginPriority Priority { get; } = PluginPriority.Medium;
 
@@ -30,20 +28,19 @@ namespace ToucanPlugin
 
         private int _patchcounter;
 
-        public Harmony Harmony { get; private set; }
+        public static ToucanPlugin Singleton;
+        public Harmony Instance;
 
-        private ToucanPlugin()
-        {
-        }
         public override void OnEnabled()
         {
+            Singleton = this;
             Log.Debug("Mh. Lets see whats going on...", Singleton.Config.Debug);
             RegisterEvents();
             Patch();
+            base.OnEnabled();
             Tcp.Start();
             //ToucanPlugin.Singleton.Config.PlayerCountMentions.ForEach(r => server.LastPlayerCountMentions.Add(r.PlayerCount, false));
             Task.Factory.StartNew(() => AutoUpdate());
-            base.OnEnabled();
         }
         public override void OnDisabled()
         {
@@ -57,12 +54,12 @@ namespace ToucanPlugin
         {
             try
             {
-                Harmony = new Harmony($"ToucanPlugin.{++_patchcounter}");
+                Instance = new Harmony($"ToucanPlugin.{++_patchcounter}");
 
                 var lastDebugStatus = Harmony.DEBUG;
                 Harmony.DEBUG = true;
 
-                Harmony.PatchAll();
+                Instance.PatchAll();
 
                 Harmony.DEBUG = lastDebugStatus;
 
@@ -75,7 +72,7 @@ namespace ToucanPlugin
         }
         private void Unpatch()
         {
-            Harmony.UnpatchAll();
+            Instance.UnpatchAll();
 
             Log.Debug($"Patches have been undone!", Loader.ShouldDebugBeShown);
         }
@@ -175,6 +172,7 @@ namespace ToucanPlugin
             string list = $"{Singleton.Name} releases:";
             Releases.ToList().ForEach(r => list += $"\n{r.TagName}");
             Log.Debug(list);*/
+            //Log.Warn(AutoUpdater.DebugReleaseToString(await AutoUpdater.GetReleases(AutoUpdater.REPOID)));
             if (Singleton.Config.Debug)
                 if (AutoUpdater.UpToDate().Result)
                     Log.Debug("No updates");

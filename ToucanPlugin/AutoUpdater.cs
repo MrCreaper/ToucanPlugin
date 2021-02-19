@@ -11,23 +11,36 @@ using Utf8Json;
 
 namespace ToucanPlugin
 {
+    public class ReleaseThing { 
+    }
     public class AutoUpdater
     {
-        public const long REPOID = 297982389;
+        public const long REPOID = 297982389; // curl https://api.github.com/repos/MrCreaper/ToucanPlugin
         public const long ExiledREPOID = 51658450;
         public static string GitHubGetReleasesTemplate = $"https://api.github.com/repositories/{REPOID}/releases";
         private static HttpClient httpClient = CreateHttpClient();
 
+        public static string DebugReleaseToString(Release[] input)
+        {
+            string output = $"Releases found: {input.Length}";
+            input.ToList().ForEach(r => {
+                output += $"\n{r.TagName}";
+            });
+            return output;
+        }
+
         public static async Task<bool> UpToDate()
         {
-            Release[] Releases = await GetReleases(REPOID);
+            Release[] Releases = await GetReleases(ExiledREPOID);
+            Log.Debug(DebugReleaseToString(Releases));
+            Log.Debug($"Current version: {ToucanPlugin.Singleton.Version}\nNew version: {Releases[0].TagName}", ToucanPlugin.Singleton.Config.Debug);
             if (ToucanPlugin.Singleton.Version.ToString() == Releases[0].TagName) return true;
             return false;
         }
 
         public static async Task<bool> UpToDateExiled()
         {
-            Release[] Releases = await GetReleases(REPOID);
+            Release[] Releases = await GetReleases(ExiledREPOID);
             if (Exiled.Loader.Loader.Version.ToString() == Releases[0].TagName) return true;
             return false;
         }
@@ -56,7 +69,7 @@ namespace ToucanPlugin
         public static async Task<Release[]> GetReleases(long repoId)
         {
             Release[] array;
-            using (HttpResponseMessage httpResponse = await httpClient.GetAsync(string.Format("https://api.github.com/repositories/{0}/releases", repoId)).ConfigureAwait(false))
+            using (HttpResponseMessage httpResponse = await httpClient.GetAsync(string.Format($"https://api.github.com/repositories/{repoId}/releases")).ConfigureAwait(false))
             {
                 using (Stream stream = await httpResponse.Content.ReadAsStreamAsync().ConfigureAwait(false))
                 {
