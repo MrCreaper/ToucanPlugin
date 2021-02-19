@@ -55,7 +55,7 @@ namespace ToucanPlugin.Commands
                         /*if (Handlers.Player.petConnections[PCplayer.CCM.UserId]) // ???
                         {
                             Handlers.Player.petConnections.Remove(PCplayer.CCM.UserId);
-                            NPCS.Npc.Dictionary.ToList().Find(x => x.Value.GetInstanceID() == Handlers.Player.petConnections[PCplayer.CCM.UserId]).Value.Kill(false);
+                            NPCS.Npc.Dictionary.ToList().Find(x => x.Value.GetSingletonID() == Handlers.Player.petConnections[PCplayer.CCM.UserId]).Value.Kill(false);
                             response = $"Unequiping...";
                             return true;
                         }

@@ -15,69 +15,6 @@ using UnityEngine;
 
 namespace ToucanPlugin.Handlers
 {
-    public class XYZ
-    {
-        public float X { get; set; }
-        public float Y { get; set; }
-        public float Z { get; set; }
-
-        public Vector3 ToVector3(XYZ xyz)
-        {
-            return new Vector3(xyz.X, xyz.Y, xyz.Z);
-        }
-    }
-    public class PlayerCountMentionsClass
-    {
-        public int PlayerCount { get; set; }
-        public string RoleID { get; set; }
-    }
-    public enum AbilityType
-    {
-        None = 0,
-        HealingGrenade = 1,
-        DoorHacking = 2,
-        IcomDisabling = 3,
-        Blackout = 4,
-        RadioDisabling = 4,
-    }
-    public class CustomSquadSpawns
-    {
-        public bool Enabled { get; set; }
-        public string Name { get; set; } // Just for the user
-        public Respawning.SpawnableTeamType Team { get; set; }
-        public int ReplaceChance { get; set; } // Chance 1-100 for [name] to spawn insteed of [team] (0 for scpKill)
-        public RoleType Role { get; set; }
-        public int MaxHealth { get; set; }
-        public int MaxAdrenalin { get; set; }
-        public int MaxEnergy { get; set; }
-        public List<int> Items { get; set; }
-        public List<int> CommanderItems { get; set; }
-        public RoleType PreSetSpawnPos { get; set; }
-        public XYZ SpawnPos { get; set; }
-        public int SquadMaxSize { get; set; }
-        public int MaxSCPKills { get; set; }
-        public int MinSCPKills { get; set; }
-        public string CassieAnnc { get; set; }
-    }
-    public class CustomPersonelSpawns
-    {
-        public bool Enabled { get; set; }
-        public string Name { get; set; } // Just for the user
-        public RoleType Role { get; set; }
-        public int PlayerCount { get; set; }
-        public int MaxSCPKills { get; set; }
-        public int MinSCPKills { get; set; }
-        public int ReplaceChance { get; set; } // Chance 1-100 for [name] to spawn insteed of [team] (0 for scpKill)
-        public int MaxHealth { get; set; }
-        public int MaxEnergy { get; set; }
-        public int MaxAdrenalin { get; set; }
-        public List<int> Items { get; set; }
-        public RoleType PreSetSpawnPosRole { get; set; }
-        public RoomType PreSetSpawnPosRoom { get; set; }
-        public XYZ SpawnPos { get; set; }
-        public string Hint { get; set; }
-        public List<AbilityType> Abilities { get; set; }
-    }
     class GamemodeChanceArrayThing
     {
         public GamemodeType Gamemode { get; set; }
@@ -112,13 +49,13 @@ namespace ToucanPlugin.Handlers
                 List<GamemodeType> GamemodesToAdd = new List<GamemodeType>();
                 foreach (GamemodeType Type in (GamemodeType[])Enum.GetValues(typeof(GamemodeType)))
                 {
-                    if (!ToucanPlugin.Instance.Config.GamemodeChances.ContainsKey(Type))
-                        ToucanPlugin.Instance.Config.GamemodeChances.Add(Type, 0);
+                    if (!ToucanPlugin.Singleton.Config.GamemodeChances.ContainsKey(Type))
+                        ToucanPlugin.Singleton.Config.GamemodeChances.Add(Type, 0);
                 }
                 int Chance = 0;
                 int NoChance = 0;
-                int TotalChance = ToucanPlugin.Instance.Config.GamemodeChances.Count() * 100;
-                ToucanPlugin.Instance.Config.GamemodeChances.ToList().ForEach(g =>
+                int TotalChance = ToucanPlugin.Singleton.Config.GamemodeChances.Count() * 100;
+                ToucanPlugin.Singleton.Config.GamemodeChances.ToList().ForEach(g =>
                 {
                     Chance += g.Value;
                     NoChance += 100 - g.Value;
@@ -128,7 +65,7 @@ namespace ToucanPlugin.Handlers
                 int RandomGamemodeNumber = rnd.Next(0, EndMaxChance);
                 int i = 0;
                 bool found = false;
-                ToucanPlugin.Instance.Config.GamemodeChances.ToList().ForEach(g =>
+                ToucanPlugin.Singleton.Config.GamemodeChances.ToList().ForEach(g =>
             {
                 i += g.Value;
                 if (i >= RandomGamemodeNumber && !found)
@@ -138,7 +75,7 @@ namespace ToucanPlugin.Handlers
                 }
             });
                 if (GamemodeLogic.RoundGamemode == GamemodeType.None)
-                    Map.Broadcast(5, ToucanPlugin.Instance.Config.RoundStartMessage);
+                    Map.Broadcast(5, ToucanPlugin.Singleton.Config.RoundStartMessage);
                 else
                 {
                     GamemodeLogic.BigBrainStarter();
@@ -146,11 +83,11 @@ namespace ToucanPlugin.Handlers
                 }
 
                 if (GamemodeLogic.NextGamemode == GamemodeType.None)
-                    Map.Broadcast(5, ToucanPlugin.Instance.Config.RoundStartMessage);
+                    Map.Broadcast(5, ToucanPlugin.Singleton.Config.RoundStartMessage);
                 else
                     Map.Broadcast(5, $"Next Round Gamemode: <i><b>{gl.ConvertToNice(GamemodeLogic.NextGamemode)}</b></i>");
 
-                /*ToucanPlugin.Instance.Config.PlayerCountMentions.ToList().ForEach(r =>
+                /*ToucanPlugin.Singleton.Config.PlayerCountMentions.ToList().ForEach(r =>
                 {
                     if (Whitelist.Whitelisted) return;
                     if (!LastPlayerCountMentions[r.PlayerCount] && Exiled.API.Features.Player.List.ToList().Count == r.PlayerCount)
@@ -174,7 +111,7 @@ namespace ToucanPlugin.Handlers
         }
         public void OnRoundEnded(RoundEndedEventArgs ev)
         {
-            if (ToucanPlugin.Instance.Config.DetonateAtRoundEnded && Warhead.IsDetonated)
+            if (ToucanPlugin.Singleton.Config.DetonateAtRoundEnded && Warhead.IsDetonated)
             {
                 Warhead.Detonate();
                 Warhead.DetonationTimer = ev.TimeToRestart;
@@ -288,7 +225,7 @@ namespace ToucanPlugin.Handlers
             List<Exiled.API.Features.Player> playerList = new List<Exiled.API.Features.Player>(ev.Players);
             Vector3 MTFSpawnLocaltion = new Vector3(0, 0, 0);
             CustomSquadSpawns Squad = null;
-            ToucanPlugin.Instance.Config.CustomSquads.ForEach(s =>
+            ToucanPlugin.Singleton.Config.CustomSquads.ForEach(s =>
             {
                 bool Invalid = false;
                 string list = $"";

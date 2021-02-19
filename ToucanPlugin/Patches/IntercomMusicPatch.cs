@@ -6,7 +6,7 @@ namespace ToucanPlugin.Patches
     [HarmonyPatch(nameof(Intercom._StartTransmitting))]
     internal static class IntercomPatch
     {
-        static bool Prefix(Intercom __instance)
+        static bool Prefix(Intercom __Singleton)
         {
 
         }

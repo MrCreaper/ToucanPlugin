@@ -36,8 +36,7 @@ namespace ToucanPlugin.Commands
                 }
                 else
                 {
-                    var isNumeric = int.TryParse(args[1], out int gameNum);
-                    if (isNumeric == true)
+                    if (int.TryParse(args[1], out int gameNum))
                     {
                         GamemodeLogic.NextGamemode = (GamemodeType)gameNum;
                         response = "Gamemode set for next round.";

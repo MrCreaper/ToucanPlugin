@@ -106,7 +106,7 @@ namespace ToucanPlugin
             List<string> Cmds = new List<string>(Cmd.Split(' '));
             if (Cmd0.Split(' ')[0].Length == Tcp.MaxMessageLenght || Cmd == "" || Cmd.Length == 1)
             {
-                //Log.Debug($"Empty Data Recived >{Cmd0}<", ToucanPlugin.Instance.Config.Debug);
+                //Log.Debug($"Empty Data Recived >{Cmd0}<", ToucanPlugin.Singleton.Config.Debug);
                 if (!Tcp.IsConnected() || !Tcp.connected) // Just in case
                     Tcp.auth = false;
                 if (!Tcp.auth)
@@ -114,11 +114,11 @@ namespace ToucanPlugin
                 return;
             }
             else
-                Log.Debug($"Recived >{Cmd}<", ToucanPlugin.Instance.Config.Debug);
+                Log.Debug($"Recived >{Cmd}<", ToucanPlugin.Singleton.Config.Debug);
             switch (Cmds[0])
             {
                 default:
-                    Log.Debug("The fuck is that?", ToucanPlugin.Instance.Config.Debug);
+                    Log.Debug("The fuck is that?", ToucanPlugin.Singleton.Config.Debug);
                     return;
 
                 case "ping":
@@ -203,7 +203,7 @@ namespace ToucanPlugin
                     if (Cmds[3] != null)
                         kickreason = Cmd.Replace($"kick {Cmds[1]} {Cmds[2]} ", "");
                     else
-                        kickreason = ToucanPlugin.Instance.Config.DefaultKickReason.Replace("{kicker}", Cmds[2]);
+                        kickreason = ToucanPlugin.Singleton.Config.DefaultKickReason.Replace("{kicker}", Cmds[2]);
                     Player.List.ToList().Find(x => x.UserId.Contains(Cmds[1])).Kick(kickreason, Cmds[1]);
                     Tcp.Send(Cmd);
                     break;
@@ -214,7 +214,7 @@ namespace ToucanPlugin
                     if (Cmds[2] != null)
                         kickallreason = Cmd.Replace($"kickall {Cmds[1]} ", "");
                     else
-                        kickallreason = ToucanPlugin.Instance.Config.DefaultKickAllReason.Replace("{kicker}", Cmds[1]);
+                        kickallreason = ToucanPlugin.Singleton.Config.DefaultKickAllReason.Replace("{kicker}", Cmds[1]);
                     Player.List.ToList().ForEach(user => user.Kick(kickallreason));
                     Tcp.Send(Cmd);
                     Tcp.SendLog($"Everyone was kicked remotly by {Cmds[1]}");
@@ -226,7 +226,7 @@ namespace ToucanPlugin
                     if (Cmds[4] != null)
                         banreason = Cmd.Replace($"ban {Cmds[1]} {Cmds[2]} {Cmds[3]} ", "");
                     else
-                        banreason = ToucanPlugin.Instance.Config.DefaultBanReason.Replace("{banner}", Cmds[3]);
+                        banreason = ToucanPlugin.Singleton.Config.DefaultBanReason.Replace("{banner}", Cmds[3]);
                     Player.List.ToList().Find(x => x.UserId.Contains(Cmds[1])).Ban(int.Parse(Cmds[1]), banreason, Cmds[2]);
                     Tcp.Send(Cmd);
                     Tcp.SendLog($"'''{Cmds[2]} was banned for {Cmds[1]} by {Cmds[3]} for the reason of;\n{Cmds[4]}'''");
@@ -316,7 +316,7 @@ namespace ToucanPlugin
                             break;*/
                         case SpectatorAbilityType.ForceStalk:
                             if (Player.List.ToList().Find(x => x.Role == RoleType.Scp106) == null)
-                                Log.Debug($"No scp 106 found", ToucanPlugin.Instance.Config.Debug);
+                                Log.Debug($"No scp 106 found", ToucanPlugin.Singleton.Config.Debug);
                             else
                             {
                                 Player Scp106 = Player.List.ToList().Find(x => x.Role == RoleType.Scp106);
@@ -415,9 +415,9 @@ namespace ToucanPlugin
 
                 case "twitch":
                     // twitch [Channel name] [player id] [other shit like follow/bits]
-                    if (!ToucanPlugin.Instance.Config.TwitchPlays) return;
-                    if (ToucanPlugin.Instance.Config.TwitchPlaysChannelWhitelist.Count != 0)
-                        if (!ToucanPlugin.Instance.Config.TwitchPlaysChannelWhitelist.Contains(Cmds[2])) return;
+                    if (!ToucanPlugin.Singleton.Config.TwitchPlays) return;
+                    if (ToucanPlugin.Singleton.Config.TwitchPlaysChannelWhitelist.Count != 0)
+                        if (!ToucanPlugin.Singleton.Config.TwitchPlaysChannelWhitelist.Contains(Cmds[2])) return;
                     if(!int.TryParse(Cmds[4], out _) && Cmds[4] == "follow") // Should maybe make this disablable? for server stability concerns..
                     {
                         Player channel = Player.List.ToList().Find(x => x.UserId == Cmds[3]);
@@ -494,7 +494,7 @@ namespace ToucanPlugin
             return resultFUCK;
         }
         public void SendStaticInfo() =>
-            Tcp.Send($"infoS [\"{Server.Name.Replace("\"", "")}\", \"{CleanServerName(Server.Name.Replace("\"", ""))}\", \"{Server.IpAddress}:{Server.Port}\", \"{Server.FriendlyFire}\", \"{GameCore.Version.VersionString}\", \"{Exiled.Loader.Loader.Version}\", \"{ToucanPlugin.Instance.Version}\"]");
+            Tcp.Send($"infoS [\"{Server.Name.Replace("\"", "")}\", \"{CleanServerName(Server.Name.Replace("\"", ""))}\", \"{Server.IpAddress}:{Server.Port}\", \"{Server.FriendlyFire}\", \"{GameCore.Version.VersionString}\", \"{Exiled.Loader.Loader.Version}\", \"{ToucanPlugin.Singleton.Version}\"]");
         public void SendInfo() =>
             Tcp.Send($"infoR [\"{Round.IsStarted}\", \"{Round.IsLocked}\", \"{Round.IsLobbyLocked}\", \"{Round.ElapsedTime.Days}d:{Round.ElapsedTime.Hours}h:{Round.ElapsedTime.Minutes}m:{Round.ElapsedTime.Seconds}s.{Round.ElapsedTime.Milliseconds}ms\", \"{Map.IsLCZDecontaminated}\", {Map.ActivatedGenerators}, \"{GamemodeLogic.RoundGamemode}\", \"{GamemodeLogic.NextGamemode}\"]");
         private void FrameDataToIcom(Images.FrameData fd) { Log.Info($">{fd.Data}<"); Intercom.host.UpdateIntercomText(fd.Data); }

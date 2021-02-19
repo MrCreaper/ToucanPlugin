@@ -50,7 +50,7 @@ namespace ToucanPlugin.Commands
         {
             Exiled.API.Features.Player.List.ToList().ForEach(p => { 
                 p.SendConsoleMessage($"{Sender}: {Msg}", "#ff8c00");
-                p.ShowHint(ToucanPlugin.Instance.Config.ChatHint.Replace("{M}", Msg).Replace("{S}", Sender));
+                p.ShowHint(ToucanPlugin.Singleton.Config.ChatHint.Replace("{M}", Msg).Replace("{S}", Sender));
             });
         }
     }

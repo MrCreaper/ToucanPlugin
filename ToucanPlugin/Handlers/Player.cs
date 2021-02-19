@@ -35,22 +35,22 @@ namespace ToucanPlugin.Handlers
         }
         public void OnJoin(JoinedEventArgs ev)
         {
-            if (ev.Player == null) Log.Warn("oh shit");
-            if (ToucanPlugin.Instance.Config.ReplaceAdvertismentNames)
+            if (ev.Player == null) Log.Debug("oh shit", ToucanPlugin.Singleton.Config.Debug);
+            if (ToucanPlugin.Singleton.Config.ReplaceAdvertismentNames)
             {
                 List<string> PlayerNameSplit = new List<string>(ev.Player.Nickname.Split(' '));
-                List<string> illigalNameParts = new List<string>(ToucanPlugin.Instance.Config.ADBlacklist);
+                List<string> illigalNameParts = new List<string>(ToucanPlugin.Singleton.Config.ADBlacklist);
                 PlayerNameSplit.ForEach(part =>
                 {
                     illigalNameParts.ForEach(NO =>
                     {
                         if (part.ToLower().Contains(NO))
-                            ev.Player.DisplayNickname = ev.Player.Nickname.Replace(part, ToucanPlugin.Instance.Config.ReplaceAdvertismentNamesWhit);
+                            ev.Player.DisplayNickname = ev.Player.Nickname.Replace(part, ToucanPlugin.Singleton.Config.ReplaceAdvertismentNamesWhit);
                     });
                 });
             }
 
-            string message = ToucanPlugin.Instance.Config.JoinedMessage.Replace("{player}", ev.Player.Nickname);
+            string message = ToucanPlugin.Singleton.Config.JoinedMessage.Replace("{player}", ev.Player.Nickname);
             Map.Broadcast(2, message);
             Tcp.SendLog($"**{ev.Player.Nickname} ({ev.Player.UserId}) Joined [{Exiled.API.Features.Player.List.Count()}/20]**");
 
@@ -66,13 +66,13 @@ namespace ToucanPlugin.Handlers
                 if (ev.Player.RankName != null)
                     ev.Player.SetRank("top", topGroup);
             }
-            if (Exiled.API.Features.Player.List.Count() == 1 && !Round.IsStarted && ToucanPlugin.Instance.Config.LonelyRound)
+            if (Exiled.API.Features.Player.List.Count() == 1 && !Round.IsStarted && ToucanPlugin.Singleton.Config.LonelyRound)
                 Task.Factory.StartNew(() => LonelyRound());
             mr.UpdatePlayerList();
         }
         public void OnLeft(LeftEventArgs ev)
         {
-            string message = ToucanPlugin.Instance.Config.LeftMessage.Replace("{player}", ev.Player.Nickname);
+            string message = ToucanPlugin.Singleton.Config.LeftMessage.Replace("{player}", ev.Player.Nickname);
             Map.Broadcast(2, message);
             Tcp.SendLog($"**{ev.Player.Nickname} ({ev.Player.UserId}) Left [{Exiled.API.Features.Player.List.Count() - 1}/20]**");
             mr.UpdatePlayerList(ev.Player.UserId);
@@ -80,7 +80,7 @@ namespace ToucanPlugin.Handlers
             {
                 Log.Warn("Empty server, restarting...");
                 GamemodeLogic.NextGamemode = GamemodeType.None;
-                if (ToucanPlugin.Instance.Config.RestartEmptyServer)
+                if (ToucanPlugin.Singleton.Config.RestartEmptyServer)
                     Round.ForceEnd();
             }
             UpdateVoiceChannel(ev.Player, RoleType.None);
@@ -176,7 +176,7 @@ namespace ToucanPlugin.Handlers
                 curText = curText.Replace("[CENTER_UP]", FormatStringForHud(player.ReferenceHub.animationController.curAnim == 1 ? "Extend:Enabled" : "Extend:Disabled", 6));
             else if (player.Role == RoleType.Scp049)
                 if (!player.ReferenceHub.fpc.NetworkforceStopInputs)
-                    curText = curText.Replace("[CENTER_UP]", FormatStringForHud($"Corpse in stack:{SanyaPlugin.Instance.Handlers.scp049stackAmount}", 6));
+                    curText = curText.Replace("[CENTER_UP]", FormatStringForHud($"Corpse in stack:{SanyaPlugin.Singleton.Handlers.scp049stackAmount}", 6));
                 else
                     curText = curText.Replace("[CENTER_UP]", FormatStringForHud($"Trying to cure...", 6));
             else
@@ -224,11 +224,7 @@ namespace ToucanPlugin.Handlers
         }*/
         public void OnEscape(EscapingEventArgs ev)
         {
-            bool classBool;
-            if (ev.Player.Role == RoleType.ClassD)
-                classBool = false;
-            else //is scientist
-                classBool = true;
+            bool classBool = (ev.Player.Role == RoleType.ClassD ? true : false);
             if (classBool == true) Tcp.Send($"stats {ev.Player.UserId} descapses 1");
             else
                 Tcp.Send($"stats {ev.Player.UserId} sescapses 1");
@@ -252,7 +248,7 @@ namespace ToucanPlugin.Handlers
             SpoopyGhosts.InvisScpDead(ev.Target);
             if (ev.Killer.Team == Team.SCP) SCPKills++;
             //if (mr.ChaosHacker.Contains(ev.Target)) mr.ChaosHacker.Remove(ev.Target); // Remove the chaos hacker things
-            if (!Has008RandomSpawned && ToucanPlugin.Instance.Config.Random008Spawn)
+            if (!Has008RandomSpawned && ToucanPlugin.Singleton.Config.Random008Spawn)
             {
                 if (ev.Target.Role != RoleType.ClassD || ev.Target.Role != RoleType.Scientist || ev.Target.Role != RoleType.FacilityGuard) return;
                 System.Random rnd = new System.Random();
@@ -363,7 +359,7 @@ namespace ToucanPlugin.Handlers
             System.Random rnd = new System.Random();
             Exiled.API.Features.Player p = ev.Player;
             List<Exiled.API.Features.Player> playerList = new List<Exiled.API.Features.Player>((IEnumerable<Exiled.API.Features.Player>)Exiled.API.Features.Player.List.ToList());
-            ToucanPlugin.Instance.Config.CustomPersonel.ForEach(per =>
+            ToucanPlugin.Singleton.Config.CustomPersonel.ForEach(per =>
             {
                 if (!per.Enabled || per.PlayerCount < Exiled.API.Features.Player.List.Count()) return;
                 if (per.Role.GetTeam() == Team.MTF || per.Role.GetTeam() == Team.CHI && SCPKills >= per.MaxSCPKills || SCPKills < per.MinSCPKills) return;
@@ -486,8 +482,8 @@ namespace ToucanPlugin.Handlers
         }
         public void OnKicked(KickedEventArgs ev)
         {
-            if(ev.Player != null)
-            Tcp.SendLog($"```{ev.Player.Nickname} ({ev.Player.UserId}) has been kicked. Reason: {ev.Reason}```");
+            if (ev.Player != null)
+                Tcp.SendLog($"```{ev.Player.Nickname} ({ev.Player.UserId}) has been kicked. Reason: {ev.Reason}```");
         }
         public void OnMedicalItemUsed(UsedMedicalItemEventArgs ev)
         {
@@ -529,20 +525,20 @@ namespace ToucanPlugin.Handlers
         }
         public void OnThrowingGrenade(ThrowingGrenadeEventArgs ev)
         {
-            if (ev.Type == GrenadeType.Flashbang)
+            switch (ev.Type)
             {
-                Tcp.SendLog($"{ev.Player.Nickname} ({ev.Player.UserId}) threw a Flashbang!");
-                Tcp.Send($"stats {ev.Player.UserId} flashThrown 1");
-            }
-            if (ev.Type == GrenadeType.FragGrenade)
-            {
-                Tcp.SendLog($"{ev.Player.Nickname} ({ev.Player.UserId}) threw a Grenade!");
-                Tcp.Send($"stats {ev.Player.UserId} grenadeThrown 1");
-            }
-            if (ev.Type == GrenadeType.Scp018)
-            {
-                Tcp.SendLog($"{ev.Player.Nickname} ({ev.Player.UserId}) threw a SCP-018!");
-                Tcp.Send($"stats {ev.Player.UserId} scp018Thrown 1");
+                case GrenadeType.Flashbang:
+                    Tcp.SendLog($"{ev.Player.Nickname} ({ev.Player.UserId}) threw a Flashbang!");
+                    Tcp.Send($"stats {ev.Player.UserId} flashThrown 1");
+                    break;
+                case GrenadeType.FragGrenade:
+                    Tcp.SendLog($"{ev.Player.Nickname} ({ev.Player.UserId}) threw a Grenade!");
+                    Tcp.Send($"stats {ev.Player.UserId} grenadeThrown 1");
+                    break;
+                case GrenadeType.Scp018:
+                    Tcp.SendLog($"{ev.Player.Nickname} ({ev.Player.UserId}) threw a SCP-018!");
+                    Tcp.Send($"stats {ev.Player.UserId} scp018Thrown 1");
+                    break;
             }
         }
         public void OnEnteringFemurBreaker(EnteringFemurBreakerEventArgs ev)
@@ -556,7 +552,7 @@ namespace ToucanPlugin.Handlers
         }
         public void OnHurting(HurtingEventArgs ev)
         {
-            if (ev.Target.Role == RoleType.Scp106 && ToucanPlugin.Instance.Config.Force106Femur && !Warhead.IsDetonated && ev.Attacker.CurrentItem.id != ItemType.MicroHID)
+            if (ev.Target.Role == RoleType.Scp106 && ToucanPlugin.Singleton.Config.Force106Femur && !Warhead.IsDetonated && ev.Attacker.CurrentItem.id != ItemType.MicroHID)
                 if (ev.Target.Health < ev.Target.MaxHealth)
                     ev.Target.Health = ev.Target.Health + ev.Amount;
                 else
@@ -579,14 +575,8 @@ namespace ToucanPlugin.Handlers
             UpdateVoiceChannel(ev.Player, ev.NewRole);
         public Team GetTeam(Exiled.API.Features.Player p, RoleType Role = RoleType.None)
         {
+            Team PlayerTeam = p.Team;
             if (Role == RoleType.None) Role = p.Role;
-            Team PlayerTeam = Team.RIP;
-            if (Role.GetSide() == Side.Tutorial) PlayerTeam = Team.TUT;
-            if (Role.GetSide() == Side.Scp) PlayerTeam = Team.SCP;
-            if (Role.GetTeam() == Team.RSC) PlayerTeam = Team.RSC;
-            if (Role.GetTeam() == Team.MTF) PlayerTeam = Team.MTF;
-            if (Role.GetTeam() == Team.CDP) PlayerTeam = Team.CDP;
-            if (Role.GetTeam() == Team.CHI) PlayerTeam = Team.CHI;
             if (SerpentsHand.API.SerpentsHand.GetSHPlayers().Contains(p)) PlayerTeam = Team.SCP;
             if (scp035.API.Scp035Data.GetScp035() == p) PlayerTeam = Team.SCP;
             return PlayerTeam;
@@ -617,12 +607,12 @@ namespace ToucanPlugin.Handlers
             {
                 while (true)
                 {
-                    if (!ToucanPlugin.Instance.Config.CrouchingEnabled || !CrouchingRunning) return;
+                    if (!ToucanPlugin.Singleton.Config.CrouchingEnabled || !CrouchingRunning) return;
                     Exiled.API.Features.Player.List.ToList().ForEach(p =>
                         {
                             if (p.MoveState == PlayerMovementState.Sneaking && !PlayersCrouchingList.Contains(p))
                             {
-                                p.Scale = new Vector3(ToucanPlugin.Instance.Config.CrouchingSize.X, ToucanPlugin.Instance.Config.CrouchingSize.Y, ToucanPlugin.Instance.Config.CrouchingSize.Z);
+                                p.Scale = new Vector3(ToucanPlugin.Singleton.Config.CrouchingSize.X, ToucanPlugin.Singleton.Config.CrouchingSize.Y, ToucanPlugin.Singleton.Config.CrouchingSize.Z);
                                 PlayersCrouchingList.Add(p);
                             }
                             else if (p.MoveState != PlayerMovementState.Sneaking && PlayersCrouchingList.Contains(p))

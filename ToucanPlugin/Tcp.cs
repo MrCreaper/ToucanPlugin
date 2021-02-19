@@ -40,7 +40,7 @@ namespace ToucanPlugin
         {
             if (connecting || IsConnected() || auth || connected) return;
             connecting = true;
-            Log.Debug("Starting Tcp Main", ToucanPlugin.Instance.Config.Debug);
+            Log.Debug("Starting Tcp Main", ToucanPlugin.Singleton.Config.Debug);
             try
             {
                 // Define those variables to be evaluated in the next for loop and
@@ -50,8 +50,8 @@ namespace ToucanPlugin
                 IPAddress hostAddress = null;
 
                 // Get DNS host information.
-                if (ToucanPlugin.Instance.Config.ToucanServerIP == "") { Log.Warn($"No Toucan Server ip set!"); return; };
-                IPHostEntry hostInfo = Dns.GetHostEntry(ToucanPlugin.Instance.Config.ToucanServerIP);
+                if (ToucanPlugin.Singleton.Config.ToucanServerIP == "") { Log.Warn($"No Toucan Server ip set!"); return; };
+                IPHostEntry hostInfo = Dns.GetHostEntry(ToucanPlugin.Singleton.Config.ToucanServerIP);
                 // Get the DNS IP addresses associated with the host.
                 IPAddress[] IPaddresses = hostInfo.AddressList;
 
@@ -87,7 +87,7 @@ namespace ToucanPlugin
                         });
                         if (!auth)
                         {
-                            Log.Debug("Authenticating...", ToucanPlugin.Instance.Config.Debug);
+                            Log.Debug("Authenticating...", ToucanPlugin.Singleton.Config.Debug);
                             Stopwatch authTimer = new Stopwatch();
                             authTimer.Start();
                             Task.Factory.StartNew(() =>
@@ -97,11 +97,11 @@ namespace ToucanPlugin
                                     if (authTimer.ElapsedMilliseconds > AuthTimeout && !auth && !IsConnected())
                                     {
                                         DissconnectCounter++;
-                                        Log.Debug($"Authenication timed out [{DissconnectCounter}]. FUCK", ToucanPlugin.Instance.Config.Debug);
+                                        Log.Debug($"Authenication timed out [{DissconnectCounter}]. FUCK", ToucanPlugin.Singleton.Config.Debug);
                                         if (DissconnectCounter >= 5)
                                         {
                                             chillTimer.Start();
-                                            Log.Debug("Starting chill", ToucanPlugin.Instance.Config.Debug);
+                                            Log.Debug("Starting chill", ToucanPlugin.Singleton.Config.Debug);
                                             Disconnect("Chill man");
                                         }
                                         if (DissconnectCounter >= 10)
@@ -125,7 +125,7 @@ namespace ToucanPlugin
                                 {
                                     auth = true;
                                     connected = true;
-                                    Log.Debug("Authanticated", ToucanPlugin.Instance.Config.Debug);
+                                    Log.Debug("Authanticated", ToucanPlugin.Singleton.Config.Debug);
                                     ConnectedEvent();
                                     Log.Info("Connected to Toucan Server");
                                 }
@@ -155,7 +155,7 @@ namespace ToucanPlugin
             connecting = false;
             if (IsConnected())
                 S.Disconnect(false);
-            Log.Debug($"Disconnected, {Reason}", ToucanPlugin.Instance.Config.Debug);
+            Log.Debug($"Disconnected, {Reason}", ToucanPlugin.Singleton.Config.Debug);
         }
         public static bool IsConnected()
         {
@@ -191,18 +191,18 @@ namespace ToucanPlugin
                     // Process the data sent by the client.
                     byte[] niceData = Encoding.ASCII.GetBytes(data);
                     S.Send(niceData);
-                    Log.Debug($"Sent: {data}", ToucanPlugin.Instance.Config.Debug);
+                    Log.Debug($"Sent: {data}", ToucanPlugin.Singleton.Config.Debug);
                     return true;
                 }
                 else
                 {
-                    Log.Debug($"Not Connected?", ToucanPlugin.Instance.Config.Debug);
+                    Log.Debug($"Not Connected?", ToucanPlugin.Singleton.Config.Debug);
                     return false;
                 }
             }
             catch (Exception e)
             {
-                Log.Debug($"Failed to send data: {e}", ToucanPlugin.Instance.Config.Debug);
+                Log.Debug($"Failed to send data: {e}", ToucanPlugin.Singleton.Config.Debug);
                 return false;
             }
         }
@@ -245,8 +245,8 @@ namespace ToucanPlugin
 
                 // Measure the Connect call only
                 stopwatch.Start();
-                if (ToucanPlugin.Instance.Config.ToucanServerIP == "") { Log.Warn($"No Toucan Server ip set!"); return "No ip set"; };
-                IPHostEntry hostInfo = Dns.GetHostEntry(ToucanPlugin.Instance.Config.ToucanServerIP);
+                if (ToucanPlugin.Singleton.Config.ToucanServerIP == "") { Log.Warn($"No Toucan Server ip set!"); return "No ip set"; };
+                IPHostEntry hostInfo = Dns.GetHostEntry(ToucanPlugin.Singleton.Config.ToucanServerIP);
                 // Get the DNS IP addresses associated with the host.
                 IPAddress[] IPaddresses = hostInfo.AddressList;
                 hostAddress = IPaddresses[0];
@@ -267,7 +267,7 @@ namespace ToucanPlugin
         string lastDebug = "";
         public void Start()
         {
-            Log.Debug("Starting Tcp...", ToucanPlugin.Instance.Config.Debug);
+            Log.Debug("Starting Tcp...", ToucanPlugin.Singleton.Config.Debug);
             topicUpdateTimer.Restart();
             Task.Factory.StartNew(() =>
             {
@@ -277,7 +277,7 @@ namespace ToucanPlugin
                 {
                     try
                     {
-                        if (ToucanPlugin.Instance.Config.Debug)
+                        if (ToucanPlugin.Singleton.Config.Debug)
                         {
                             string fuckingDebugMsg = $"\nauth: {auth}\nconnected: {IsConnected()}\nconnected 2: {connected}\nconnecting: {connecting}\ndissconnect count: {DissconnectCounter}\nchilling: {chillTimer.IsRunning} [ {chillTimer.ElapsedMilliseconds} ]\nSTOP: {STOP}";
                             if (lastDebug != fuckingDebugMsg)
@@ -301,7 +301,7 @@ namespace ToucanPlugin
                     }
                 }
                 // If i fucking uncomment this it all fucking breaks
-                //Log.Debug($"Idle mode updated", ToucanPlugin.Instance.Config.Debug);
+                //Log.Debug($"Idle mode updated", ToucanPlugin.Singleton.Config.Debug);
                 IdleModeUpdateEvent(IdleMode.IdleModeActive);
             });
         }

@@ -286,8 +286,6 @@ namespace ToucanPlugin
                 Desc="Gives a List of all Players with they Role and in which Zone they are",
             },
         };
-        [Description("I dont wana be part of that statistic!")]
-        public bool HiddenExiled { get; set; } = false;
         [Description("I put thees down here for a reason.")]
         public string ToucanServerIP { get; set; } = "scpsl.mrtoucan.dev";
         public bool Debug { get; set; } = false;

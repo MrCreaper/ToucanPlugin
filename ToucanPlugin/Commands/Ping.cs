@@ -18,7 +18,7 @@ namespace ToucanPlugin.Commands
 
         public bool Execute(ArraySegment<string> arguments, ICommandSender Sender, out string response)
         {
-            if (!ToucanPlugin.Instance.Config.Debug)
+            if (!ToucanPlugin.Singleton.Config.Debug)
             {
                 response = "Maybe dont..";
                 return false;

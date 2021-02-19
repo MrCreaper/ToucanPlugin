@@ -31,7 +31,7 @@ namespace ToucanPlugin.Commands
                 response = "Bruh";
                 return false;
             }
-            List<AbiltyRequirementData> ard = ToucanPlugin.Instance.Config.Scp079Abilities;
+            List<AbiltyRequirementData> ard = ToucanPlugin.Singleton.Config.Scp079Abilities;
             if (args.Count < 2)
             {
                 string CmdList = "cmd - cost - lvl - desc";

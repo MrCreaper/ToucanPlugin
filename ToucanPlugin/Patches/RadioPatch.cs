@@ -6,11 +6,11 @@
     [HarmonyPatch(nameof(Radio.Us))]
     internal static class RadioPatch
     {
-        static bool Prefix(Radio __instance)
+        static bool Prefix(Radio __Singleton)
         {
-            if (__instance.ccm.CurRole.team == Team.MTF)
+            if (__Singleton.ccm.CurRole.team == Team.MTF)
             {
-                __instance.name = "RADIO-SPAMMER 9000";
+                __Singleton.name = "RADIO-SPAMMER 9000";
                 RadioDisplay.label = "CUM";
                 return true;
             }

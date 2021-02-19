@@ -7,7 +7,7 @@ using ToucanPlugin.Commands;
     [HarmonyPatch(nameof(Radio.Start))]
     internal static class RadioHackPatch
     {
-        static bool Prefix(/*Radio __instance*//*)
+        static bool Prefix(/*Radio __Singleton*//*)
         {
             if (HackRadio.radioHacked)
             {

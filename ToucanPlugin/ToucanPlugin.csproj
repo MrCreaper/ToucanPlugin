@@ -302,10 +302,10 @@
     <Compile Include="Gamemodes\QuietPlace.cs" />
     <Compile Include="Gamemodes\RealPeanutInfection.cs" />
     <Compile Include="Gamemodes\SpoopyGhosts.cs" />
+    <Compile Include="Handlers\Classes.cs" />
     <Compile Include="Handlers\Player.cs" />
     <Compile Include="Handlers\Server.cs" />
     <Compile Include="MessageResponder.cs" />
-    <Compile Include="Patches\HiddenExiled.cs" />
     <Compile Include="Patches\IntercomMusicPatch.cs" />
     <Compile Include="Patches\RadioHackPatch.cs" />
     <Compile Include="Patches\RadioPatch.cs" />

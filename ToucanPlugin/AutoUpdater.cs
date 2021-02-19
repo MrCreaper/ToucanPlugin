@@ -21,7 +21,7 @@ namespace ToucanPlugin
         public static async Task<bool> UpToDate()
         {
             Release[] Releases = await GetReleases(REPOID);
-            if (ToucanPlugin.Instance.Version.ToString() == Releases[0].TagName) return true;
+            if (ToucanPlugin.Singleton.Version.ToString() == Releases[0].TagName) return true;
             return false;
         }
 
@@ -40,7 +40,7 @@ namespace ToucanPlugin
                 //var res = await client.DownloadStringTaskAsync("https://fuck.website.com/someshit");
                 //if (res == Version) return;
 
-                var location = Directory.GetFiles(Paths.Plugins).FirstOrDefault(path => path.ToLower().Contains(ToucanPlugin.Instance.Name.ToLower()) && path.EndsWith(".dll"));
+                var location = Directory.GetFiles(Paths.Plugins).FirstOrDefault(path => path.ToLower().Contains(ToucanPlugin.Singleton.Name.ToLower()) && path.EndsWith(".dll"));
                 /*if (location == null)
                 {
                     Log.Warn("Why did you rename the plugin?... why?");
@@ -48,7 +48,7 @@ namespace ToucanPlugin
                 }*/
                 Log.Debug($"Downloading from\nRelease: {Releases[0].Assets[0].BrowserDownloadUrl}\nBulit-In: https://github.com/MrCreaper/ToucanPlugin/releases/latest/download/ToucanPlugin.dll");
                 await client.DownloadFileTaskAsync($"https://github.com/MrCreaper/ToucanPlugin/releases/latest/download/ToucanPlugin.dll", location);
-                Log.Info($"Updated {ToucanPlugin.Instance.Name} {ToucanPlugin.Instance.Version}=>{Releases[0].TagName}. Restarting server...");
+                Log.Info($"Updated {ToucanPlugin.Singleton.Name} {ToucanPlugin.Singleton.Version}=>{Releases[0].TagName}. Restarting server...");
                 Application.Quit();
             }
         }
@@ -76,7 +76,7 @@ namespace ToucanPlugin
                 {
                     {
                         "User-Agent",
-                        "FUCK (https://github.com/MrCreaper/ToucanPlugin, " + ToucanPlugin.Instance.Assembly.GetName().Version.ToString(3) + ")"
+                        "FUCK (https://github.com/MrCreaper/ToucanPlugin, " + ToucanPlugin.Singleton.Assembly.GetName().Version.ToString(3) + ")"
                     }
                 }
             };

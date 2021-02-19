@@ -5,21 +5,19 @@ using HarmonyLib;
 using System;
 using Player = Exiled.Events.Handlers.Player;
 using Server = Exiled.Events.Handlers.Server;
-using System.Diagnostics;
-using System.Linq;
-using MEC;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Net.Http;
 
 namespace ToucanPlugin
 {
     public class ToucanPlugin : Plugin<Config>
     {
         readonly Tcp Tcp = new Tcp();
-        private static readonly Lazy<ToucanPlugin> LazyInstance = new Lazy<ToucanPlugin>(() => new ToucanPlugin());
-        public static ToucanPlugin Instance => LazyInstance.Value;
+        public static ToucanPlugin Singleton;
+        public Harmony Instance;
+
+        public override Version Version { get; } = Singleton.Version;
+        public override Version RequiredExiledVersion { get; } = new Version(2, 2, 4, 0);
 
         public override PluginPriority Priority { get; } = PluginPriority.Medium;
 
@@ -37,30 +35,22 @@ namespace ToucanPlugin
         private ToucanPlugin()
         {
         }
-        public bool Enabled { get; private set; } = false;
         public override void OnEnabled()
         {
-            if (Instance.RequiredExiledVersion > Loader.Version && !Instance.Config.Debug) {
-                Log.Error($"Nope. Exiled {Instance.RequiredExiledVersion}^");
-                return;
-            };
-            base.OnEnabled();
-            Enabled = true;
-            Log.Info($"Hes right, {Instance.Name} (v{Instance.Version}) is enabled");
-            Log.Debug("Mh. Lets see whats going on...", Instance.Config.Debug);
+            Log.Debug("Mh. Lets see whats going on...", Singleton.Config.Debug);
             RegisterEvents();
             Patch();
             Tcp.Start();
-            //ToucanPlugin.Instance.Config.PlayerCountMentions.ForEach(r => server.LastPlayerCountMentions.Add(r.PlayerCount, false));
+            //ToucanPlugin.Singleton.Config.PlayerCountMentions.ForEach(r => server.LastPlayerCountMentions.Add(r.PlayerCount, false));
             Task.Factory.StartNew(() => AutoUpdate());
+            base.OnEnabled();
         }
         public override void OnDisabled()
         {
-            base.OnDisabled();
-            Enabled = false;
             UnRegisterEvents();
             Unpatch();
             Tcp.Disconnect("Disabling plugin");
+            base.OnDisabled();
         }
 
         private void Patch()
@@ -175,23 +165,23 @@ namespace ToucanPlugin
         public void OnIdlemodeUpdate(bool NewState)
         {
             // This is an awful idea, idle mode is never gonna end if debugs on..
-            //Log.Debug($"New idlemode state: {NewState}", ToucanPlugin.Instance.Config.Debug);
+            //Log.Debug($"New idlemode state: {NewState}", ToucanPlugin.Singleton.Config.Debug);
             if (!NewState && !Tcp.connecting)
                 Tcp.Start();
         }
         private async void AutoUpdate()
         {
             /*Release[] Releases = AutoUpdater.GetReleases(AutoUpdater.REPOID).Result;
-            string list = $"{Instance.Name} releases:";
+            string list = $"{Singleton.Name} releases:";
             Releases.ToList().ForEach(r => list += $"\n{r.TagName}");
             Log.Debug(list);*/
-            if (Instance.Config.Debug)
+            if (Singleton.Config.Debug)
                 if (AutoUpdater.UpToDate().Result)
                     Log.Debug("No updates");
                 else Log.Debug("Update found");
             while (true)
             {
-                Log.Debug("Checking for updates... again...", Instance.Config.Debug);
+                Log.Debug("Checking for updates... again...", Singleton.Config.Debug);
                 if (!AutoUpdater.UpToDate().Result)
                 {
                     Log.Info("Update found");
